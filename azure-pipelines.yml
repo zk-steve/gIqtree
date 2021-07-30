@@ -1,0 +1,34 @@
+# Variable Group 'Test' was defined in the Variables tab
+# Variable Group 'FE variable' was defined in the Variables tab
+trigger:
+  branches:
+    include:
+    - releases/*
+    - dev
+    - main
+name: $(SourceBranchName)_$(Date:ddMMyyyy)$(Rev:.r)
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: dev
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  pool:
+    name: Builder
+  steps:
+  - checkout: self
+  - task: CmdLine@2
+    displayName: Build
+    inputs:
+      script: >-
+        rm -Rf dist
+        ./build.sh
+      workingDirectory: $(System.DefaultWorkingDirectory)
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: gIqtree'
+    inputs:
+      PathtoPublish: dist
+      ArtifactName: releases
+...
