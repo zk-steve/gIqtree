@@ -1,11 +1,11 @@
 {
-  "name": "iqtree",
+  "name": "gIqtree",
   "version": "0.1.0",
   "private": true,
   "description": "iqtree",
   "author": "iqtree",
   "build": {
-    "appId": "com.iqtree"
+    "appId": "com.giqtree"
   },
   "main": "public/electron.js",
   "homepage": "./",
@@ -16,7 +16,7 @@
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
     "release": "yarn react-build && electron-builder --publish=always",
-    "build": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build && mv build dist",
+    "build": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build --win portable -l",
     "start": "concurrently \"cross-env SKIP_PREFLIGHT_CHECK=true BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "dependencies": {
