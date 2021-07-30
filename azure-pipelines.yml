@@ -23,7 +23,7 @@ jobs:
     displayName: Build
     inputs:
       script: >-
-        rm -Rf dist
+        rm -Rf dist &&
         ./build.sh
       workingDirectory: $(System.DefaultWorkingDirectory)
   - task: PublishBuildArtifacts@1
