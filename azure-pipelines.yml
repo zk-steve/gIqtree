@@ -23,7 +23,7 @@ jobs:
     displayName: Build
     inputs:
       script: >-
-        ls && rm -Rf dist && ./build.sh
+        ls && rm -Rf dist && ./build.sh && rm -Rf dist/linux-unpacked && rm -Rf dist/win-unpacked
       workingDirectory: $(System.DefaultWorkingDirectory)
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: gIqtree'
