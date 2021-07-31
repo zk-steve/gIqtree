@@ -1,24 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
-
+import MenuBar from "component/MenuBar/MenuBar";
+import HomePage from "pages/HomePage/HomePage";
+import ProjectPage from "pages/ProjectPage/ProjectPage";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import "./App.css";
+const { remote } = window.require("electron");
+const fs = remote.require("fs");
 function App() {
+  // const { dialog } = remote;
+  // const getFolder = async () => {
+  //   const path = await dialog.showOpenDialog({ properties: ["openDirectory"] });
+  //   console.log(fs.readdirSync(path.filePaths[0]));
+  // };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <MenuBar />
+        <Switch>
+          <Route path="/">
+            <HomePage />
+          </Route>
+          <Route path="/project">
+            <ProjectPage />
+          </Route>
+        </Switch>
+
+        {/* <button onClick={getFolder}>Choose your folder.</button> */}
+      </div>
+    </Router>
   );
 }
 
