@@ -3,7 +3,7 @@ import React from "react";
 import { File } from "shared/icons";
 import useStyles from "./styles";
 
-function ProjectHistory({ projectName, status, percent, time }) {
+function ProjectHistory({ projectName, percent, time }) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -14,7 +14,7 @@ function ProjectHistory({ projectName, status, percent, time }) {
         <div className={classes.project}>
           <Typography>{projectName}</Typography>
           <Typography variant="caption">
-            {status === "processing" ? "Processed" : "Done"} {percent}%
+            {percent < 100 ? `Processed ${percent}%` : `${percent}%`}
           </Typography>
         </div>
         <Typography align="left" className={classes.lastColumn}>

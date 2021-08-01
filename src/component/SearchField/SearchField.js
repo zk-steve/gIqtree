@@ -6,12 +6,10 @@ const { ipcRenderer } = window.require("electron");
 function SearchField(props) {
   const classes = useStyles();
   const [value, setValue] = useState();
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
     ipcRenderer.send("search", value);
   };
-  ipcRenderer.on("searchProject", (event, data) => {
-    console.log(data);
-  });
   return (
     <div className={classes.root}>
       <form className={classes.form} onSubmit={onSubmit}>

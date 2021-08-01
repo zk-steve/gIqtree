@@ -2,11 +2,6 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const isDev = require("electron-is-dev");
 const homepage = require("../src/server/controller/homepage");
 function createWindow() {
-  // const path = fs.readdirSync("C:\\Users\\ADMIN\\Dev\\webnoithat\\my-app", {
-  //   encoding: "utf8",
-  // });
-  // console.log(path);
-  // Create the browser window.
   const win = new BrowserWindow({
     minWidth: 1020,
     minHeight: 600,
