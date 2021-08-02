@@ -17,5 +17,11 @@ const useStyles = makeStyles((theme) => ({
   actionSection: {
     marginTop: "2rem",
   },
+  directory: {
+    marginTop: "2rem",
+    "& svg": {
+      cursor: "pointer",
+    },
+  },
 }));
 export default useStyles;

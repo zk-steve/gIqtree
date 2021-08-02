@@ -8,6 +8,7 @@ import File from "./file";
 import SmallFile from "./smallFile";
 import InputFile from "./inputFile";
 import Setting from "./setting";
+import Directory from "./directory";
 export {
   Minimize,
   Maximize,
@@ -19,4 +20,5 @@ export {
   SmallFile,
   InputFile,
   Setting,
+  Directory,
 };

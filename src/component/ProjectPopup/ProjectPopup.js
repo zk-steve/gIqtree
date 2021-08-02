@@ -7,8 +7,10 @@ import {
   TextField,
   DialogActions,
   Button,
+  InputAdornment,
 } from "@material-ui/core";
 import useStyles from "./styles";
+import { Directory } from "shared/icons";
 function ProjectPopup({
   title,
   subTitle,
@@ -30,6 +32,22 @@ function ProjectPopup({
             variant="outlined"
             placeholder="Your project"
             fullWidth
+          />
+        </div>
+        <div className={classes.directory}>
+          <Typography className={classes.title}>Location</Typography>
+          <TextField
+            size="small"
+            variant="outlined"
+            placeholder="Select path"
+            fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Directory />
+                </InputAdornment>
+              ),
+            }}
           />
         </div>
       </DialogContent>
