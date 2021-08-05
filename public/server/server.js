@@ -1,6 +1,6 @@
 const path = require("path");
 const db = require("./db");
-const model = path.join(__dirname, "/table.js");
+const model = require("./table");
 const homepage = require("./controller/homepage");
 
 const {
