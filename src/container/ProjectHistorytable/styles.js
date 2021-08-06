@@ -51,5 +51,8 @@ const useStyles = makeStyles((theme) => ({
       fontSize: "16px",
     },
   },
+  divider: {
+    marginTop: "10px",
+  },
 }));
 export default useStyles;

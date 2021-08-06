@@ -30,5 +30,10 @@ const useStyles = makeStyles((theme) => ({
   lastColumn: {
     flex: 1,
   },
+  progress: {
+    fontSize: "10px",
+    lineHeight: "12px",
+    color: "#393D56",
+  },
 }));
 export default useStyles;

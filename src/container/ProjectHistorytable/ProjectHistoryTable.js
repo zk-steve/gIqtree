@@ -37,7 +37,7 @@ function ProjectHistoryTable(props) {
             Time upload
           </Typography>
         </div>
-        <Divider variant="fullWidth" />
+        <Divider variant="fullWidth" className={classes.divider} />
       </div>
       {history.map((project) => (
         <ProjectHistory

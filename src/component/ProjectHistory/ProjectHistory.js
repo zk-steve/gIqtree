@@ -13,7 +13,7 @@ function ProjectHistory({ projectName, percent, time }) {
         </div>
         <div className={classes.project}>
           <Typography>{projectName}</Typography>
-          <Typography variant="caption">
+          <Typography className={classes.progress}>
             {percent < 100 ? `Processed ${percent}%` : `${percent}%`}
           </Typography>
         </div>
