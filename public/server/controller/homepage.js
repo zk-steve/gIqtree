@@ -35,30 +35,36 @@ module.exports.getOutput = () => {
 };
 
 module.exports.setProject = (name, path) => {
-  db.serialize(() => {
-    let stmp = db.prepare(
-      `INSERT INTO project 
-      VALUES(?,?, DATETIME("now"), ?, ?)`
-    );
-    stmp.run(uuidv4(), name, 0, path);
-
-    stmp.finalize();
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      let stmp = db.prepare(
+        `INSERT INTO project 
+        VALUES(?,?, DATETIME("now"), ?, ?)`
+      );
+      stmp.run(uuidv4(), name, 0, path);
+  
+      stmp.finalize();
+    });
   });
 };
 
 module.exports.setInput = async (name, path, project_id) => {
-  db.serialize(() => {
-    let stmp = db.prepare(`INSERT INTO input VALUES(?, ?, ?, ?, ?)`);
-    stmp.run(uuidv4(), name, path, project_id, 0);
-    stmp.finalize();
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      let stmp = db.prepare(`INSERT INTO input VALUES(?, ?, ?, ?, ?)`);
+      stmp.run(uuidv4(), name, path, project_id, 0);
+      stmp.finalize();
+    });
   });
 };
 
 module.exports.setOutput = async (name, path, project_id) => {
-  db.serialize(() => {
-    let smtp = db.prepare(`INSERT INTO output VALUES(?, ?, ?, ?)`);
-    smtp.run(uuidv4(), name, path, project_id);
-    smtp.finalize();
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      let smtp = db.prepare(`INSERT INTO output VALUES(?, ?, ?, ?)`);
+      smtp.run(uuidv4(), name, path, project_id);
+      smtp.finalize();
+    });
   });
 };
 
