@@ -20,7 +20,7 @@ function ProjectHistoryTable(props) {
   return (
     <div className={classes.root}>
       <div className={classes.tabBar}>
-        <Tabs value={value} onChange={handleChange} indicatorColor="primary">
+        <Tabs value={value} onChange={handleChange} indicatorColor="secondary">
           <Tab label="Recently" />
           <Tab label="Oldest" />
         </Tabs>

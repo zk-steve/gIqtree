@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Avatar, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { Minimize, Maximize, UnMaximize, CloseWindow } from "shared/icons";
 import useStyles from "./styles";
 import clsx from "clsx";
 import ProjectPopup from "component/ProjectPopup/ProjectPopup";
+import Logo from "shared/img/logo.png";
 const ipcRenderer = window.require("electron").ipcRenderer;
 function MenuBar(props) {
   const classes = useStyles();
@@ -32,15 +33,27 @@ function MenuBar(props) {
     <>
       <div className={classes.root}>
         <div className={classes.container}>
-          <Avatar className={classes.avatar}>D</Avatar>
-          <div className={clsx(classes.button, classes.leftButton)}>
-            <Typography variant="body2">Dashboard</Typography>
+          <img src={Logo} alt="logo" className={classes.avatar} />
+          <div
+            className={clsx(
+              classes.button,
+              classes.leftButton,
+              classes.dashboard
+            )}
+          >
+            <Typography variant="body2" className={classes.text}>
+              Dashboard
+            </Typography>
           </div>
           <div className={clsx(classes.button, classes.leftButton)}>
-            <Typography variant="body2">New</Typography>
+            <Typography variant="body2" className={classes.text}>
+              New
+            </Typography>
           </div>
           <div className={clsx(classes.button, classes.leftButton)}>
-            <Typography variant="body2">Open</Typography>
+            <Typography variant="body2" className={classes.text}>
+              Open
+            </Typography>
           </div>
         </div>
         <div className={classes.drag}></div>

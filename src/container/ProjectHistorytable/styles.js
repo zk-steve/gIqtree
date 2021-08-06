@@ -20,6 +20,11 @@ const useStyles = makeStyles((theme) => ({
   },
   nameColumn: {
     flexBasis: "80%",
+    color: " #696969",
+    fontSize: "14px",
+    fontWeight: "normal",
+    lineHeight: "21px",
+    fontStyle: "normal",
   },
   fileIcon: {
     flexBasis: "6%",
@@ -28,12 +33,22 @@ const useStyles = makeStyles((theme) => ({
   },
   lastColumn: {
     flex: 1,
+    color: " #696969",
+    fontSize: "14px",
+    fontWeight: "normal",
+    lineHeight: "21px",
+    fontStyle: "normal",
   },
   tabBar: {
-    width: "25%",
+    width: "15%",
     "& button": {
       width: "50%",
-      minWidth: "50px",
+      minWidth: "74px",
+    },
+    "& span": {
+      textTransform: "none",
+      fontWeight: 600,
+      fontSize: "16px",
     },
   },
 }));

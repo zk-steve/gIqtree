@@ -22,8 +22,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
   },
   title: {
-    fontWeight: 900,
+    fontWeight: 600,
+    fontSize: "24px",
     margin: "1rem 0",
+    fontStyle: "normal",
+    lineHeight: "34px",
   },
 }));
 export default useStyles;

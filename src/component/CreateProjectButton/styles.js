@@ -8,14 +8,17 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     flexBasis: "18%",
-    height: "52px",
+    minHeight: "62px",
+    minWidth: "168px",
     cursor: "pointer",
     "&:hover": {
-      backgroundColor: alpha(theme.palette.secondary.light, 0.2),
+      background: "linear-gradient(45.92deg, #FFF2F3 -13.5%, #FFE1DE 75.22%)",
     },
-    backgroundColor: alpha(theme.palette.info.light, 0.2),
+    backgroundColor: theme.palette.primary.main,
     transition: `0.1s ${theme.transitions.easing.easeInOut}`,
-    boxShadow: theme.shadows[4],
+    boxShadow: "6px 4px 4px rgba(0, 0, 0, 0.25)",
+    border: "0.5px solid #EEEEEE",
+    boxSizing: "border-box",
   },
   container: {
     display: "flex",
@@ -24,10 +27,16 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     width: "75%",
 
-    "& > svg": {
+    "& > img": {
       position: "absolute",
       top: "5px",
       left: "5px",
+    },
+    "& > p": {
+      fontSize: "16px",
+      fontWeight: 600,
+      lineHeight: "24px",
+      fontStyle: "normal",
     },
   },
 }));

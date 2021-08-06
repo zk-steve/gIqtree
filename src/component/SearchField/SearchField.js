@@ -18,7 +18,7 @@ function SearchField(props) {
           classes={{ root: classes.input }}
           size="small"
           variant="filled"
-          placeholder="Search"
+          placeholder="Search all projects"
           disableUnderline
           startAdornment={<Search />}
           onChange={(e) => setValue(e.target.value)}

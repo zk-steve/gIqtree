@@ -8,18 +8,19 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "1rem",
   },
   form: {
-    width: "40%",
+    width: "518px",
   },
   input: {
     borderRadius: "20px",
-    backgroundColor: theme.palette.grey[300],
-    border: "none",
+    backgroundColor: "white",
+    border: "1px solid #E7E9F1",
     padding: "0 1rem",
     width: "100%",
     "& input": {
       paddingLeft: "0.5rem",
       border: "none",
     },
+    height: "40px",
   },
 }));
 export default useStyles;

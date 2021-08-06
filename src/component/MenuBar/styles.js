@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: "1.75rem",
+    height: "69px",
     backgroundColor: theme.palette.common.white,
     display: "flex",
     justifyContent: "space-between",
@@ -15,9 +15,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   avatar: {
-    width: "24px",
-    height: "24px",
-    margin: "0 1rem",
+    margin: "0 21px",
   },
   container: {
     display: "flex",
@@ -30,18 +28,26 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.grey[400],
     },
     transition: `0.2s ${theme.transitions.easing.easeInOut}`,
-    padding: "0 1rem",
+    padding: "0 2rem",
     display: "flex",
     alignItems: "center",
     cursor: "default",
   },
   leftButton: {
-    padding: "0 0.5rem",
+    padding: "0 1.5rem",
   },
   closeButton: {
     "&:hover": {
       backgroundColor: theme.palette.error.main,
     },
+  },
+  text: {
+    fontSize: "18px",
+    fontWeight: 600,
+    lineHeight: "28px",
+  },
+  dashboard: {
+    color: theme.palette.secondary.main,
   },
 }));
 export default useStyles;

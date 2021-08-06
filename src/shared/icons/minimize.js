@@ -3,7 +3,7 @@ import * as React from "react";
 function Minimize(props) {
   return (
     <svg
-      width={12}
+      width={18}
       height={1}
       viewBox="0 0 18 1"
       fill="none"

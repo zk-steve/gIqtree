@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain} = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const homepage = require("./server/controller/homepage");
@@ -7,8 +7,8 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    minWidth: 1020,
-    minHeight: 600,
+    minWidth: 1440,
+    minHeight: 900,
     frame: true,
     webPreferences: {
       nodeIntegration: true,
@@ -17,9 +17,9 @@ function createWindow() {
     },
   });
   mainWindow.loadURL(
-      isDev
-          ? "http://localhost:3000"
-          : `file://${path.join(__dirname, "../build/index.html")}`
+    isDev
+      ? "http://localhost:3000"
+      : `file://${path.join(__dirname, "../build/index.html")}`
   );
   if (isDev) {
     mainWindow.webContents.openDevTools();
@@ -37,6 +37,25 @@ function createWindow() {
     });
   });
   mainWindow.on("closed", () => (mainWindow = null));
+  ipcMain.on("minimizeApp", () => {
+    console.log("sent");
+    mainWindow.minimize();
+  });
+  ipcMain.on("maximizeApp", () => {
+    mainWindow.maximize();
+  });
+  ipcMain.on("closeApp", () => {
+    mainWindow.close();
+  });
+  ipcMain.on("unmaximizeApp", () => {
+    mainWindow.unmaximize();
+  });
+  mainWindow.on("maximize", () => {
+    mainWindow.webContents.send("maximize");
+  });
+  mainWindow.on("unmaximize", () => {
+    mainWindow.webContents.send("unmaximize");
+  });
 }
 
 app.on("ready", createWindow);
