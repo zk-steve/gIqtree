@@ -4,6 +4,8 @@ const path = require("path");
 const isDev = require("electron-is-dev");
 const homepage = require("./server/controller/homepage");
 
+const { v4: uuidv4 } = require("uuid");
+
 let mainWindow;
 
 function createWindow() {
@@ -32,17 +34,38 @@ function createWindow() {
     });
   });
 
-  ipcMain.on("setProject", async (event, name) => {
+  ipcMain.on("hihi", (event) => {
+    console.log("dcmm")
+  })
+
+  ipcMain.on("openDir", async (event, name) => {
     const { filePath } = await dialog.showSaveDialog({
       defaultPath: "./IQTREE_Example",
     });
+    mainWindow.webContents.send({filePath})
+  })
+
+  ipcMain.on("setProject", async (event, name, filePath) => {
     if (!fs.existsSync(filePath)) {
       fs.mkdir(filePath, { recursive: true }, (err) => {
         if (err) throw err;
-        else console.log("created");
+        else {
+          console.log("created");
+          const input = path.join(filePath, "input")
+          const output = path.join(filePath, "output")
+          fs.mkdir(input, { recursive: true }, (err) => {
+            if (err) throw err;
+            else console.log("Created input folder");
+          })
+          fs.mkdir(output, { recursive: true }, (err) => {
+            if (err) throw err;
+            else console.log("Created input folder");
+          })
+        }
       });
-      await homepage.setProject(name, path).then(() => {
-        mainWindow.webContents.send({ name, path });
+      let project_id = uuidv4();
+      await homepage.setProject(name, path, project_id).then(() => {
+        mainWindow.webContents.send({ name, path, project_id });
       });
     }
   });

@@ -34,14 +34,14 @@ module.exports.getOutput = () => {
   });
 };
 
-module.exports.setProject = (name, path) => {
+module.exports.setProject = (name, path, project_id) => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
       let stmp = db.prepare(
         `INSERT INTO project 
         VALUES(?,?, DATETIME("now"), ?, ?)`
       );
-      stmp.run(uuidv4(), name, 0, path);
+      stmp.run(project_id, name, 0, path);
   
       stmp.finalize();
     });

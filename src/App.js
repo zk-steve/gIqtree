@@ -5,6 +5,10 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 const { remote } = window.require("electron");
 const fs = remote.require("fs");
+// const ipcRenderer = window.require("electron").ipcRenderer;
+// ipcRenderer.send("hihi");
+// ipcRenderer.send("setProject", "NamND", "D:/IQTREE/public/iqtree")
+// ipcRenderer.send("hihi");
 function App() {
   // const { dialog } = remote;
   // const getFolder = async () => {
