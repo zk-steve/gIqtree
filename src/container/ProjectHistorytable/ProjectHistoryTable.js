@@ -1,6 +1,6 @@
 import { Divider, Tab, Tabs, Typography } from "@material-ui/core";
 import ProjectHistory from "component/ProjectHistory/ProjectHistory";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SmallFile } from "shared/icons";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
@@ -11,7 +11,10 @@ function ProjectHistoryTable(props) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  ipcRenderer.on("getHistory", (event, data) => {
+  useEffect(() => {
+    ipcRenderer.send("getHistory");
+  });
+  ipcRenderer.on("returnHistory", (event, data) => {
     setHistory(data);
   });
   ipcRenderer.on("searchProject", (event, data) => {

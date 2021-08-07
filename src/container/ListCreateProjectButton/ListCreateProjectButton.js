@@ -3,7 +3,7 @@ import CreateProjectButton from "component/CreateProjectButton/CreateProjectButt
 import ProjectPopup from "component/ProjectPopup/ProjectPopup";
 import React, { useState } from "react";
 import useStyles from "./styles";
-
+const { ipcRenderer } = window.require("electron");
 function ListCreateProjectButton(props) {
   const classes = useStyles();
   const listButton = [
@@ -22,6 +22,7 @@ function ListCreateProjectButton(props) {
   const handleClose = () => {
     setIsOpen(false);
   };
+  const handleConfirm = () => {};
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -44,6 +45,7 @@ function ListCreateProjectButton(props) {
         confirmAction="confirm"
         cancelAction="Cancel"
         handleClose={handleClose}
+        handleConfirm={handleConfirm}
       />
     </div>
   );

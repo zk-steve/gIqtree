@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,8 @@ import {
 } from "@material-ui/core";
 import useStyles from "./styles";
 import { Directory } from "shared/icons";
+const { ipcRenderer } = window.require("electron");
+
 function ProjectPopup({
   title,
   subTitle,
@@ -21,6 +23,10 @@ function ProjectPopup({
   handleConfirm,
 }) {
   const classes = useStyles();
+  const [name, setName] = useState("");
+  const handleOpenDir = () => {
+    ipcRenderer.send("setProject", name);
+  };
   return (
     <Dialog open={isOpen} maxWidth="xs" fullWidth onClose={handleClose}>
       <DialogTitle>{title}</DialogTitle>
@@ -32,6 +38,9 @@ function ProjectPopup({
             variant="outlined"
             placeholder="Your project"
             fullWidth
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
           />
         </div>
         <div className={classes.directory}>
@@ -43,7 +52,7 @@ function ProjectPopup({
             fullWidth
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">
+                <InputAdornment position="start" onClick={handleOpenDir}>
                   <Directory />
                 </InputAdornment>
               ),

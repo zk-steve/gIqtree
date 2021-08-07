@@ -1,10 +1,4 @@
-const {
-  app,
-  BrowserWindow,
-  ipcMain,
-  ipcRenderer,
-  dialog,
-} = require("electron");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const fs = require("fs");
 const path = require("path");
 const isDev = require("electron-is-dev");
@@ -14,8 +8,8 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    minWidth: 1020,
-    minHeight: 600,
+    minWidth: 1440,
+    minHeight: 900,
     frame: true,
     webPreferences: {
       nodeIntegration: true,
@@ -32,23 +26,23 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   }
 
-  mainWindow.once("ready-to-show", () => {
+  ipcMain.on("getHistory", () => {
     homepage.getHistory().then((data) => {
-      mainWindow.webContents.send("getHistory", data);
+      mainWindow.webContents.send("returnHistory", data);
     });
   });
 
   ipcMain.on("setProject", async (event, name) => {
     const { filePath } = await dialog.showSaveDialog({
-      defaultPath: "./IQTREE_Example"
+      defaultPath: "./IQTREE_Example",
     });
     if (!fs.existsSync(filePath)) {
-      fs.mkdir(filePath,{ recursive: true }, (err) => {
+      fs.mkdir(filePath, { recursive: true }, (err) => {
         if (err) throw err;
         else console.log("created");
       });
       await homepage.setProject(name, path).then(() => {
-        mainWindow.webContents.send({name, path});
+        mainWindow.webContents.send({ name, path });
       });
     }
   });
