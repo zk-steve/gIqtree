@@ -1,4 +1,11 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  ipcRenderer,
+  dialog,
+} = require("electron");
+const fs = require("fs");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const homepage = require("./server/controller/homepage");
@@ -31,10 +38,19 @@ function createWindow() {
     });
   });
 
-  ipcMain.on("setProject", (event, name, path) => {
-    homepage.setProject(name, path).then(() => {
-      mainWindow.webContents.send();
+  ipcMain.on("setProject", async (event, name) => {
+    const { filePath } = await dialog.showSaveDialog({
+      defaultPath: "./IQTREE_Example"
     });
+    if (!fs.existsSync(filePath)) {
+      fs.mkdir(filePath,{ recursive: true }, (err) => {
+        if (err) throw err;
+        else console.log("created");
+      });
+      await homepage.setProject(name, path).then(() => {
+        mainWindow.webContents.send({name, path});
+      });
+    }
   });
 
   ipcMain.on("setInput", (event, name, path, projectId) => {
@@ -91,6 +107,7 @@ function createWindow() {
 }
 
 app.on("ready", createWindow);
+
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
