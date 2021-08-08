@@ -13,7 +13,7 @@ function ProjectHistoryTable(props) {
   };
   useEffect(() => {
     ipcRenderer.send("getHistory");
-  });
+  }, []);
   ipcRenderer.on("returnHistory", (event, data) => {
     setHistory(data);
   });

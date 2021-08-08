@@ -5,6 +5,7 @@ import useStyles from "./styles";
 import clsx from "clsx";
 import ProjectPopup from "component/ProjectPopup/ProjectPopup";
 import Logo from "shared/img/logo.png";
+import { Link } from "react-router-dom";
 const ipcRenderer = window.require("electron").ipcRenderer;
 function MenuBar(props) {
   const classes = useStyles();
@@ -34,8 +35,8 @@ function MenuBar(props) {
       <div className={classes.root}>
         <div className={classes.container}>
           <img src={Logo} alt="logo" className={classes.avatar} />
-          <a
-            href="/"
+          <Link
+            to="/"
             className={clsx(
               classes.button,
               classes.leftButton,
@@ -47,7 +48,7 @@ function MenuBar(props) {
                 Dashboard
               </Typography>
             </div>
-          </a>
+          </Link>
           <div className={clsx(classes.button, classes.leftButton)}>
             <Typography variant="body2" className={classes.text}>
               New
