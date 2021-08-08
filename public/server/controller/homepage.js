@@ -42,8 +42,9 @@ module.exports.setProject = (name, path, project_id) => {
         VALUES(?,?, DATETIME("now"), ?, ?)`
       );
       stmp.run(project_id, name, 0, path);
-  
+
       stmp.finalize();
+      resolve({ name, path, project_id });
     });
   });
 };

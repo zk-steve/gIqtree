@@ -24,9 +24,23 @@ function ProjectPopup({
 }) {
   const classes = useStyles();
   const [name, setName] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [path, setPath] = useState("");
+  const [helperText, setHelperText] = useState("");
   const handleOpenDir = () => {
-    ipcRenderer.send("setProject", name);
+    if (name === "") {
+      setIsError(true);
+      setHelperText("Invalid text");
+    } else {
+      setIsError(false);
+      setHelperText("");
+      ipcRenderer.send("openDir", name);
+    }
   };
+  ipcRenderer.on("openDirSuccess", (event, data) => {
+    const { filePath } = data;
+    setPath(filePath);
+  });
   return (
     <Dialog open={isOpen} maxWidth="xs" fullWidth onClose={handleClose}>
       <DialogTitle>{title}</DialogTitle>
@@ -34,10 +48,12 @@ function ProjectPopup({
         <div>
           <Typography className={classes.title}>{subTitle}</Typography>
           <TextField
+            error={isError}
             size="small"
             variant="outlined"
             placeholder="Your project"
             fullWidth
+            helperText={helperText}
             onChange={(e) => {
               setName(e.target.value);
             }}
@@ -57,6 +73,7 @@ function ProjectPopup({
                 </InputAdornment>
               ),
             }}
+            value={path}
           />
         </div>
       </DialogContent>
@@ -64,7 +81,9 @@ function ProjectPopup({
         <Button
           variant="contained"
           className={classes.button1}
-          onClick={handleConfirm}
+          onClick={() => {
+            handleConfirm(name, path);
+          }}
         >
           {confirmAction}
         </Button>

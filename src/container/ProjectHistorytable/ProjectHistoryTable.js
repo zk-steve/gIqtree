@@ -42,11 +42,12 @@ function ProjectHistoryTable(props) {
         </div>
         <Divider variant="fullWidth" className={classes.divider} />
       </div>
-      {history.map((project) => (
+      {history.map((project, index) => (
         <ProjectHistory
           projectName={project.name}
           percent={project.process}
           time={project.time}
+          key={index}
         />
       ))}
     </div>

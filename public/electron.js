@@ -33,39 +33,36 @@ function createWindow() {
       mainWindow.webContents.send("returnHistory", data);
     });
   });
-
-  ipcMain.on("hihi", (event) => {
-    console.log("dcmm")
-  })
-
   ipcMain.on("openDir", async (event, name) => {
     const { filePath } = await dialog.showSaveDialog({
-      defaultPath: "./IQTREE_Example",
+      defaultPath: `./${name}`,
     });
-    mainWindow.webContents.send({filePath})
-  })
+    mainWindow.webContents.send("openDirSuccess", { filePath });
+  });
 
-  ipcMain.on("setProject", async (event, name, filePath) => {
+  ipcMain.on("setProject", (event, data) => {
+    const { name, filePath } = data;
     if (!fs.existsSync(filePath)) {
       fs.mkdir(filePath, { recursive: true }, (err) => {
         if (err) throw err;
         else {
           console.log("created");
-          const input = path.join(filePath, "input")
-          const output = path.join(filePath, "output")
+          const input = path.join(filePath, "input");
+          const output = path.join(filePath, "output");
           fs.mkdir(input, { recursive: true }, (err) => {
             if (err) throw err;
             else console.log("Created input folder");
-          })
+          });
           fs.mkdir(output, { recursive: true }, (err) => {
             if (err) throw err;
             else console.log("Created input folder");
-          })
+          });
         }
       });
       let project_id = uuidv4();
-      await homepage.setProject(name, path, project_id).then(() => {
-        mainWindow.webContents.send({ name, path, project_id });
+      homepage.setProject(name, filePath, project_id).then((data) => {
+        console.log(data);
+        mainWindow.webContents.send("setProjectSuccess", data);
       });
     }
   });

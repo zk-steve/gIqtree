@@ -2,6 +2,7 @@ import { Typography } from "@material-ui/core";
 import CreateProjectButton from "component/CreateProjectButton/CreateProjectButton";
 import ProjectPopup from "component/ProjectPopup/ProjectPopup";
 import React, { useState } from "react";
+import history from "shared/constant/history";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 function ListCreateProjectButton(props) {
@@ -22,7 +23,13 @@ function ListCreateProjectButton(props) {
   const handleClose = () => {
     setIsOpen(false);
   };
-  const handleConfirm = () => {};
+  const handleConfirm = (name, filePath) => {
+    let data = { name, filePath };
+    ipcRenderer.send("setProject", data);
+  };
+  ipcRenderer.on("setProjectSuccess", (event, data) => {
+    history.push(`/project/${data.project_id}`);
+  });
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -30,10 +37,11 @@ function ListCreateProjectButton(props) {
           Create new project
         </Typography>
         <div className={classes.list}>
-          {listButton.map((button) => (
+          {listButton.map((button, index) => (
             <CreateProjectButton
               name={button}
               onClick={() => handleClick(button)}
+              key={index}
             />
           ))}
         </div>

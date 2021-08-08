@@ -34,17 +34,20 @@ function MenuBar(props) {
       <div className={classes.root}>
         <div className={classes.container}>
           <img src={Logo} alt="logo" className={classes.avatar} />
-          <div
+          <a
+            href="/"
             className={clsx(
               classes.button,
               classes.leftButton,
               classes.dashboard
             )}
           >
-            <Typography variant="body2" className={classes.text}>
-              Dashboard
-            </Typography>
-          </div>
+            <div>
+              <Typography variant="body2" className={classes.text}>
+                Dashboard
+              </Typography>
+            </div>
+          </a>
           <div className={clsx(classes.button, classes.leftButton)}>
             <Typography variant="body2" className={classes.text}>
               New
