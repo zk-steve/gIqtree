@@ -1,13 +1,11 @@
 import MenuBar from "component/MenuBar/MenuBar";
 import HomePage from "pages/HomePage/HomePage";
 import ProjectPage from "pages/ProjectPage/ProjectPage";
-import { Router } from "react-router";
-import { Route, Switch } from "react-router-dom";
-import history from "shared/constant/history";
+import { Route, Switch, HashRouter } from "react-router-dom";
 import "./App.css";
 function App() {
   return (
-    <Router history={history}>
+    <HashRouter>
       <div className="App">
         <MenuBar />
         <Switch>
@@ -19,7 +17,7 @@ function App() {
           </Route>
         </Switch>
       </div>
-    </Router>
+    </HashRouter>
   );
 }
 

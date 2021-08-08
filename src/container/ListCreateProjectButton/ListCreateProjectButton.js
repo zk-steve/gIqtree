@@ -2,7 +2,7 @@ import { Typography } from "@material-ui/core";
 import CreateProjectButton from "component/CreateProjectButton/CreateProjectButton";
 import ProjectPopup from "component/ProjectPopup/ProjectPopup";
 import React, { useState } from "react";
-import history from "shared/constant/history";
+import { useHistory } from "react-router-dom";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 function ListCreateProjectButton(props) {
@@ -16,6 +16,7 @@ function ListCreateProjectButton(props) {
   ];
   const [isOpen, setIsOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
+  const history = useHistory();
   const handleClick = (name) => {
     setProjectName(name);
     setIsOpen(true);

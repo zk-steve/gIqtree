@@ -61,7 +61,6 @@ function createWindow() {
       });
       let project_id = uuidv4();
       homepage.setProject(name, filePath, project_id).then((data) => {
-        console.log(data);
         mainWindow.webContents.send("setProjectSuccess", data);
       });
     }

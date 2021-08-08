@@ -1,9 +1,9 @@
 import { Divider } from "@material-ui/core";
-import ProjectHistory from "component/ProjectHistory/ProjectHistory";
 import SearchField from "component/SearchField/SearchField";
 import ListCreateProjectButton from "container/ListCreateProjectButton/ListCreateProjectButton";
 import ProjectHistoryTable from "container/ProjectHistorytable/ProjectHistoryTable";
 import React from "react";
+import { withRouter } from "react-router-dom";
 import useStyles from "./styles";
 
 function HomePage(props) {
@@ -14,10 +14,10 @@ function HomePage(props) {
         <ListCreateProjectButton />
         <Divider variant="fullWidth" />
         <SearchField />
-        <ProjectHistoryTable/>
+        <ProjectHistoryTable />
       </div>
     </div>
   );
 }
 
-export default HomePage;
+export default withRouter(HomePage);
