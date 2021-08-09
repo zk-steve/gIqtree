@@ -1,18 +1,18 @@
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
-const isDev = require("electron-is-dev");
 const fs = require("fs");
 const os = require("os");
 
 let dataPath;
 
-const isWindows = () => {
-  if (os.type === "Windows_NT") return true;
-  return false;
-}
-
-if (isWindows) {
+if (os.type() === "Windows_NT") {
   dataPath = path.join("C:", "Users", os.userInfo().username, "AppData")
+}
+else if (os.type() === "Linux") {
+  dataPath = path.join("home", os.userInfo().username)
+}
+else if (os.type() === "Darwin") {
+  //dataPath = path.join()
 }
 
 if (!fs.existsSync(dataPath)) {
@@ -30,9 +30,7 @@ if (!fs.existsSync(dataPath)) {
   });
 }
 
-const storage = isWindows
-  ? path.join(dataPath, "iqtree.sqlite3")
-  : path.join(process.resourcesPath, "database", "iqtree.sqlite3");
+const storage = path.join(dataPath, "iqtree.sqlite3")
 
 const db = new sqlite3.Database(storage);
 module.exports = db;
