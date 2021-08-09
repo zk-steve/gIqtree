@@ -13,8 +13,8 @@ function App() {
             <ProjectPage />
           </Route>
           <Route path="/" exact>
-            {/* <HomePage /> */}
-            <ProjectPage />
+            <HomePage />
+            {/* <ProjectPage /> */}
           </Route>
         </Switch>
       </div>

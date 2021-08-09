@@ -1,5 +1,19 @@
 const db = require("../db");
 const { v4: uuidv4 } = require("uuid");
+const {
+  CREATE_TABLE_PROJECT,
+  CREATE_TABLE_INPUT,
+  CREATE_TABLE_OUTPUT,
+} = require("../table");
+
+db.serialize(() => {
+  // db.run(`DROP TABLE IF EXISTS project`);
+  // db.run(`DROP TABLE IF EXISTS input`);
+  // db.run(`DROP TABLE IF EXISTS output`);
+  db.run(CREATE_TABLE_PROJECT);
+  db.run(CREATE_TABLE_INPUT);
+  db.run(CREATE_TABLE_OUTPUT);
+});
 
 module.exports.getProjects = () => {
   return new Promise((resolve, reject) => {
