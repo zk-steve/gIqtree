@@ -5,7 +5,7 @@ import UnMaximize from "./unmaximize";
 import Search from "./search";
 import File from "./file";
 import SmallFile from "./smallFile";
-import InputFile from "./inputFile";
+import InputFileIcon from "./inputFile";
 import Setting from "./setting";
 import Directory from "./directory";
 import Logo from "./logo";
@@ -17,7 +17,7 @@ export {
   Search,
   File,
   SmallFile,
-  InputFile,
+  InputFileIcon,
   Setting,
   Directory,
   Logo,

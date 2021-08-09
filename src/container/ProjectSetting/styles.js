@@ -7,27 +7,27 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   container: {
-    width: "97%",
+    width: "calc(100% - 42px)",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
   },
   projectSetting: {
-    flexBasis: "15%",
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   buttonContainer: {
     display: "flex",
-    justifyContent: "space-between",
-    flexBasis: "20%",
+    justifyContent: "flex-end",
     alignItems: "center",
   },
   setting: {
-    borderRadius: "5px",
+    borderRadius: "6px",
+    width: "40px",
+    height: "40px",
     backgroundColor: theme.palette.grey[900],
-    padding: "0.25rem",
+    marginLeft: "24px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -38,7 +38,15 @@ const useStyles = makeStyles((theme) => ({
     transition: `0.15s ${theme.transitions.easing.easeIn}`,
   },
   title: {
-    fontWeight: 900,
+    fontWeight: 600,
+    fontSize: "28px",
+    lineHeight: "40px",
+  },
+  button: {
+    width: "136px",
+    height: "40px",
+    textTransform: "none",
+    marginLeft: "20px",
   },
 }));
 export default useStyles;

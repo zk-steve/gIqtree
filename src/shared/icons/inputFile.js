@@ -1,6 +1,6 @@
 import * as React from "react";
 
-function InputFile(props) {
+function InputFileIcon(props) {
   return (
     <svg
       width={105}
@@ -15,4 +15,4 @@ function InputFile(props) {
   );
 }
 
-export default InputFile;
+export default InputFileIcon;

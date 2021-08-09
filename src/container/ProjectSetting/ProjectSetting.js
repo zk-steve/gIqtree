@@ -17,13 +17,27 @@ function ProjectSetting(props) {
           </div>
         </div>
         <div className={classes.buttonContainer}>
-          <Button color="primary" variant="contained">
+          <Button
+            color="secondary"
+            variant="contained"
+            className={classes.button}
+          >
             Execute
           </Button>
-          <Button color="primary" variant="contained">
+          <Button
+            color="primary"
+            variant="contained"
+            className={classes.button}
+            disabled
+          >
             Pause
           </Button>
-          <Button color="primary" variant="contained">
+          <Button
+            color="primary"
+            variant="contained"
+            className={classes.button}
+            disabled
+          >
             Continue
           </Button>
         </div>

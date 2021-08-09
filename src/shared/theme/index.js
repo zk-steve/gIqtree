@@ -7,6 +7,9 @@ const theme = createTheme({
     secondary: {
       main: "#DC3A61",
     },
+    action: {
+      disabled: "#9D9D9D",
+    },
   },
   typography: {
     fontFamily: "Euclid Circular A",

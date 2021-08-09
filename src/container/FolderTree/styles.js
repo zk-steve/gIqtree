@@ -2,12 +2,12 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexBasis: "13%",
+    width: "229px",
   },
 
   container: {
     width: "100%",
-    marginTop: "1rem",
+    marginTop: "26px",
   },
   inputAndOutputContainer: {
     width: "100%",
@@ -17,7 +17,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "flex-start",
   },
   title: {
-    fontWeight: 900,
+    fontWeight: 600,
+    fontSize: "24px",
+    lineHeight: "34px",
   },
 }));
 export default useStyles;

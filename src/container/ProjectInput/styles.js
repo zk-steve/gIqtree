@@ -2,8 +2,7 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "80%",
-    paddingLeft: "4rem",
+    flex: 1,
   },
   container: {
     display: "flex",
@@ -11,27 +10,18 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     width: "80%",
-    marginTop: "1rem",
+    marginLeft: "71px",
+    marginTop: "27px",
   },
   inputContainer: {
-    border: `dashed 3px ${theme.palette.grey[400]}`,
+    border: `dashed 1px ${theme.palette.action.disabled}`,
     borderRadius: "8px",
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "80%",
-    padding: "3rem 0",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    width: "852px",
+    height: "262px",
     cursor: "pointer",
-    "&:hover": {
-      borderColor: theme.palette.primary.main,
-      "& svg": {
-        transform: "translateY(-10px)",
-        fill: theme.palette.primary.main,
-      },
-      "& p": {
-        transform: "translateY(-5px)",
-      },
-    },
     transition: `0.15s ${theme.transitions.easing.easeInOut}`,
     "& svg": {
       transition: `0.35s ${theme.transitions.easing.easeInOut}`,
@@ -44,13 +34,47 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    height: "100%",
+    "&:hover": {
+      "& > svg": {
+        transform: "translateY(-10px)",
+        fill: theme.palette.secondary.main,
+      },
+      "&  p": {
+        transform: "translateY(-5px)",
+      },
+    },
   },
   title: {
-    fontWeight: 900,
-    marginBottom: "0.5rem",
+    fontWeight: 600,
+    marginBottom: "30px",
+    fontSize: "2rem",
+    lineHeight: "40px",
   },
   browse: {
-    marginTop: "1rem",
+    fontWeight: 600,
+    fontSize: "14px",
+    lineHeight: "20px",
+  },
+  smallTitle: {
+    fontSize: "18px",
+    fontWeight: 600,
+    lineHeight: "28px",
+    marginBottom: "12px",
+  },
+  smallText: {
+    fontWeight: 600,
+    fontSize: "14px",
+    lineHeight: "20px",
+    color: "#EC960C",
+  },
+  textContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "41px",
   },
 }));
 export default useStyles;

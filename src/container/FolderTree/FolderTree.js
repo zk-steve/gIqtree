@@ -9,12 +9,12 @@ function FolderTree(props) {
       <div className={classes.container}>
         <div className={classes.inputAndOutputContainer}>
           <Typography className={classes.title} color="secondary">
-            INPUT
+            Input
           </Typography>
         </div>
         <div className={classes.inputAndOutputContainer}>
           <Typography className={classes.title} color="secondary">
-            OUTPUT
+            Output
           </Typography>
         </div>
       </div>
