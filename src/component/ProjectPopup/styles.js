@@ -10,9 +10,15 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: theme.palette.grey[800],
     },
+    width: "150px",
+    height: "42px",
+    textTransform: "none",
   },
   button2: {
     borderColor: theme.palette.grey[900],
+    width: "150px",
+    height: "42px",
+    textTransform: "none",
   },
   actionSection: {
     marginTop: "2rem",
@@ -22,6 +28,11 @@ const useStyles = makeStyles((theme) => ({
     "& svg": {
       cursor: "pointer",
     },
+  },
+  topTitle: {
+    fontWeight: 600,
+    fontSize: "24px",
+    lineHeight: "34px",
   },
 }));
 export default useStyles;

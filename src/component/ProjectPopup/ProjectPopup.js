@@ -20,13 +20,14 @@ function ProjectPopup({
   cancelAction,
   handleClose,
   isOpen,
-  handleConfirm,
 }) {
   const classes = useStyles();
   const [name, setName] = useState("");
   const [isError, setIsError] = useState(false);
+  const [isPathError, setIsPathError] = useState(false);
   const [path, setPath] = useState("");
   const [helperText, setHelperText] = useState("");
+  const [helperTextPath, setHelperTextPath] = useState("");
   const handleOpenDir = () => {
     if (name === "") {
       setIsError(true);
@@ -37,13 +38,29 @@ function ProjectPopup({
       ipcRenderer.send("openDir", name);
     }
   };
+  const handleConfirm = (name, filePath) => {
+    if (name === "") {
+      setIsError(true);
+      setHelperText("Invalid text");
+      return;
+    }
+    if (filePath === "") {
+      setIsPathError(true);
+      setHelperTextPath("Invalid path!");
+      return;
+    }
+    let data = { name, filePath };
+    ipcRenderer.send("setProject", data);
+  };
   ipcRenderer.on("openDirSuccess", (event, data) => {
     const { filePath } = data;
     setPath(filePath);
   });
   return (
-    <Dialog open={isOpen} maxWidth="xs" fullWidth onClose={handleClose}>
-      <DialogTitle>{title}</DialogTitle>
+    <Dialog open={isOpen} fullWidth onClose={handleClose}>
+      <DialogTitle>
+        <Typography className={classes.topTitle}>{title}</Typography>
+      </DialogTitle>
       <DialogContent>
         <div>
           <Typography className={classes.title}>{subTitle}</Typography>
@@ -74,6 +91,11 @@ function ProjectPopup({
               ),
             }}
             value={path}
+            onChange={(e) => {
+              setPath(e.target.value);
+            }}
+            helperText={helperTextPath}
+            error={isPathError}
           />
         </div>
       </DialogContent>

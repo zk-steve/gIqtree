@@ -24,10 +24,6 @@ function ListCreateProjectButton(props) {
   const handleClose = () => {
     setIsOpen(false);
   };
-  const handleConfirm = (name, filePath) => {
-    let data = { name, filePath };
-    ipcRenderer.send("setProject", data);
-  };
   ipcRenderer.on("setProjectSuccess", (event, data) => {
     history.push(`/project/${data.project_id}`);
   });
@@ -51,10 +47,9 @@ function ListCreateProjectButton(props) {
         isOpen={isOpen}
         title={`Create ${projectName} Project`}
         subTitle="Project name"
-        confirmAction="confirm"
+        confirmAction="Save"
         cancelAction="Cancel"
         handleClose={handleClose}
-        handleConfirm={handleConfirm}
       />
     </div>
   );
