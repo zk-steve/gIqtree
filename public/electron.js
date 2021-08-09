@@ -12,7 +12,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     minWidth: 1440,
     minHeight: 900,
-    frame: true,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -68,9 +68,9 @@ function createWindow() {
 
   ipcMain.on("getProjectById", (event, id) => {
     homepage.getProjectById(id).then((data) => {
-      mainWindow.webContents.send("getProjectById", data);
-    })
-  })
+      mainWindow.webContents.send("returnProjectById", data);
+    });
+  });
 
   ipcMain.on("setInput", (event, name, path, projectId) => {
     homepage.setInput(name, path, projectId).then(() => {});
