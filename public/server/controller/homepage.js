@@ -26,6 +26,17 @@ module.exports.getProjects = () => {
   });
 };
 
+module.exports.getProjectById = (id) => {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.all(`SELECT * FROM project WHERE project_id = ${id}`, (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  });
+};
+
 module.exports.getInput = () => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
@@ -88,6 +99,20 @@ module.exports.getHistory = async () => {
     db.serialize(() => {
       db.all(
         "SELECT * FROM project ORDER BY project.time DESC",
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
+      );
+    });
+  });
+};
+
+module.exports.getOldest = async () => {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.all(
+        "SELECT * FROM project ORDER BY project.time",
         (err, rows) => {
           if (err) reject(err);
           else resolve(rows);

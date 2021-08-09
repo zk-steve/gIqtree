@@ -66,6 +66,12 @@ function createWindow() {
     }
   });
 
+  ipcMain.on("getProjectById", (event, id) => {
+    homepage.getProjectById(id).then((data) => {
+      mainWindow.webContents.send("getProjectById", data);
+    })
+  })
+
   ipcMain.on("setInput", (event, name, path, projectId) => {
     homepage.setInput(name, path, projectId).then(() => {});
   });
