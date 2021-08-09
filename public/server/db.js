@@ -6,10 +6,10 @@ const os = require("os");
 let dataPath;
 
 if (os.type() === "Windows_NT") {
-  dataPath = path.join("C:", "Users", os.userInfo().username, "AppData")
+  dataPath = path.join("C:", "Users", os.userInfo().username, "AppData", "IQTREE")
 }
 else if (os.type() === "Linux") {
-  dataPath = path.join("home", os.userInfo().username)
+  dataPath = path.join("/home", os.userInfo().username, "IQTree")
 }
 else if (os.type() === "Darwin") {
   //dataPath = path.join()
@@ -20,12 +20,10 @@ if (!fs.existsSync(dataPath)) {
     if (err) throw err;
     else {
       console.log("created");
-      fs.writeFile("iqtree.sqlite3", (err) => {
+      fs.writeFile("iqtree.sqlite3", '', (err) => {
         if (err) throw err;
-        else {
-          console.log("Created Database")
-        }
-      })
+        else console.log("Created Database")
+      });
     }
   });
 }
