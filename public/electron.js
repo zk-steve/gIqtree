@@ -28,6 +28,69 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   }
 
+  ipcMain.on("selectDialog", async (event, project_id) => {
+    try {
+      // Step 1: Choose msa file and get path and name of it
+      const filePath = dialog.showOpenDialogSync({
+        properties: ["multiSelections"],
+        filters: [{ name: "IQTREE", extensions: ["msa"] }],
+      });
+      if (!filePath) {
+        mainWindow.webContents.send("cancelSelect", { canceled: 1 });
+      } else {
+        const fileName = filePath.map((element) => {
+          let result = element.split("\\");
+          if (!result) {
+            result = element.split("/");
+          }
+          return result[result.length - 1];
+        });
+        console.log({ filePath, fileName });
+        // Step 2: Copy input file into folder input of project
+        let projectPath;
+        await homepage.getProjectById(project_id).then((data) => {
+          projectPath = path.join(data[0].path, "input");
+        });
+
+        let status = 1;
+        for (let i = 0; i < filePath.length; i++) {
+          let elementPath = path.join(projectPath, fileName[i]);
+          fs.copyFile(filePath[i], elementPath, (err) => {
+            if (err) throw err;
+            else console.log("Copy successfully");
+          });
+
+          // Step 3: Insert input path into input table
+          let exist = 0;
+          await homepage.getInputByPath(elementPath).then(data => {
+            console.log({data, elementPath})
+            if (data.length === 0) {
+              homepage.setInput(fileName[i], elementPath, project_id).then(() => {
+                console.log(`Insert file ${fileName[i]} into project ${project_id} successfully`)
+              });
+            }
+            else {
+              console.log({
+                message: "Input file is exists"
+              })
+              exist = 1;
+            }
+          })
+          if (exist === 1) {
+            status = 0;
+            break;
+          }
+        }
+        let message = status ? {fileName, filePath} : "File is exists"
+        mainWindow.webContents.send("selectFile", {
+          message: message,
+        });
+      }
+    } catch (err) {
+      console.log({ err });
+    }
+  });
+
   ipcMain.on("getHistory", () => {
     homepage.getHistory().then((data) => {
       mainWindow.webContents.send("returnHistory", data);
@@ -60,6 +123,7 @@ function createWindow() {
         }
       });
       let project_id = uuidv4();
+      console.log(project_id);
       homepage.setProject(name, filePath, project_id).then((data) => {
         mainWindow.webContents.send("setProjectSuccess", data);
       });
@@ -72,14 +136,6 @@ function createWindow() {
     });
   });
 
-  ipcMain.on("setInput", (event, name, path, projectId) => {
-    homepage.setInput(name, path, projectId).then(() => {});
-  });
-
-  ipcMain.on("setOutput", (event, name, path, projectId) => {
-    homepage.setOutput(name, path, projectId).then(() => {});
-  });
-
   ipcMain.on("getProject", (event) => {
     homepage.getProjects().then((data) => {
       mainWindow.webContents.send("getProject", data);
@@ -88,6 +144,7 @@ function createWindow() {
 
   ipcMain.on("getInput", (event) => {
     homepage.getInput().then((data) => {
+      console.log(data);
       mainWindow.webContents.send("getInput", data);
     });
   });
