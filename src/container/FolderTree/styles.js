@@ -21,5 +21,13 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "24px",
     lineHeight: "34px",
   },
+  fileName: {
+    fontWeight: 500,
+    lineHeight: "24px",
+    marginLeft: "30px",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+  },
 }));
 export default useStyles;

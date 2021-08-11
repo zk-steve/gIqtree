@@ -9,6 +9,11 @@ const useStyles = makeStyles((theme) => ({
     height: "37px",
     backgroundColor: "#EBECED",
     position: "relative",
+    "&:hover": {
+      backgroundColor: theme.palette.grey[500],
+    },
+    transition: `0.15s ${theme.transitions.easing.easeIn}`,
+    cursor: "pointer",
   },
   fileIcon: {
     marginLeft: "12.5px",

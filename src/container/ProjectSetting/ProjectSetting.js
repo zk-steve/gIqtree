@@ -9,7 +9,6 @@ function ProjectSetting(props) {
   const classes = useStyles();
   const { id } = useParams();
   const [projectName, setProjectName] = useState();
-  console.log(id);
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
   }, [id]);

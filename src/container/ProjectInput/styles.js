@@ -21,7 +21,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "flex-start",
     width: "852px",
     height: "262px",
-    cursor: "pointer",
     transition: `0.15s ${theme.transitions.easing.easeInOut}`,
     "& svg": {
       transition: `0.35s ${theme.transitions.easing.easeInOut}`,
@@ -46,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
         transform: "translateY(-5px)",
       },
     },
+    cursor: "pointer",
   },
   title: {
     fontWeight: 600,
@@ -75,6 +75,17 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     marginTop: "41px",
+  },
+  uploadMoreButton: {
+    textTransform: "none",
+    width: "130px",
+    height: "32px",
+    marginTop: "25px",
+    backgroundColor: theme.palette.grey[900],
+    color: "white",
+    "&:hover": {
+      backgroundColor: "black",
+    },
   },
 }));
 export default useStyles;

@@ -1,16 +1,24 @@
 import { Typography } from "@material-ui/core";
-import React from "react";
+import React, { useState } from "react";
 import { SmallFile } from "shared/icons";
 import CloseFile from "shared/icons/closeFile";
 import useStyles from "./styles";
 
-function InputFile(props) {
+function InputFile({ name }) {
   const classes = useStyles();
+  const [showDeleteIcon, setShowDeleteIcon] = useState(false);
+  const handleHover = (e) => {
+    setShowDeleteIcon(!showDeleteIcon);
+  };
   return (
-    <div className={classes.root}>
+    <div
+      className={classes.root}
+      onMouseEnter={handleHover}
+      onMouseLeave={handleHover}
+    >
       <SmallFile className={classes.fileIcon} />
-      <Typography component="span">Xử lí gen động vật.MSA</Typography>
-      <CloseFile className={classes.closeIcon} />
+      <Typography component="span">{name}</Typography>
+      {showDeleteIcon && <CloseFile className={classes.closeIcon} />}
     </div>
   );
 }
