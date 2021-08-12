@@ -1,4 +1,5 @@
 import { Button, Typography } from "@material-ui/core";
+import AlertDialog from "component/AlertDialog/AlertDialog";
 import InputFile from "component/InputFile/InputFile";
 import ListInputFiles from "container/ListInputFiles/ListInputFiles";
 import React, { useState } from "react";
@@ -11,14 +12,18 @@ function ProjectInput(props) {
   const classes = useStyles();
   const { id } = useParams();
   const [listInput, setListInput] = useState([]);
+  const [isOpenAlert, setIsOpenAlert] = useState(false);
   const handleSelectInput = () => {
     ipcRenderer.send("selectDialog", id);
   };
   ipcRenderer.on("selectFile", (event, data) => {
     const { fileName, filePath } = data.message;
     if (fileName && filePath) setListInput([...listInput, fileName]);
+    else setIsOpenAlert(true);
   });
-
+  const handleCloseAlert = () => {
+    setIsOpenAlert(false);
+  };
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -53,6 +58,7 @@ function ProjectInput(props) {
           </Button>
         )}
       </div>
+      <AlertDialog isOpen={isOpenAlert} handleClose={handleCloseAlert} />
     </div>
   );
 }
