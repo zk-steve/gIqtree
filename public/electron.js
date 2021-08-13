@@ -106,8 +106,7 @@ function createWindow() {
     console.log(inputData);
     try {
       await homepage.deleteInput(input_id, project_id).then((data) => {
-        console.log("deleted");
-        console.log(data);
+        console.log({ data });
         mainWindow.webContents.send("deleteResult", { data });
       });
     } catch (err) {
