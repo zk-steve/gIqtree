@@ -4,7 +4,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "229px",
   },
-
   container: {
     width: "100%",
     marginTop: "26px",
@@ -20,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
     fontSize: "24px",
     lineHeight: "34px",
+    marginBottom: "20px",
   },
   fileName: {
     fontWeight: 500,
@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     textOverflow: "ellipsis",
     overflow: "hidden",
     whiteSpace: "nowrap",
+    marginBottom: "20px",
   },
 }));
 export default useStyles;

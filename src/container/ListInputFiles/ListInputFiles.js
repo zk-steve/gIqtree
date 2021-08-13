@@ -6,7 +6,7 @@ function ListInputFiles({ listInput, onDeleteFile, listId }) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      {listInput &&
+      {listInput.length > 0 &&
         listInput.map((name, index) => (
           <InputFile
             name={name}

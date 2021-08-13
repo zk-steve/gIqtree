@@ -19,8 +19,8 @@ function ProjectInput(props) {
   ipcRenderer.on("selectFile", (event, data) => {
     const { fileName, filePath, inputs_id } = data.message;
     if (fileName && filePath) {
-      setListInput([...listInput, fileName]);
-      setListId([...listId, inputs_id]);
+      setListInput([...listInput, ...fileName]);
+      setListId([...listId, ...inputs_id]);
     } else setIsOpenAlert(true);
   });
   const handleCloseAlert = () => {
@@ -30,8 +30,11 @@ function ProjectInput(props) {
     const data = { input_id: fileId, project_id: id };
     ipcRenderer.send("deleteInput", data);
   };
-  ipcRenderer.on("deleteResult", (event, data) => {
-    console.log(data);
+  ipcRenderer.on("deleteResult", (event, response) => {
+    const newListInput = listInput.filter(
+      (input) => input !== response.data[0].name
+    );
+    setListInput(newListInput);
   });
   return (
     <div className={classes.root}>

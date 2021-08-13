@@ -5,14 +5,13 @@ import CloseFile from "shared/icons/closeFile";
 import useStyles from "./styles";
 
 function InputFile({ name, onDeleteFile, id }) {
-  console.log(id);
   const classes = useStyles();
   const [showDeleteIcon, setShowDeleteIcon] = useState(false);
   const handleHover = (e) => {
     setShowDeleteIcon(!showDeleteIcon);
   };
   const handleDeleteFile = () => {
-    onDeleteFile(id[0]);
+    onDeleteFile(id);
   };
   return (
     <div
