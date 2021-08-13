@@ -1,6 +1,5 @@
 import { Button, Typography } from "@material-ui/core";
 import AlertDialog from "component/AlertDialog/AlertDialog";
-import InputFile from "component/InputFile/InputFile";
 import ListInputFiles from "container/ListInputFiles/ListInputFiles";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
@@ -13,17 +12,27 @@ function ProjectInput(props) {
   const { id } = useParams();
   const [listInput, setListInput] = useState([]);
   const [isOpenAlert, setIsOpenAlert] = useState(false);
+  const [listId, setListId] = useState([]);
   const handleSelectInput = () => {
     ipcRenderer.send("selectDialog", id);
   };
   ipcRenderer.on("selectFile", (event, data) => {
-    const { fileName, filePath } = data.message;
-    if (fileName && filePath) setListInput([...listInput, fileName]);
-    else setIsOpenAlert(true);
+    const { fileName, filePath, inputs_id } = data.message;
+    if (fileName && filePath) {
+      setListInput([...listInput, fileName]);
+      setListId([...listId, inputs_id]);
+    } else setIsOpenAlert(true);
   });
   const handleCloseAlert = () => {
     setIsOpenAlert(false);
   };
+  const handleDeleteFile = (fileId) => {
+    const data = { input_id: fileId, project_id: id };
+    ipcRenderer.send("deleteInput", data);
+  };
+  ipcRenderer.on("deleteResult", (event, data) => {
+    console.log(data);
+  });
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -46,7 +55,13 @@ function ProjectInput(props) {
               </div>
             </div>
           )}
-          {listInput.length > 0 && <ListInputFiles listInput={listInput} />}
+          {listInput.length > 0 && (
+            <ListInputFiles
+              listInput={listInput}
+              onDeleteFile={handleDeleteFile}
+              listId={listId}
+            />
+          )}
         </div>
         {listInput.length > 0 && (
           <Button

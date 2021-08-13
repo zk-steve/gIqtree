@@ -101,15 +101,18 @@ function createWindow() {
     }
   });
 
-  ipcMain.on("deleteInput", async(event, input_id, project_id) => {
+  ipcMain.on("deleteInput", async (event, inputData) => {
+    const { input_id, project_id } = inputData;
+    console.log(inputData);
     try {
       await homepage.deleteInput(input_id, project_id).then((data) => {
         console.log("deleted");
-        mainWindow.webContents.send(`delete${input_id}`, {data});
+        console.log(data);
+        mainWindow.webContents.send("deleteResult", { data });
       });
     } catch (err) {
       console.log("fail");
-      mainWindow.webContents.send(`delete${input_id}`, {
+      mainWindow.webContents.send("deleteResult", {
         message: "Does not delete it",
       });
     }
