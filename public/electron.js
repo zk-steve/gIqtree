@@ -53,6 +53,9 @@ function createWindow() {
         });
 
         let status = 1;
+        let result = Object.assign({}, { fileName }, { filePath });
+        let inputs_id = [];
+        console.log({ result });
         for (let i = 0; i < filePath.length; i++) {
           let elementPath = path.join(projectPath, fileName[i]);
           fs.copyFile(filePath[i], elementPath, (err) => {
@@ -62,32 +65,53 @@ function createWindow() {
 
           // Step 3: Insert input path into input table
           let exist = 0;
-          await homepage.getInputByPath(elementPath).then(data => {
-            console.log({data, elementPath})
+          await homepage.getInputByPath(elementPath).then((data) => {
+            console.log({ data, elementPath });
             if (data.length === 0) {
-              homepage.setInput(fileName[i], elementPath, project_id).then(() => {
-                console.log(`Insert file ${fileName[i]} into project ${project_id} successfully`)
-              });
-            }
-            else {
+              let input_id = uuidv4();
+              inputs_id.push(input_id);
+              homepage
+                .setInput(input_id, fileName[i], elementPath, project_id)
+                .then(() => {
+                  console.log(
+                    `Insert file ${fileName[i]} into project ${project_id} successfully`
+                  );
+                });
+            } else {
               console.log({
-                message: "Input file is exists"
-              })
+                message: "Input file is exists",
+              });
               exist = 1;
             }
-          })
+          });
           if (exist === 1) {
             status = 0;
             break;
           }
         }
-        let message = status ? {fileName, filePath} : "File is exists"
+        result = Object.assign(result, { inputs_id });
+        console.log({ result });
+        let message = status ? result : "File is exists";
         mainWindow.webContents.send("selectFile", {
           message: message,
         });
       }
     } catch (err) {
       console.log({ err });
+    }
+  });
+
+  ipcMain.on("deleteInput", async(event, input_id, project_id) => {
+    try {
+      await homepage.deleteInput(input_id, project_id).then((data) => {
+        console.log("deleted");
+        mainWindow.webContents.send(`delete${input_id}`, {data});
+      });
+    } catch (err) {
+      console.log("fail");
+      mainWindow.webContents.send(`delete${input_id}`, {
+        message: "Does not delete it",
+      });
     }
   });
 

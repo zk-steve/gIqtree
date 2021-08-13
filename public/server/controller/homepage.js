@@ -91,15 +91,31 @@ module.exports.getInputByPath = async(storePath) => {
   });
 }
 
-module.exports.setInput = async (name, path, project_id) => {
+module.exports.setInput = async (input_id, name, path, project_id) => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
       let stmp = db.prepare(`INSERT INTO input VALUES(?, ?, ?, ?, ?)`);
-      stmp.run(uuidv4(), name, path, project_id, 0);
+      stmp.run(input_id, name, path, project_id, 0);
       stmp.finalize();
     });
   });
 };
+
+module.exports.deleteInput = async (input_id, project_id) => {
+  db.serialize(() => {
+    db.run(
+      `DELETE FROM input WHERE input_id = "${input_id}"`
+    );
+    return new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.all(`SELECT * FROM input WHERE project_id = "${project_id}"`, (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        });
+      });
+    });
+  });
+}
 
 module.exports.setOutput = async (name, path, project_id) => {
   return new Promise((resolve, reject) => {
