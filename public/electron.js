@@ -53,9 +53,7 @@ function createWindow() {
         });
 
         let status = 1;
-        let result = Object.assign({}, { fileName }, { filePath });
         let inputs_id = [];
-        console.log({ result });
         for (let i = 0; i < filePath.length; i++) {
           let elementPath = path.join(projectPath, fileName[i]);
           fs.copyFile(filePath[i], elementPath, (err) => {
@@ -89,8 +87,11 @@ function createWindow() {
             break;
           }
         }
-        result = Object.assign(result, { inputs_id });
-        console.log({ result });
+        let result = [];
+        for (let i = 0; i < fileName.length; i++){
+          result.push({input_id: inputs_id[i], file_name: fileName[i], file_path: filePath[i]})
+        }
+        console.log({ result, status });
         let message = status ? result : "File is exists";
         mainWindow.webContents.send("selectFile", {
           message: message,
