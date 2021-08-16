@@ -118,8 +118,12 @@ module.exports.setInput = async (input_id, name, path, project_id) => {
 module.exports.deleteInput = async (input_id, project_id) => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
-      db.run(
-        `DELETE FROM input WHERE input_id = "${input_id}"`
+      db.all(
+        `DELETE FROM input WHERE input_id = "${input_id}"`,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
       );
     });
   });
