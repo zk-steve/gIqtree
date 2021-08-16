@@ -89,7 +89,7 @@ function createWindow() {
         }
         let result = [];
         for (let i = 0; i < fileName.length; i++){
-          result.push({input_id: inputs_id[i], file_name: fileName[i], file_path: filePath[i]})
+          result.push({input_id: inputs_id[i], name: fileName[i], path: path.join(projectPath, fileName[i])})
         }
         console.log({ result, status });
         let message = status ? result : "File is exists";
@@ -108,7 +108,9 @@ function createWindow() {
     try {
       await homepage.deleteInput(input_id, project_id).then((data) => {
         console.log({ data });
-        mainWindow.webContents.send("deleteResult", { data });
+        mainWindow.webContents.send("deleteResult", {
+          message: "Deleted",
+        });
       });
     } catch (err) {
       console.log("fail");
@@ -118,7 +120,7 @@ function createWindow() {
     }
   });
 
-  ipcMain.on("getHistory", () => {
+  ipcMain.on("getHistory", (event) => {
     homepage.getHistory().then((data) => {
       mainWindow.webContents.send("returnHistory", data);
     });
@@ -170,9 +172,9 @@ function createWindow() {
   });
 
   ipcMain.on("getInput", (event) => {
-    homepage.getInput().then((data) => {
-      console.log(data);
-      mainWindow.webContents.send("getInput", data);
+    homepage.getInput().then((input) => {
+      console.log({input});
+      mainWindow.webContents.send("getInput", input);
     });
   });
 

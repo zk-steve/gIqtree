@@ -91,6 +91,20 @@ module.exports.getInputByPath = async(storePath) => {
   });
 }
 
+module.exports.getInputById = async(input_id) => {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.all(
+        `SELECT * FROM input WHERE path = "${input_id}"`,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
+      );
+    });
+  });
+}
+
 module.exports.setInput = async (input_id, name, path, project_id) => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
@@ -107,13 +121,6 @@ module.exports.deleteInput = async (input_id, project_id) => {
       db.run(
         `DELETE FROM input WHERE input_id = "${input_id}"`
       );
-      db.all(`SELECT * FROM input WHERE project_id = "${project_id}"`, (err, rows) => {
-        if (err) reject(err);
-        else {
-          console.log({rows})
-          resolve(rows);
-        }
-      });
     });
   });
 }
