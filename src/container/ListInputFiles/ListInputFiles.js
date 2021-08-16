@@ -9,10 +9,10 @@ function ListInputFiles({ listInput, onDeleteFile, listId }) {
       {listInput.length > 0 &&
         listInput.map((name, index) => (
           <InputFile
-            name={name}
+            name={name.name}
             key={index}
             onDeleteFile={onDeleteFile}
-            id={listId[index]}
+            id={name.input_id}
           />
         ))}
     </div>

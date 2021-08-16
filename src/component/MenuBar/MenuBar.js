@@ -49,11 +49,13 @@ function MenuBar(props) {
               </Typography>
             </div>
           </Link>
-          <div className={clsx(classes.button, classes.leftButton)}>
-            <Typography variant="body2" className={classes.text}>
-              New
-            </Typography>
-          </div>
+          <Link to="/" className={clsx(classes.button, classes.leftButton)}>
+            <div>
+              <Typography variant="body2" className={classes.text}>
+                New
+              </Typography>
+            </div>
+          </Link>
           <div className={clsx(classes.button, classes.leftButton)}>
             <Typography variant="body2" className={classes.text}>
               Open

@@ -7,8 +7,8 @@ function FolderTree(props) {
   const classes = useStyles();
   const [listName, setListName] = useState([]);
   ipcRenderer.on("selectFile", (event, data) => {
-    const { fileName } = data.message;
-    if (fileName) setListName([...listName, ...fileName]);
+    const { message } = data;
+    if (Array.isArray(message)) setListName([...listName, ...message]);
   });
   return (
     <div className={classes.root}>
@@ -18,7 +18,7 @@ function FolderTree(props) {
           {listName.length > 0 &&
             listName.map((name, index) => (
               <Typography className={classes.fileName} key={index}>
-                {name}
+                {name.name}
               </Typography>
             ))}
         </div>

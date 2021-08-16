@@ -88,8 +88,12 @@ function createWindow() {
           }
         }
         let result = [];
-        for (let i = 0; i < fileName.length; i++){
-          result.push({input_id: inputs_id[i], name: fileName[i], path: path.join(projectPath, fileName[i])})
+        for (let i = 0; i < fileName.length; i++) {
+          result.push({
+            input_id: inputs_id[i],
+            name: fileName[i],
+            path: path.join(projectPath, fileName[i]),
+          });
         }
         console.log({ result, status });
         let message = status ? result : "File is exists";
@@ -110,14 +114,15 @@ function createWindow() {
         console.log({ data });
         mainWindow.webContents.send("deleteResult", {
           message: "Deleted",
-          status: 1
+          status: 1,
+          id: input_id,
         });
       });
     } catch (err) {
       console.log("fail");
       mainWindow.webContents.send("deleteResult", {
         message: "Does not delete it",
-        status: 0
+        status: 0,
       });
     }
   });
@@ -175,7 +180,7 @@ function createWindow() {
 
   ipcMain.on("getInput", (event) => {
     homepage.getInput().then((input) => {
-      console.log({input});
+      console.log({ input });
       mainWindow.webContents.send("getInput", input);
     });
   });

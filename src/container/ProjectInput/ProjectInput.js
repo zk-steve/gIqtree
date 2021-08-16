@@ -12,15 +12,13 @@ function ProjectInput(props) {
   const { id } = useParams();
   const [listInput, setListInput] = useState([]);
   const [isOpenAlert, setIsOpenAlert] = useState(false);
-  const [listId, setListId] = useState([]);
   const handleSelectInput = () => {
     ipcRenderer.send("selectDialog", id);
   };
   ipcRenderer.on("selectFile", (event, data) => {
-    const { fileName, filePath, inputs_id } = data.message;
-    if (fileName && filePath) {
-      setListInput([...listInput, ...fileName]);
-      setListId([...listId, ...inputs_id]);
+    const { message } = data;
+    if (Array.isArray(message)) {
+      setListInput([...listInput, ...message]);
     } else setIsOpenAlert(true);
   });
   const handleCloseAlert = () => {
@@ -31,10 +29,13 @@ function ProjectInput(props) {
     ipcRenderer.send("deleteInput", data);
   };
   ipcRenderer.on("deleteResult", (event, response) => {
-    const newListInput = listInput.filter(
-      (input) => input !== response.data[0].name
-    );
-    setListInput(newListInput);
+    const { status } = response;
+    console.log(response);
+    if (status === 1) {
+      const { id } = response;
+      const newListInput = listInput.filter((input) => input.input_id !== id);
+      setListInput(newListInput);
+    } else console.log(status);
   });
   return (
     <div className={classes.root}>
@@ -62,7 +63,6 @@ function ProjectInput(props) {
             <ListInputFiles
               listInput={listInput}
               onDeleteFile={handleDeleteFile}
-              listId={listId}
             />
           )}
         </div>

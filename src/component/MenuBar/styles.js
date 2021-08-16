@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
   },
   leftButton: {
     padding: "0 1.5rem",
+    color: "black",
   },
   closeButton: {
     "&:hover": {
