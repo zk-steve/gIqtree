@@ -110,6 +110,11 @@ function createWindow() {
     const { input_id, project_id } = inputData;
     console.log(inputData);
     try {
+      //Step 1: delete file from input folder
+      await homepage.getInputById(input_id).then(async(data) => {
+        console.log({ path: data[0].path });
+        fs.unlinkSync(data[0].path);
+        // Step 2: delete data in database
       await homepage.deleteInput(input_id, project_id).then((data) => {
         console.log({ data });
         mainWindow.webContents.send("deleteResult", {
@@ -118,6 +123,7 @@ function createWindow() {
           id: input_id,
         });
       });
+      })
     } catch (err) {
       console.log("fail");
       mainWindow.webContents.send("deleteResult", {

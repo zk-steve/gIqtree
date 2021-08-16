@@ -91,11 +91,11 @@ module.exports.getInputByPath = async(storePath) => {
   });
 }
 
-module.exports.getInputById = async(input_id) => {
+module.exports.getInputById = async (input_id) => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
       db.all(
-        `SELECT * FROM input WHERE path = "${input_id}"`,
+        `SELECT * FROM input WHERE input_id = "${input_id}"`,
         (err, rows) => {
           if (err) reject(err);
           else resolve(rows);
