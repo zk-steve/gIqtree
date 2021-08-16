@@ -110,12 +110,14 @@ function createWindow() {
         console.log({ data });
         mainWindow.webContents.send("deleteResult", {
           message: "Deleted",
+          status: 1
         });
       });
     } catch (err) {
       console.log("fail");
       mainWindow.webContents.send("deleteResult", {
         message: "Does not delete it",
+        status: 0
       });
     }
   });
