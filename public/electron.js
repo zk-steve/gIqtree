@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const homepage = require("./server/controller/homepage");
+const child_process = require("child_process");
 
 const { v4: uuidv4 } = require("uuid");
 
@@ -27,6 +28,17 @@ function createWindow() {
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
+
+  ipcMain.on("executeProject", (event, input_path) => {
+    child_process.exec(`d: && cd D:/IQTREE/public/server/model && iqtree.exe -s ${input_path}`, (err, stdout, stderr) => {
+      if (err) {
+        console.error(`exec error: ${err}`);
+        return;
+      }
+    
+      mainWindow.webContents.send("resultExecute", {data: stdout})
+    });
+  })
 
   ipcMain.on("selectDialog", async (event, project_id) => {
     try {
