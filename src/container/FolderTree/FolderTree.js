@@ -10,6 +10,13 @@ function FolderTree(props) {
     const { message } = data;
     if (Array.isArray(message)) setListName([...listName, ...message]);
   });
+  ipcRenderer.on("deleteResult", (event, response) => {
+    const { id, status } = response;
+    if (status === 1) {
+      const newListName = listName.filter((input) => input.input_id !== id);
+      setListName(newListName);
+    }
+  });
   return (
     <div className={classes.root}>
       <div className={classes.container}>

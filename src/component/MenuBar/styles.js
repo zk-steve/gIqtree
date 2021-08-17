@@ -8,6 +8,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     borderBottom: `1px solid ${theme.palette.grey[300]}`,
+    position: "sticky",
+    top: 0,
+    zIndex: 100,
   },
   drag: {
     flex: 1,
