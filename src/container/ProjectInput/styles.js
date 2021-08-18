@@ -87,5 +87,14 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "black",
     },
   },
+  progress: {
+    width: "120px",
+    "& p": {
+      color: theme.palette.secondary.main,
+      fontWeight: 600,
+      fontSize: "18px",
+      lineHeight: "28px",
+    },
+  },
 }));
 export default useStyles;

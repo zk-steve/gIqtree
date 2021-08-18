@@ -3,8 +3,6 @@ import HomePage from "pages/HomePage/HomePage";
 import ProjectPage from "pages/ProjectPage/ProjectPage";
 import { Route, Switch, HashRouter } from "react-router-dom";
 import "./App.css";
-const ipcRenderer = window.require("electron").ipcRenderer;
-ipcRenderer.send("executeProject", "D:/demo/example.phy")
 function App() {
   return (
     <HashRouter>
@@ -16,7 +14,6 @@ function App() {
           </Route>
           <Route path="/" exact>
             <HomePage />
-            {/* <ProjectPage /> */}
           </Route>
         </Switch>
       </div>

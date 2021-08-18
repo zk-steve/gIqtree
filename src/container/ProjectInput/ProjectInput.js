@@ -5,6 +5,12 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { InputFileIcon } from "shared/icons";
 import useStyles from "./styles";
+import {
+  buildStyles,
+  CircularProgressbarWithChildren,
+} from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+
 const { ipcRenderer } = window.require("electron");
 
 function ProjectInput(props) {
@@ -12,6 +18,7 @@ function ProjectInput(props) {
   const { id } = useParams();
   const [listInput, setListInput] = useState([]);
   const [isOpenAlert, setIsOpenAlert] = useState(false);
+  const [isExecute, setIsExecute] = useState(false);
   const handleSelectInput = () => {
     ipcRenderer.send("selectDialog", id);
   };
@@ -77,6 +84,20 @@ function ProjectInput(props) {
         )}
       </div>
       <AlertDialog isOpen={isOpenAlert} handleClose={handleCloseAlert} />
+      {isExecute && (
+        <div className={classes.progress}>
+          <CircularProgressbarWithChildren
+            value={10}
+            styles={buildStyles({
+              pathTransition: "0.25s ease",
+              pathColor:
+                "linear-gradient(227.4deg, #DC3A61 28.11%, #B73CC6 81.79%)",
+            })}
+          >
+            <Typography>66%</Typography>
+          </CircularProgressbarWithChildren>
+        </div>
+      )}
     </div>
   );
 }
