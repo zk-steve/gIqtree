@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography } from "@material-ui/core";
 import { Minimize, Maximize, UnMaximize, CloseWindow } from "shared/icons";
 import useStyles from "./styles";
@@ -24,12 +24,15 @@ function MenuBar(props) {
   const onClose = () => {
     ipcRenderer.send("closeApp");
   };
-  ipcRenderer.on("maximize", () => {
-    setIsMaximize(true);
-  });
-  ipcRenderer.on("unmaximize", () => {
-    setIsMaximize(false);
-  });
+  useEffect(() => {
+    ipcRenderer.once("maximize", () => {
+      setIsMaximize(true);
+    });
+    ipcRenderer.once("unmaximize", () => {
+      setIsMaximize(false);
+    });
+  }, []);
+
   return (
     <>
       <div className={classes.root}>

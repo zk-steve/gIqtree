@@ -29,6 +29,8 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
     whiteSpace: "nowrap",
     marginBottom: "20px",
+    textAlign: "start",
+    width: "80%",
   },
 }));
 export default useStyles;

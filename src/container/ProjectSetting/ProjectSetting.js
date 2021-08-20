@@ -11,11 +11,12 @@ function ProjectSetting(props) {
   const [projectName, setProjectName] = useState();
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
+    ipcRenderer.once("returnProjectById", (event, data) => {
+      const { name } = data[0];
+      setProjectName(name);
+    });
   }, [id]);
-  ipcRenderer.on("returnProjectById", (event, data) => {
-    const { name } = data[0];
-    setProjectName(name);
-  });
+
   return (
     <div className={classes.root}>
       <div className={classes.container}>

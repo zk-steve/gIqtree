@@ -13,13 +13,20 @@ function ProjectHistoryTable(props) {
   };
   useEffect(() => {
     ipcRenderer.send("getHistory");
+    const returnHistory = (event, data) => {
+      setHistory(data);
+    };
+    const searchProject = (event, data) => {
+      setHistory(data);
+    };
+    ipcRenderer.on("returnHistory", returnHistory);
+    ipcRenderer.on("searchProject", searchProject);
+    return () => {
+      ipcRenderer.removeListener("returnHistory", returnHistory);
+      ipcRenderer.removeListener("searchProject", searchProject);
+    };
   }, []);
-  ipcRenderer.on("returnHistory", (event, data) => {
-    setHistory(data);
-  });
-  ipcRenderer.on("searchProject", (event, data) => {
-    setHistory(data);
-  });
+
   return (
     <div className={classes.root}>
       <div className={classes.tabBar}>

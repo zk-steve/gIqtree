@@ -1,22 +1,31 @@
 import { Typography } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
 function FolderTree(props) {
   const classes = useStyles();
   const [listName, setListName] = useState([]);
-  ipcRenderer.on("selectFile", (event, data) => {
-    const { message } = data;
-    if (Array.isArray(message)) setListName([...listName, ...message]);
-  });
-  ipcRenderer.on("deleteResult", (event, response) => {
-    const { id, status } = response;
-    if (status === 1) {
-      const newListName = listName.filter((input) => input.input_id !== id);
-      setListName(newListName);
-    }
-  });
+  useEffect(() => {
+    const selectFile = (event, data) => {
+      const { message } = data;
+      if (Array.isArray(message)) setListName([...listName, ...message]);
+    };
+    const deleteResult = (event, response) => {
+      const { id, status } = response;
+      if (status === 1) {
+        const newListName = listName.filter((input) => input.input_id !== id);
+        setListName(newListName);
+      }
+    };
+    ipcRenderer.once("selectFile", selectFile);
+    ipcRenderer.once("deleteResult", deleteResult);
+    return () => {
+      ipcRenderer.removeListener("selectFile", selectFile);
+      ipcRenderer.removeListener("deleteResult", deleteResult);
+    };
+  }, [listName]);
+
   return (
     <div className={classes.root}>
       <div className={classes.container}>

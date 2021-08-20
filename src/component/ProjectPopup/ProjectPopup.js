@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -52,10 +52,13 @@ function ProjectPopup({
     let data = { name, filePath };
     ipcRenderer.send("setProject", data);
   };
-  ipcRenderer.on("openDirSuccess", (event, data) => {
-    const { filePath } = data;
-    setPath(filePath);
+  useEffect(() => {
+    ipcRenderer.once("openDirSuccess", (event, data) => {
+      const { filePath } = data;
+      setPath(filePath);
+    });
   });
+
   return (
     <Dialog open={isOpen} fullWidth onClose={handleClose}>
       <DialogTitle>

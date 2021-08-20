@@ -1,7 +1,7 @@
 import { Button, Typography } from "@material-ui/core";
 import AlertDialog from "component/AlertDialog/AlertDialog";
 import ListInputFiles from "container/ListInputFiles/ListInputFiles";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { InputFileIcon } from "shared/icons";
 import useStyles from "./styles";
@@ -22,12 +22,28 @@ function ProjectInput(props) {
   const handleSelectInput = () => {
     ipcRenderer.send("selectDialog", id);
   };
-  ipcRenderer.on("selectFile", (event, data) => {
-    const { message } = data;
-    if (Array.isArray(message)) {
-      setListInput([...listInput, ...message]);
-    } else setIsOpenAlert(true);
-  });
+  useEffect(() => {
+    const selectFile = (event, data) => {
+      const { message } = data;
+      if (Array.isArray(message)) {
+        setListInput([...listInput, ...message]);
+      } else setIsOpenAlert(true);
+    };
+    const deleteResult = (event, response) => {
+      const { status } = response;
+      if (status === 1) {
+        const { id } = response;
+        const newListInput = listInput.filter((input) => input.input_id !== id);
+        setListInput(newListInput);
+      } else console.log(status);
+    };
+    ipcRenderer.on("selectFile", selectFile);
+    ipcRenderer.on("deleteResult", deleteResult);
+    return () => {
+      ipcRenderer.removeListener("selectFile", selectFile);
+      ipcRenderer.removeListener("deleteResult", deleteResult);
+    };
+  }, [listInput]);
   const handleCloseAlert = () => {
     setIsOpenAlert(false);
   };
@@ -35,15 +51,7 @@ function ProjectInput(props) {
     const data = { input_id: fileId, project_id: id };
     ipcRenderer.send("deleteInput", data);
   };
-  ipcRenderer.on("deleteResult", (event, response) => {
-    const { status } = response;
-    console.log(response);
-    if (status === 1) {
-      const { id } = response;
-      const newListInput = listInput.filter((input) => input.input_id !== id);
-      setListInput(newListInput);
-    } else console.log(status);
-  });
+
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -90,8 +98,7 @@ function ProjectInput(props) {
             value={10}
             styles={buildStyles({
               pathTransition: "0.25s ease",
-              pathColor:
-                "#DC3A61",
+              pathColor: "#DC3A61",
             })}
           >
             <Typography>66%</Typography>
