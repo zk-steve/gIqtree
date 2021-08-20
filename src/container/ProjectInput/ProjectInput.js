@@ -91,7 +91,7 @@ function ProjectInput(props) {
             styles={buildStyles({
               pathTransition: "0.25s ease",
               pathColor:
-                "linear-gradient(227.4deg, #DC3A61 28.11%, #B73CC6 81.79%)",
+                "#DC3A61",
             })}
           >
             <Typography>66%</Typography>
