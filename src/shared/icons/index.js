@@ -9,6 +9,7 @@ import InputFileIcon from "./inputFile";
 import Setting from "./setting";
 import Directory from "./directory";
 import Logo from "./logo";
+import SettingClose from "./settingClose";
 export {
   Minimize,
   Maximize,
@@ -21,4 +22,5 @@ export {
   Setting,
   Directory,
   Logo,
+  SettingClose,
 };
