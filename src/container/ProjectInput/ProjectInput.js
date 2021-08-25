@@ -26,7 +26,7 @@ function ProjectInput(props) {
     const selectFile = (event, data) => {
       const { message } = data;
       if (Array.isArray(message)) {
-        setListInput([...listInput, ...message]);
+        setListInput([...message]);
       } else setIsOpenAlert(true);
     };
     const deleteResult = (event, response) => {

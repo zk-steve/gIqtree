@@ -9,7 +9,7 @@ function FolderTree(props) {
   useEffect(() => {
     const selectFile = (event, data) => {
       const { message } = data;
-      if (Array.isArray(message)) setListName([...listName, ...message]);
+      if (Array.isArray(message)) setListName([...message]);
     };
     const deleteResult = (event, response) => {
       const { name, status } = response;
