@@ -12,9 +12,9 @@ function FolderTree(props) {
       if (Array.isArray(message)) setListName([...listName, ...message]);
     };
     const deleteResult = (event, response) => {
-      const { id, status } = response;
+      const { name, status } = response;
       if (status === 1) {
-        const newListName = listName.filter((input) => input.input_id !== id);
+        const newListName = listName.filter((input) => input.name !== name);
         setListName(newListName);
       }
     };

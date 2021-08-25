@@ -32,23 +32,31 @@ function ProjectInput(props) {
     const deleteResult = (event, response) => {
       const { status } = response;
       if (status === 1) {
-        const { id } = response;
-        const newListInput = listInput.filter((input) => input.input_id !== id);
+        const { name } = response;
+        const newListInput = listInput.filter((input) => input.name !== name);
         setListInput(newListInput);
       } else console.log(status);
     };
+    const getProjectInput = (event, data) => {
+      const { status, message } = data;
+      if (status === 1) setListInput([...listInput, ...message]);
+    };
     ipcRenderer.on("selectFile", selectFile);
     ipcRenderer.on("deleteResult", deleteResult);
+    ipcRenderer.once("inputsOfProject", getProjectInput);
     return () => {
       ipcRenderer.removeListener("selectFile", selectFile);
       ipcRenderer.removeListener("deleteResult", deleteResult);
     };
   }, [listInput]);
+  useEffect(() => {
+    ipcRenderer.send("getInputByProject", id);
+  }, [id]);
   const handleCloseAlert = () => {
     setIsOpenAlert(false);
   };
-  const handleDeleteFile = (fileId) => {
-    const data = { input_id: fileId, project_id: id };
+  const handleDeleteFile = (name) => {
+    const data = { input_name: name, project_id: id };
     ipcRenderer.send("deleteInput", data);
   };
 

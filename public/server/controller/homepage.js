@@ -1,5 +1,4 @@
 const db = require("../db");
-const { v4: uuidv4 } = require("uuid");
 const {
   CREATE_TABLE_PROJECT,
   CREATE_TABLE_INPUT,
@@ -128,16 +127,6 @@ module.exports.deleteInput = async (input_id, project_id) => {
     });
   });
 }
-
-module.exports.setOutput = async (name, path, project_id) => {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      let smtp = db.prepare(`INSERT INTO output VALUES(?, ?, ?, ?)`);
-      smtp.run(uuidv4(), name, path, project_id);
-      smtp.finalize();
-    });
-  });
-};
 
 module.exports.getHistory = async () => {
   return new Promise((resolve, reject) => {

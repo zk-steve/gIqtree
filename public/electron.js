@@ -45,7 +45,7 @@ function createWindow() {
       // Step 1: Choose msa file and get path and name of it
       const filePath = dialog.showOpenDialogSync({
         properties: ["multiSelections"],
-        filters: [{ name: "IQTREE", extensions: ["msa"] }],
+        filters: [{ name: "IQTREE", extensions: ["msa", "phy"] }],
       });
       if (!filePath) {
         mainWindow.webContents.send("cancelSelect", { canceled: 1 });
@@ -65,44 +65,16 @@ function createWindow() {
         });
 
         let status = 1;
-        let inputs_id = [];
         for (let i = 0; i < filePath.length; i++) {
           let elementPath = path.join(projectPath, fileName[i]);
           fs.copyFile(filePath[i], elementPath, (err) => {
             if (err) throw err;
             else console.log("Copy successfully");
           });
-
-          // Step 3: Insert input path into input table
-          let exist = 0;
-          await homepage.getInputByPath(elementPath).then((data) => {
-            console.log({ data, elementPath });
-            if (data.length === 0) {
-              let input_id = uuidv4();
-              inputs_id.push(input_id);
-              homepage
-                .setInput(input_id, fileName[i], elementPath, project_id)
-                .then(() => {
-                  console.log(
-                    `Insert file ${fileName[i]} into project ${project_id} successfully`
-                  );
-                });
-            } else {
-              console.log({
-                message: "Input file is exists",
-              });
-              exist = 1;
-            }
-          });
-          if (exist === 1) {
-            status = 0;
-            break;
-          }
         }
         let result = [];
         for (let i = 0; i < fileName.length; i++) {
           result.push({
-            input_id: inputs_id[i],
             name: fileName[i],
             path: path.join(projectPath, fileName[i]),
           });
@@ -118,23 +90,47 @@ function createWindow() {
     }
   });
 
+  ipcMain.on("getInputByProject", (event, project_id) => {
+    try {
+      homepage.getProjectById(project_id).then(data => {
+        console.log(data);
+        const inputFolder = path.join(data[0].path, "input")
+        console.log({inputFolder})
+        fs.readdir(inputFolder, "utf-8", (err, files) => {
+          if (err) throw err;
+          let fileName = files.map(file => {
+            return {
+              name: file,
+              path: path.join(inputFolder, file)
+            }
+          })
+          console.log({fileName})
+          mainWindow.webContents.send("inputsOfProject", {
+            message: fileName,
+            status: 1
+          })
+        })
+      })
+    } catch (err) {
+      mainWindow.webContents.send("inputsOfProject", {
+        message: "Error",
+        status: 0
+      })
+    }
+  })
+
   ipcMain.on("deleteInput", async (event, inputData) => {
-    const { input_id, project_id } = inputData;
+    const { input_name, project_id } = inputData;
     console.log(inputData);
     try {
-      //Step 1: delete file from input folder
-      await homepage.getInputById(input_id).then(async(data) => {
-        console.log({ path: data[0].path });
-        fs.unlinkSync(data[0].path);
-        // Step 2: delete data in database
-      await homepage.deleteInput(input_id, project_id).then((data) => {
-        console.log({ data });
+      await homepage.getProjectById(project_id).then(data => {
+        let inputFile = path.join(data[0].path, "input", input_name);
+        fs.unlinkSync(inputFile);
         mainWindow.webContents.send("deleteResult", {
           message: "Deleted",
           status: 1,
-          id: input_id,
+          name: input_name,
         });
-      });
       })
     } catch (err) {
       console.log("fail");
@@ -187,25 +183,6 @@ function createWindow() {
   ipcMain.on("getProjectById", (event, id) => {
     homepage.getProjectById(id).then((data) => {
       mainWindow.webContents.send("returnProjectById", data);
-    });
-  });
-
-  ipcMain.on("getProject", (event) => {
-    homepage.getProjects().then((data) => {
-      mainWindow.webContents.send("getProject", data);
-    });
-  });
-
-  ipcMain.on("getInput", (event) => {
-    homepage.getInput().then((input) => {
-      console.log({ input });
-      mainWindow.webContents.send("getInput", input);
-    });
-  });
-
-  ipcMain.on("getOutput", (event) => {
-    homepage.getOutput().then((data) => {
-      mainWindow.webContents.send("getOutput", data);
     });
   });
 
