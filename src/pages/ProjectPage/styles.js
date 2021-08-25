@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
   main: {
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     height: "90vh",
     width: "calc(100% - 42px)",
   },

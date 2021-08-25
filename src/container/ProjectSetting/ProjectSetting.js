@@ -5,7 +5,7 @@ import { Setting } from "shared/icons";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
-function ProjectSetting(props) {
+function ProjectSetting({ handleOpenSetting }) {
   const classes = useStyles();
   const { id } = useParams();
   const [projectName, setProjectName] = useState();
@@ -24,7 +24,7 @@ function ProjectSetting(props) {
           <Typography variant="h5" className={classes.title}>
             {projectName}
           </Typography>
-          <div className={classes.setting}>
+          <div className={classes.setting} onClick={handleOpenSetting}>
             <Setting />
           </div>
         </div>

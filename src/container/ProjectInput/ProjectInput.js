@@ -43,10 +43,11 @@ function ProjectInput(props) {
     };
     ipcRenderer.on("selectFile", selectFile);
     ipcRenderer.on("deleteResult", deleteResult);
-    ipcRenderer.once("inputsOfProject", getProjectInput);
+    ipcRenderer.on("inputsOfProject", getProjectInput);
     return () => {
       ipcRenderer.removeListener("selectFile", selectFile);
       ipcRenderer.removeListener("deleteResult", deleteResult);
+      ipcRenderer.removeListener("inputsOfProject", getProjectInput);
     };
   }, [listInput]);
   useEffect(() => {

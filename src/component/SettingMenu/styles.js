@@ -48,5 +48,8 @@ const useStyles = makeStyles((theme) => ({
     },
     cursor: "default",
   },
+  onSelect: {
+    backgroundColor: "#eeeeee",
+  },
 }));
 export default useStyles;
