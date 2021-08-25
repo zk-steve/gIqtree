@@ -64,7 +64,6 @@ function createWindow() {
           projectPath = path.join(data[0].path, "input");
         });
 
-        let status = 1;
         for (let i = 0; i < filePath.length; i++) {
           let elementPath = path.join(projectPath, fileName[i]);
           fs.copyFile(filePath[i], elementPath, (err) => {
@@ -72,18 +71,30 @@ function createWindow() {
             else console.log("Copy successfully");
           });
         }
-        let result = [];
-        for (let i = 0; i < fileName.length; i++) {
-          result.push({
-            name: fileName[i],
-            path: path.join(projectPath, fileName[i]),
-          });
-        }
-        console.log({ result, status });
-        let message = status ? result : "File is exists";
-        mainWindow.webContents.send("selectFile", {
-          message: message,
-        });
+
+        setTimeout(() => {
+          try {
+            fs.readdir(projectPath, "utf-8", (err, files) => {
+              if (err) throw err;
+              let fileName = files.map(file => {
+                return {
+                  name: file,
+                  path: path.join(projectPath, file)
+                }
+              })
+              console.log({AAA: fileName})
+              mainWindow.webContents.send("selectFile", {
+                message: fileName,
+                status: 1
+              })
+            })
+          } catch (err) {
+            mainWindow.webContents.send("selectFile", {
+              message: "File is exists",
+              status: 0
+            })
+          }
+        }, 100)
       }
     } catch (err) {
       console.log({ err });
