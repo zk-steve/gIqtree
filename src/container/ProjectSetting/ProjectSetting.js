@@ -5,7 +5,7 @@ import { Setting } from "shared/icons";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
-function ProjectSetting({ handleOpenSetting }) {
+function ProjectSetting({ handleOpenSetting, handleExecute }) {
   const classes = useStyles();
   const { id } = useParams();
   const [projectName, setProjectName] = useState();
@@ -33,6 +33,7 @@ function ProjectSetting({ handleOpenSetting }) {
             color="secondary"
             variant="contained"
             className={classes.button}
+            onClick={() => handleExecute(id)}
           >
             Execute
           </Button>

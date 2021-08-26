@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
-function FolderTree(props) {
+function FolderTree({ outputList }) {
   const classes = useStyles();
   const [listName, setListName] = useState([]);
   useEffect(() => {
@@ -40,6 +40,12 @@ function FolderTree(props) {
         </div>
         <div className={classes.inputAndOutputContainer}>
           <Typography className={classes.title}>Output</Typography>
+          {outputList.length > 0 &&
+            outputList.map((name, index) => (
+              <Typography className={classes.fileName} key={index}>
+                {name}
+              </Typography>
+            ))}
         </div>
       </div>
     </div>

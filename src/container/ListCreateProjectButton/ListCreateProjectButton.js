@@ -11,8 +11,8 @@ function ListCreateProjectButton(props) {
     "Find Model",
     "Merge Partitions",
     "Infer Tree",
-    "Asset Support",
-    "Data Tree",
+    "Assess Support",
+    "Date Tree",
   ];
   const [isOpen, setIsOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
