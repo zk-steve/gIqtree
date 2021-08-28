@@ -6,6 +6,9 @@
   "author": "iqtree",
   "build": {
     "appId": "com.giqtree",
+    "mac": {
+      "category": "your.app.category.type"
+    },
     "extraResources": [
       {
         "from": "public/server/database",
@@ -28,6 +31,7 @@
     "build": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build --win portable -l",
     "build:win": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build --win portable",
     "build:linux": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build -l",
+    "build:mac": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build -m",
     "start": "concurrently \"cross-env SKIP_PREFLIGHT_CHECK=true BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "dependencies": {
