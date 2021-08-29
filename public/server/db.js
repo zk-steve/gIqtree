@@ -9,32 +9,26 @@ let dataPath;
 let iqtreePath;
 
 if (os.type() === "Windows_NT") {
-  dataPath = path.join("C:", "Users", os.userInfo().username, "AppData", "IQTREE")
-  iqtreePath = path.join("C:", "Users", os.userInfo().username, "AppData", "IQTREE", "bin");
+  dataPath = path.join("C:", "Users", os.userInfo().username, "AppData", "iqtree")
+  iqtreePath = path.join("C:", "Users", os.userInfo().username, "AppData", "iqtree", "bin");
+} else if (os.type() === "Linux") {
+  dataPath = path.join("/home", os.userInfo().username, "iqtree")
+  iqtreePath = path.join("/home", os.userInfo().username, "iqtree", "bin");
+} else if (os.type() === "Darwin") {
+  dataPath = path.join("/Users", os.userInfo().username, "Library", "Application Support", "iqtree")
+  iqtreePath = path.join("/Users", os.userInfo().username, "Library", "Application Support", "iqtree", "bin");
 }
-else if (os.type() === "Linux") {
-  dataPath = path.join("/home", os.userInfo().username, "IQTree")
-  iqtreePath = path.join("/home", os.userInfo().username, "IQTree", "bin");
-}
-else if (os.type() === "Darwin") {
-  //dataPath = path.join()
-}
+const storage = path.join(dataPath, "iqtree.sqlite3")
 
 if (!fs.existsSync(dataPath)) {
-  fs.mkdir(dataPath, { recursive: true }, (err) => {
+  fs.mkdir(dataPath, {recursive: true}, (err) => {
     if (err) throw err;
-    else {
-      console.log("created");
-      fs.writeFile("iqtree.sqlite3", '', (err) => {
-        if (err) throw err;
-        else console.log("Created Database")
-      });
-    }
+    console.log("created");
   });
 }
 
 if (fs.existsSync(mainSource)) {
-  fs.mkdir(iqtreePath, { recursive: true }, (err) => {
+  fs.mkdir(iqtreePath, {recursive: true}, (err) => {
     if (err) throw err;
     else {
       console.log("creater iqtree bin");
@@ -54,7 +48,6 @@ if (fs.existsSync(mainSource)) {
   })
 }
 
-const storage = path.join(dataPath, "iqtree.sqlite3")
 
 const db = new sqlite3.Database(storage);
-module.exports = { db, iqtreePath};
+module.exports = {db, iqtreePath};
