@@ -32,7 +32,7 @@ function createWindow() {
   }
 
   ipcMain.on("executeProject", (event, project_path) => {
-    let iqtreeExecute = path.join(iqtreePath, "iqtree.exe")
+    let iqtreeExecute = path.join(iqtreePath, "iqtree2.exe")
     let input_path = path.join(project_path, "input", "example.phy");
     let output_path = path.join(project_path, "output", "output");
 
