@@ -8,6 +8,7 @@ const child_process = require("child_process");
 const { iqtreePath } = require("./server/db");
 
 const { v4: uuidv4 } = require("uuid");
+const { getOutputWhenExecuted } = require("./server/controller/execute");
 
 let mainWindow;
 
@@ -31,20 +32,35 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   }
 
-  ipcMain.on("executeProject", (event, project_path) => {
+  ipcMain.handle("executeProject", async (event, project_id) => {
+    let project_path;
+    await homepage.getProjectById(project_id).then((data) => {
+      project_path = data[0].path;
+    }).catch(err => {
+      console.log({error: "does not get project path"})
+    }) 
+
+    console.log({ project_path });
+
     let iqtreeExecute = path.join(iqtreePath, "iqtree2.exe")
     let input_path = path.join(project_path, "input", "example.phy");
     let output_path = path.join(project_path, "output", "output");
 
     console.log("exec...")
-    child_process.exec(`${iqtreeExecute} -s ${input_path} -pre "${output_path}`, (err, stdout, stderr) => {
+    await child_process.exec(`${iqtreeExecute} -s ${input_path} -pre "${output_path}`, async(err, stdout, stderr) => {
       if (err) {
         console.error(`exec error: ${err}`);
         return;
       }
       console.log("done")
-      console.log({stdout})
-      mainWindow.webContents.send("resultExecute", {data: stdout})
+      let data;
+      await getOutputWhenExecuted(project_path).then((result) => {
+        data = result
+      }).catch(err => {
+        console.log({errorExecuted: "does not get output"})
+      })
+      console.log({data})
+      return {data: data}
     });
   })
 
