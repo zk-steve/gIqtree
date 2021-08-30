@@ -34,35 +34,43 @@ function createWindow() {
 
   ipcMain.handle("executeProject", async (event, project_id) => {
     let project_path;
-    await homepage.getProjectById(project_id).then((data) => {
-      project_path = data[0].path;
-    }).catch(err => {
-      console.log({error: "does not get project path"})
-    }) 
+    await homepage
+      .getProjectById(project_id)
+      .then((data) => {
+        project_path = data[0].path;
+      })
+      .catch((err) => {
+        console.log({ error: "does not get project path" });
+      });
 
     console.log({ project_path });
 
-    let iqtreeExecute = path.join(iqtreePath, "iqtree2.exe")
+    let iqtreeExecute = path.join(iqtreePath, "iqtree2.exe");
     let input_path = path.join(project_path, "input", "example.phy");
     let output_path = path.join(project_path, "output", "output");
 
-    console.log("exec...")
-    await child_process.exec(`${iqtreeExecute} -s ${input_path} -pre "${output_path}`, async(err, stdout, stderr) => {
-      if (err) {
-        console.error(`exec error: ${err}`);
-        return;
+    console.log("exec...");
+    await child_process.exec(
+      `${iqtreeExecute} -s ${input_path} -pre "${output_path}`,
+      async (err, stdout, stderr) => {
+        if (err) {
+          console.error(`exec error: ${err}`);
+          return;
+        }
+        console.log("done");
+        let data;
+        await getOutputWhenExecuted(project_path)
+          .then((result) => {
+            data = result;
+          })
+          .catch((err) => {
+            console.log({ errorExecuted: "does not get output" });
+          });
+        console.log({ data });
+        event.sender.send("executeResult", data);
       }
-      console.log("done")
-      let data;
-      await getOutputWhenExecuted(project_path).then((result) => {
-        data = result
-      }).catch(err => {
-        console.log({errorExecuted: "does not get output"})
-      })
-      console.log({data})
-      return {data: data}
-    });
-  })
+    );
+  });
 
   ipcMain.on("selectDialog", async (event, project_id) => {
     try {
@@ -100,25 +108,25 @@ function createWindow() {
           try {
             fs.readdir(projectPath, "utf-8", (err, files) => {
               if (err) throw err;
-              let fileName = files.map(file => {
+              let fileName = files.map((file) => {
                 return {
                   name: file,
-                  path: path.join(projectPath, file)
-                }
-              })
-              console.log({AAA: fileName})
+                  path: path.join(projectPath, file),
+                };
+              });
+              console.log({ AAA: fileName });
               mainWindow.webContents.send("selectFile", {
                 message: fileName,
-                status: 1
-              })
-            })
+                status: 1,
+              });
+            });
           } catch (err) {
             mainWindow.webContents.send("selectFile", {
               message: "File is exists",
-              status: 0
-            })
+              status: 0,
+            });
           }
-        }, 100)
+        }, 100);
       }
     } catch (err) {
       console.log({ err });
@@ -127,38 +135,38 @@ function createWindow() {
 
   ipcMain.on("getInputByProject", (event, project_id) => {
     try {
-      homepage.getProjectById(project_id).then(data => {
+      homepage.getProjectById(project_id).then((data) => {
         console.log(data);
-        const inputFolder = path.join(data[0].path, "input")
-        console.log({inputFolder})
+        const inputFolder = path.join(data[0].path, "input");
+        console.log({ inputFolder });
         fs.readdir(inputFolder, "utf-8", (err, files) => {
           if (err) throw err;
-          let fileName = files.map(file => {
+          let fileName = files.map((file) => {
             return {
               name: file,
-              path: path.join(inputFolder, file)
-            }
-          })
-          console.log({fileName})
+              path: path.join(inputFolder, file),
+            };
+          });
+          console.log({ fileName });
           mainWindow.webContents.send("inputsOfProject", {
             message: fileName,
-            status: 1
-          })
-        })
-      })
+            status: 1,
+          });
+        });
+      });
     } catch (err) {
       mainWindow.webContents.send("inputsOfProject", {
         message: "Error",
-        status: 0
-      })
+        status: 0,
+      });
     }
-  })
+  });
 
   ipcMain.on("deleteInput", async (event, inputData) => {
     const { input_name, project_id } = inputData;
     console.log(inputData);
     try {
-      await homepage.getProjectById(project_id).then(data => {
+      await homepage.getProjectById(project_id).then((data) => {
         let inputFile = path.join(data[0].path, "input", input_name);
         fs.unlinkSync(inputFile);
         mainWindow.webContents.send("deleteResult", {
@@ -166,7 +174,7 @@ function createWindow() {
           status: 1,
           name: input_name,
         });
-      })
+      });
     } catch (err) {
       console.log("fail");
       mainWindow.webContents.send("deleteResult", {

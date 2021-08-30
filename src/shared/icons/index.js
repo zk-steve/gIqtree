@@ -10,6 +10,7 @@ import Setting from "./setting";
 import Directory from "./directory";
 import Logo from "./logo";
 import SettingClose from "./settingClose";
+import DownArrow from "./downArrow";
 export {
   Minimize,
   Maximize,
@@ -23,4 +24,5 @@ export {
   Directory,
   Logo,
   SettingClose,
+  DownArrow,
 };

@@ -5,7 +5,13 @@ import { Setting } from "shared/icons";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
-function ProjectSetting({ handleOpenSetting, handleExecute }) {
+function ProjectSetting({
+  handleOpenSetting,
+  handleExecute,
+  isExecuteDisabled,
+  isContinueDisabled,
+  isPauseDisabled,
+}) {
   const classes = useStyles();
   const { id } = useParams();
   const [projectName, setProjectName] = useState();
@@ -34,22 +40,23 @@ function ProjectSetting({ handleOpenSetting, handleExecute }) {
             variant="contained"
             className={classes.button}
             onClick={() => handleExecute(id)}
+            disabled={isExecuteDisabled}
           >
             Execute
           </Button>
           <Button
-            color="primary"
+            color="secondary"
             variant="contained"
             className={classes.button}
-            disabled
+            disabled={isPauseDisabled}
           >
             Pause
           </Button>
           <Button
-            color="primary"
+            color="secondary"
             variant="contained"
             className={classes.button}
-            disabled
+            disabled={isContinueDisabled}
           >
             Continue
           </Button>

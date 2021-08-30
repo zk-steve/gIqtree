@@ -74,5 +74,80 @@ const useStyles = makeStyles((theme) => ({
     },
     paddingLeft: "36px",
   },
+  modelFinderHead: {
+    width: "100%",
+    height: "50px",
+    borderBottom: "1px solid #EBECED",
+    display: "flex",
+    alignItems: "center",
+    "& > p": {
+      fontWeight: 600,
+    },
+    "& > #model": {
+      marginLeft: "102px",
+      width: "170px",
+      textAlign: "left",
+    },
+    "& > #df": {
+      textAlign: "left",
+      width: "90px",
+    },
+    "& > #explanation": {
+      textAlign: "left",
+    },
+  },
+  first: {
+    marginLeft: "66px",
+  },
+  modelTableHead: {
+    marginTop: "0 !important",
+  },
+  modelTable: {
+    padding: 0,
+  },
+  listModel: {
+    paddingLeft: "36px",
+    margin: 0,
+    "& > div": {
+      marginTop: "22px",
+    },
+  },
+  modelMargin: {
+    marginLeft: "calc(102px - 36px - 12.8px)",
+    width: "170px",
+  },
+  df: {
+    width: "90px",
+    margin: 0,
+  },
+  expl: {
+    margin: 0,
+  },
+  fontSmall: {
+    fontSize: "14px !important",
+  },
+  shortPath: {
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    "& > p": {
+      width: "300px",
+    },
+  },
+  shortTextInput: {
+    width: "170px",
+    height: "37px",
+  },
+  selectMargin: {
+    marginTop: "18px",
+  },
+  selectMarginLeft: {
+    marginLeft: "20px",
+  },
+  twoOption: {
+    display: "grid",
+    gridTemplateColumns: "auto auto",
+    columnGap: "60px",
+  },
 }));
 export default useStyles;

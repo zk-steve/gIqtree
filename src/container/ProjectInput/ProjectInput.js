@@ -13,10 +13,9 @@ import "react-circular-progressbar/dist/styles.css";
 
 const { ipcRenderer } = window.require("electron");
 
-function ProjectInput(props) {
+function ProjectInput({ listInput, handleSetListInput, handleDeleteInput }) {
   const classes = useStyles();
   const { id } = useParams();
-  const [listInput, setListInput] = useState([]);
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const [isExecute, setIsExecute] = useState(false);
   const handleSelectInput = () => {
@@ -26,20 +25,19 @@ function ProjectInput(props) {
     const selectFile = (event, data) => {
       const { message } = data;
       if (Array.isArray(message)) {
-        setListInput([...message]);
+        handleSetListInput(message);
       } else setIsOpenAlert(true);
     };
     const deleteResult = (event, response) => {
       const { status } = response;
       if (status === 1) {
         const { name } = response;
-        const newListInput = listInput.filter((input) => input.name !== name);
-        setListInput(newListInput);
+        handleDeleteInput(name);
       } else console.log(status);
     };
     const getProjectInput = (event, data) => {
       const { status, message } = data;
-      if (status === 1) setListInput([...listInput, ...message]);
+      if (status === 1) handleSetListInput(message);
     };
     ipcRenderer.on("selectFile", selectFile);
     ipcRenderer.on("deleteResult", deleteResult);
@@ -49,7 +47,7 @@ function ProjectInput(props) {
       ipcRenderer.removeListener("deleteResult", deleteResult);
       ipcRenderer.removeListener("inputsOfProject", getProjectInput);
     };
-  }, [listInput]);
+  }, [listInput, handleDeleteInput, handleSetListInput]);
   useEffect(() => {
     ipcRenderer.send("getInputByProject", id);
   }, [id]);
@@ -67,7 +65,9 @@ function ProjectInput(props) {
         <Typography variant="h5" className={classes.title}>
           Input
         </Typography>
-        <Typography className={classes.smallTitle}>Select MSA file</Typography>
+        <Typography className={classes.smallTitle}>
+          Select input file(s)
+        </Typography>
         <div className={classes.inputContainer}>
           {listInput.length === 0 && (
             <div className={classes.input} onClick={handleSelectInput}>

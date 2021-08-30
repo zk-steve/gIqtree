@@ -3,36 +3,45 @@ import React, { useEffect, useState } from "react";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
-function FolderTree({ outputList }) {
+function FolderTree({
+  listOutput,
+  handleSetListOutput,
+  listInput,
+  handleSetListInput,
+  handleDeleteInput,
+}) {
   const classes = useStyles();
-  const [listName, setListName] = useState([]);
   useEffect(() => {
     const selectFile = (event, data) => {
       const { message } = data;
-      if (Array.isArray(message)) setListName([...message]);
+      if (Array.isArray(message)) handleSetListInput(message);
     };
     const deleteResult = (event, response) => {
       const { name, status } = response;
       if (status === 1) {
-        const newListName = listName.filter((input) => input.name !== name);
-        setListName(newListName);
+        handleDeleteInput(name);
       }
+    };
+    const executeResult = (event, data) => {
+      handleSetListOutput(data);
     };
     ipcRenderer.once("selectFile", selectFile);
     ipcRenderer.once("deleteResult", deleteResult);
+    ipcRenderer.once("executeResult", executeResult);
     return () => {
       ipcRenderer.removeListener("selectFile", selectFile);
       ipcRenderer.removeListener("deleteResult", deleteResult);
+      ipcRenderer.removeListener("executeResult", executeResult);
     };
-  }, [listName]);
+  }, [handleDeleteInput, handleSetListInput, handleSetListOutput]);
 
   return (
     <div className={classes.root}>
       <div className={classes.container}>
         <div className={classes.inputAndOutputContainer}>
           <Typography className={classes.title}>Input</Typography>
-          {listName.length > 0 &&
-            listName.map((name, index) => (
+          {listInput.length > 0 &&
+            listInput.map((name, index) => (
               <Typography className={classes.fileName} key={index}>
                 {name.name}
               </Typography>
@@ -40,10 +49,10 @@ function FolderTree({ outputList }) {
         </div>
         <div className={classes.inputAndOutputContainer}>
           <Typography className={classes.title}>Output</Typography>
-          {outputList.length > 0 &&
-            outputList.map((name, index) => (
+          {listOutput.length > 0 &&
+            listOutput.map((name, index) => (
               <Typography className={classes.fileName} key={index}>
-                {name}
+                {name.name}
               </Typography>
             ))}
         </div>
