@@ -9,6 +9,7 @@ const { iqtreePath } = require("./server/db");
 
 const { v4: uuidv4 } = require("uuid");
 const { getOutputWhenExecuted } = require("./server/controller/execute");
+const { viewFile } = require("./server/controller/file_handler");
 
 let mainWindow;
 
@@ -31,6 +32,13 @@ function createWindow() {
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
+
+  ipcMain.on("viewFile", (event, filePath) => {
+    viewFile(filePath).then((data) => {
+      console.log({ readFile: data });
+      mainWindow.webContents.send("viewFileData", data)
+    }).catch(err => mainWindow.webContents.send("viewFileData", {message: "Does not read file"}))
+  })
 
   ipcMain.handle("executeProject", async (event, project_id) => {
     let project_path;
