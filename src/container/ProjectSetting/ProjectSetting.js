@@ -1,9 +1,7 @@
 import { Button, Typography } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React from "react";
 import { Setting } from "shared/icons";
 import useStyles from "./styles";
-const { ipcRenderer } = window.require("electron");
 
 function ProjectSetting({
   handleOpenSetting,
@@ -11,18 +9,12 @@ function ProjectSetting({
   isExecuteDisabled,
   isContinueDisabled,
   isPauseDisabled,
+  isInProcess,
+  isDoneProcess,
+  projectName,
+  handlePauseProject,
 }) {
   const classes = useStyles();
-  const { id } = useParams();
-  const [projectName, setProjectName] = useState();
-  useEffect(() => {
-    ipcRenderer.send("getProjectById", id);
-    ipcRenderer.once("returnProjectById", (event, data) => {
-      const { name } = data[0];
-      setProjectName(name);
-    });
-  }, [id]);
-
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -39,16 +31,17 @@ function ProjectSetting({
             color="secondary"
             variant="contained"
             className={classes.button}
-            onClick={() => handleExecute(id)}
+            onClick={handleExecute}
             disabled={isExecuteDisabled}
           >
-            Execute
+            {isDoneProcess ? "Restart" : "Execute"}
           </Button>
           <Button
             color="secondary"
             variant="contained"
             className={classes.button}
             disabled={isPauseDisabled}
+            onClick={handlePauseProject}
           >
             Pause
           </Button>

@@ -3,8 +3,6 @@ import HomePage from "pages/HomePage/HomePage";
 import ProjectPage from "pages/ProjectPage/ProjectPage";
 import { Route, Switch, HashRouter } from "react-router-dom";
 import "./App.css";
-const ipcRenderer = window.require("electron").ipcRenderer;
-ipcRenderer.send("viewFile", "D:/mxs281.pdf")
 function App() {
   return (
     <HashRouter>

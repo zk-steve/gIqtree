@@ -10,14 +10,21 @@ import {
   CircularProgressbarWithChildren,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-
 const { ipcRenderer } = window.require("electron");
 
-function ProjectInput({ listInput, handleSetListInput, handleDeleteInput }) {
+function ProjectInput({
+  listInput,
+  handleSetListInput,
+  handleDeleteInput,
+  isInProcess,
+  projectName,
+  outputContent,
+  currentTab,
+  currentFile,
+}) {
   const classes = useStyles();
   const { id } = useParams();
   const [isOpenAlert, setIsOpenAlert] = useState(false);
-  const [isExecute, setIsExecute] = useState(false);
   const handleSelectInput = () => {
     ipcRenderer.send("selectDialog", id);
   };
@@ -35,22 +42,13 @@ function ProjectInput({ listInput, handleSetListInput, handleDeleteInput }) {
         handleDeleteInput(name);
       } else console.log(status);
     };
-    const getProjectInput = (event, data) => {
-      const { status, message } = data;
-      if (status === 1) handleSetListInput(message);
-    };
     ipcRenderer.on("selectFile", selectFile);
     ipcRenderer.on("deleteResult", deleteResult);
-    ipcRenderer.on("inputsOfProject", getProjectInput);
     return () => {
       ipcRenderer.removeListener("selectFile", selectFile);
       ipcRenderer.removeListener("deleteResult", deleteResult);
-      ipcRenderer.removeListener("inputsOfProject", getProjectInput);
     };
   }, [listInput, handleDeleteInput, handleSetListInput]);
-  useEffect(() => {
-    ipcRenderer.send("getInputByProject", id);
-  }, [id]);
   const handleCloseAlert = () => {
     setIsOpenAlert(false);
   };
@@ -63,34 +61,63 @@ function ProjectInput({ listInput, handleSetListInput, handleDeleteInput }) {
     <div className={classes.root}>
       <div className={classes.container}>
         <Typography variant="h5" className={classes.title}>
-          Input
+          {isInProcess && "Input"}
+          {!isInProcess && currentTab === "input" && projectName}
+          {!isInProcess && currentTab === "output" && "Output"}
         </Typography>
         <Typography className={classes.smallTitle}>
-          Select input file(s)
+          {isInProcess && "Progression"}
+          {!isInProcess && currentTab === "input" && "Select input file(s)"}
+          {!isInProcess && currentTab === "output" && currentFile}
         </Typography>
-        <div className={classes.inputContainer}>
-          {listInput.length === 0 && (
-            <div className={classes.input} onClick={handleSelectInput}>
-              <InputFileIcon />
-              <div className={classes.textContainer}>
-                <Typography className={classes.smallText} component="p">
-                  Browse
-                </Typography>
-                &nbsp;
-                <Typography className={classes.browse} component="p">
-                  to choose a file
-                </Typography>
+        {currentTab === "output" && !isInProcess && outputContent !== "" && (
+          <textarea
+            readOnly
+            className={classes.outputContent}
+            value={outputContent}
+          />
+        )}
+        {currentTab === "input" && (
+          <div className={classes.inputContainer}>
+            {listInput.length === 0 && (
+              <div className={classes.input} onClick={handleSelectInput}>
+                <InputFileIcon />
+                <div className={classes.textContainer}>
+                  <Typography className={classes.smallText} component="p">
+                    Browse
+                  </Typography>
+                  &nbsp;
+                  <Typography className={classes.browse} component="p">
+                    to choose a file
+                  </Typography>
+                </div>
               </div>
-            </div>
-          )}
-          {listInput.length > 0 && (
-            <ListInputFiles
-              listInput={listInput}
-              onDeleteFile={handleDeleteFile}
-            />
-          )}
-        </div>
-        {listInput.length > 0 && (
+            )}
+            {listInput.length > 0 && !isInProcess && currentTab === "input" && (
+              <ListInputFiles
+                listInput={listInput}
+                onDeleteFile={handleDeleteFile}
+              />
+            )}
+            {isInProcess && (
+              <div className={classes.progressContainer}>
+                <div className={classes.progress}>
+                  <CircularProgressbarWithChildren
+                    value={10}
+                    styles={buildStyles({
+                      pathTransition: "0.25s ease",
+                      pathColor: "#DC3A61",
+                    })}
+                  >
+                    <Typography>66%</Typography>
+                  </CircularProgressbarWithChildren>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {listInput.length > 0 && !isInProcess && currentTab === "input" && (
           <Button
             variant="contained"
             className={classes.uploadMoreButton}
@@ -101,19 +128,6 @@ function ProjectInput({ listInput, handleSetListInput, handleDeleteInput }) {
         )}
       </div>
       <AlertDialog isOpen={isOpenAlert} handleClose={handleCloseAlert} />
-      {isExecute && (
-        <div className={classes.progress}>
-          <CircularProgressbarWithChildren
-            value={10}
-            styles={buildStyles({
-              pathTransition: "0.25s ease",
-              pathColor: "#DC3A61",
-            })}
-          >
-            <Typography>66%</Typography>
-          </CircularProgressbarWithChildren>
-        </div>
-      )}
     </div>
   );
 }

@@ -96,5 +96,23 @@ const useStyles = makeStyles((theme) => ({
       lineHeight: "28px",
     },
   },
+  progressContainer: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  outputContent: {
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    whiteSpace: "pre",
+    height: "547px",
+    width: "1092px",
+    border: `dashed 1px ${theme.palette.action.disabled}`,
+    borderRadius: "8px",
+    resize: "none",
+  },
 }));
 export default useStyles;

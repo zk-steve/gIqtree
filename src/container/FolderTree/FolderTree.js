@@ -1,5 +1,6 @@
 import { Typography } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import clsx from "clsx";
+import React, { useEffect } from "react";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
@@ -9,6 +10,12 @@ function FolderTree({
   listInput,
   handleSetListInput,
   handleDeleteInput,
+  setIsInProcess,
+  isDoneProcess,
+  handleGetOutputContent,
+  currentTab,
+  handleChangeTab,
+  currentFile,
 }) {
   const classes = useStyles();
   useEffect(() => {
@@ -24,6 +31,7 @@ function FolderTree({
     };
     const executeResult = (event, data) => {
       handleSetListOutput(data);
+      setIsInProcess(false);
     };
     ipcRenderer.once("selectFile", selectFile);
     ipcRenderer.once("deleteResult", deleteResult);
@@ -33,13 +41,26 @@ function FolderTree({
       ipcRenderer.removeListener("deleteResult", deleteResult);
       ipcRenderer.removeListener("executeResult", executeResult);
     };
-  }, [handleDeleteInput, handleSetListInput, handleSetListOutput]);
+  }, [
+    handleDeleteInput,
+    handleSetListInput,
+    handleSetListOutput,
+    setIsInProcess,
+  ]);
 
   return (
     <div className={classes.root}>
       <div className={classes.container}>
         <div className={classes.inputAndOutputContainer}>
-          <Typography className={classes.title}>Input</Typography>
+          <Typography
+            className={clsx({
+              [classes.title]: true,
+              [classes.isCurrentTab]: currentTab === "input",
+            })}
+            onClick={() => handleChangeTab("input")}
+          >
+            Input
+          </Typography>
           {listInput.length > 0 &&
             listInput.map((name, index) => (
               <Typography className={classes.fileName} key={index}>
@@ -47,15 +68,35 @@ function FolderTree({
               </Typography>
             ))}
         </div>
-        <div className={classes.inputAndOutputContainer}>
-          <Typography className={classes.title}>Output</Typography>
-          {listOutput.length > 0 &&
-            listOutput.map((name, index) => (
-              <Typography className={classes.fileName} key={index}>
-                {name.name}
-              </Typography>
-            ))}
-        </div>
+        {isDoneProcess && (
+          <div className={classes.inputAndOutputContainer}>
+            <Typography
+              className={clsx({
+                [classes.title]: true,
+                [classes.isCurrentTab]: currentTab === "output",
+              })}
+              onClick={() => handleChangeTab("output")}
+            >
+              Output
+            </Typography>
+            {listOutput.length > 0 &&
+              listOutput.map((name, index) => (
+                <Typography
+                  className={clsx({
+                    [classes.fileName]: true,
+                    [classes.isCurrentFile]: name.name === currentFile,
+                  })}
+                  key={index}
+                  onClick={() => {
+                    handleGetOutputContent(name);
+                    handleChangeTab("output");
+                  }}
+                >
+                  {name.name}
+                </Typography>
+              ))}
+          </div>
+        )}
       </div>
     </div>
   );
