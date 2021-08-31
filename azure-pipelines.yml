@@ -6,6 +6,7 @@ trigger:
     - releases/*
     - dev
     - main
+  batch: true
 name: $(SourceBranchName)_$(Date:ddMMyyyy)$(Rev:.r)
 variables:
   GIT_PAT: $(gitPat)
@@ -16,8 +17,8 @@ resources:
     type: git
     ref: dev
 jobs:
-- job: Job_1
-  displayName: Agent job 1
+- job: U_W
+  displayName: Build Ubuntu and Windown
   pool:
     name: Builder
   steps:
@@ -32,11 +33,44 @@ jobs:
   - task: CmdLine@2
     displayName: Build
     inputs:
-      script: >-
-        ls && rm -Rf dist && ./build.sh && rm -Rf dist/linux-unpacked && rm -Rf dist/win-unpacked
+      script: |
+        ls 
+        rm -Rf dist
+        rm -Rf uw
+        ./build.sh
+        rm -Rf dist/linux-unpacked
+        rm -Rf dist/win-unpacked
+        mkdir uw
+        find ./dist -name '*.exe' -exec cp -prv '{}' "./uw/" ";"
+        find ./dist -name '*.AppImage' -exec cp -prv '{}' "./uw/" ";"
       workingDirectory: $(System.DefaultWorkingDirectory)
   - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: gIqtree'
+    displayName: 'Publish Artifact: Ubuntu And Windown'
     inputs:
-      PathtoPublish: dist
-      ArtifactName: releases
+      PathtoPublish: uw
+      ArtifactName: ubuntu-and-windown
+
+- job: MAC
+  displayName: Build MacOS
+  pool:
+    name: MAC
+  steps:
+  - checkout: self
+  - task: CmdLine@2
+    displayName: Build
+    inputs:
+      script: |
+        ls 
+        rm -Rf dist
+        rm -Rf mac
+        yarn
+        yarn build:mac
+        mkdir mac
+        find ./dist -name '*.dmg' -exec cp -prv '{}' "./mac/" ";"
+      workingDirectory: $(System.DefaultWorkingDirectory)
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: MacOS'
+    inputs:
+      PathtoPublish: mac
+      ArtifactName: mac
+
