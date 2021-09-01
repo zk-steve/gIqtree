@@ -10,9 +10,10 @@ const { iqtreePath } = require("./server/db");
 const { v4: uuidv4 } = require("uuid");
 const { getOutputWhenExecuted } = require("./server/controller/execute");
 const { viewFile } = require("./server/controller/file_handler");
+const os = require("os");
 
 let mainWindow;
-
+let inputFileName;
 function createWindow() {
   mainWindow = new BrowserWindow({
     minWidth: 1440,
@@ -52,14 +53,14 @@ function createWindow() {
       });
 
     console.log({ project_path });
-
-    let iqtreeExecute = path.join(iqtreePath, "iqtree2.exe");
-    let input_path = path.join(project_path, "input", "example.phy");
+    let execName = os.type() === "Windows_NT" ? "iqtree2.exe" : "iqtree2";
+    let iqtreeExecute = path.join(iqtreePath, execName);
+    let input_path = path.join(project_path, "input", inputFileName);
     let output_path = path.join(project_path, "output", "output");
 
     console.log("exec...");
     await child_process.exec(
-      `${iqtreeExecute} -s ${input_path} -pre "${output_path}`,
+      `chmod 755 "${iqtreeExecute}" &&  "${iqtreeExecute}" -s "${input_path}" -pre "${output_path}"`,
       async (err, stdout, stderr) => {
         if (err) {
           console.error(`exec error: ${err}`);
@@ -84,20 +85,24 @@ function createWindow() {
     try {
       // Step 1: Choose msa file and get path and name of it
       const filePath = dialog.showOpenDialogSync({
-        properties: ["multiSelections"],
-        filters: [{ name: "IQTREE", extensions: ["msa", "phy"] }],
+        properties: ['openFile', 'multiSelections'],
+        filters: [{ name:"msa file", extensions: ["msa", "phy"] }],
       });
       if (!filePath) {
         mainWindow.webContents.send("cancelSelect", { canceled: 1 });
       } else {
         const fileName = filePath.map((element) => {
-          let result = element.split("\\");
-          if (!result) {
+
+          console.log(element)
+          let result;
+          if (os.type() === "Windows_NT"){
+            result = element.split("\\");
+          }  else {
             result = element.split("/");
           }
           return result[result.length - 1];
         });
-        console.log({ filePath, fileName });
+        inputFileName = fileName[0]
         // Step 2: Copy input file into folder input of project
         let projectPath;
         await homepage.getProjectById(project_id).then((data) => {
