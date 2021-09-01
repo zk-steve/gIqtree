@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, screen } = require("electron");
 const fs = require("fs");
 const path = require("path");
 const isDev = require("electron-is-dev");
@@ -15,16 +15,25 @@ const os = require("os");
 let mainWindow;
 let inputFileName;
 function createWindow() {
+  const display = screen.getPrimaryDisplay();
+  const dimensions = display.workAreaSize;
   mainWindow = new BrowserWindow({
     minWidth: 1440,
-    minHeight: 900,
+    minHeight: 600,
+    width: dimensions.width,
+    height: dimensions.height,
+    maxWidth: dimensions.width,
+    maxHeight: dimensions.height,
     frame: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,
     },
+    icon: `${__dirname}/assets/icon.ico`
   });
+
+
   mainWindow.loadURL(
     isDev
       ? "http://localhost:3000"

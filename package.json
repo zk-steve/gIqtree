@@ -32,7 +32,7 @@
     "build:win": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build --win portable",
     "build:linux": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build -l",
     "build:mac": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build -m",
-    "start": "concurrently \"cross-env SKIP_PREFLIGHT_CHECK=true BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
+    "start": "concurrently \"cross-env HOST=localhost SKIP_PREFLIGHT_CHECK=true BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "dependencies": {
     "@material-ui/core": "^4.12.2",
