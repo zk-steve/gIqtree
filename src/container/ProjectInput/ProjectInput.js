@@ -67,17 +67,20 @@ function ProjectInput({
         </Typography>
         <Typography className={classes.smallTitle}>
           {isInProcess && "Progression"}
-          {!isInProcess && currentTab === "input" && "Select input file(s)"}
-          {!isInProcess && currentTab === "output" && currentFile}
+          {!isInProcess &&
+            currentTab === "input" &&
+            currentFile === "" &&
+            "Select input file(s)"}
+          {!isInProcess && currentFile !== "" && currentFile}
         </Typography>
-        {currentTab === "output" && !isInProcess && outputContent !== "" && (
+        {!isInProcess && outputContent !== "" && (
           <textarea
             readOnly
             className={classes.outputContent}
             value={outputContent}
           />
         )}
-        {currentTab === "input" && (
+        {currentTab === "input" && currentFile === "" && (
           <div className={classes.inputContainer}>
             {listInput.length === 0 && (
               <div className={classes.input} onClick={handleSelectInput}>
@@ -103,7 +106,7 @@ function ProjectInput({
               <div className={classes.progressContainer}>
                 <div className={classes.progress}>
                   <CircularProgressbarWithChildren
-                    value={10}
+                    value={66}
                     styles={buildStyles({
                       pathTransition: "0.25s ease",
                       pathColor: "#DC3A61",
@@ -117,15 +120,18 @@ function ProjectInput({
           </div>
         )}
 
-        {listInput.length > 0 && !isInProcess && currentTab === "input" && (
-          <Button
-            variant="contained"
-            className={classes.uploadMoreButton}
-            onClick={handleSelectInput}
-          >
-            Upload more
-          </Button>
-        )}
+        {listInput.length > 0 &&
+          !isInProcess &&
+          currentTab === "input" &&
+          currentFile === "" && (
+            <Button
+              variant="contained"
+              className={classes.uploadMoreButton}
+              onClick={handleSelectInput}
+            >
+              Upload more
+            </Button>
+          )}
       </div>
       <AlertDialog isOpen={isOpenAlert} handleClose={handleCloseAlert} />
     </div>

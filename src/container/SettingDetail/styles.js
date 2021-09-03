@@ -149,5 +149,34 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateColumns: "auto auto",
     columnGap: "60px",
   },
+  buttonContainer: {
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    marginLeft: "35px",
+    marginTop: "50px",
+  },
+  button1: {
+    backgroundColor: theme.palette.grey[900],
+    color: "white",
+    "&:hover": {
+      backgroundColor: theme.palette.grey[800],
+    },
+    width: "150px",
+    height: "42px",
+    textTransform: "none",
+    transition: `0.15s ${theme.transitions.easing.easeIn}`,
+  },
+  button2: {
+    borderColor: theme.palette.grey[900],
+    width: "150px",
+    height: "42px",
+    textTransform: "none",
+    marginLeft: "18px",
+    "&:hover": {
+      backgroundColor: theme.palette.grey[300],
+    },
+    transition: `0.15s ${theme.transitions.easing.easeIn}`,
+  },
 }));
 export default useStyles;

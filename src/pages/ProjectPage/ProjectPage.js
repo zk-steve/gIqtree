@@ -84,8 +84,11 @@ function ProjectPage(props) {
     if (tab === "output" && currentFile === "") {
       handleGetOutputContent(listOutput[0]);
     }
-
-    if (tab === "input") setCurrentFile("");
+  };
+  const handleSelectInputTab = () => {
+    handleChangeTab("input");
+    setCurrentFile("");
+    setOutputContent("");
   };
   return (
     <div className={classes.root}>
@@ -115,6 +118,7 @@ function ProjectPage(props) {
             currentTab={currentTab}
             handleChangeTab={handleChangeTab}
             currentFile={currentFile}
+            handleSelectInputTab={handleSelectInputTab}
           />
           <Divider orientation="vertical" variant="fullWidth" />
           {!isSettingOpen && (
@@ -130,7 +134,10 @@ function ProjectPage(props) {
             />
           )}
           {isSettingOpen && (
-            <SettingDetail handleCloseSetting={handleCloseSetting} />
+            <SettingDetail
+              handleCloseSetting={handleCloseSetting}
+              multiPartition={listInput.length > 1}
+            />
           )}
         </div>
       </div>

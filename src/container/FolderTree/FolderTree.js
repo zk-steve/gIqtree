@@ -16,6 +16,7 @@ function FolderTree({
   currentTab,
   handleChangeTab,
   currentFile,
+  handleSelectInputTab,
 }) {
   const classes = useStyles();
   useEffect(() => {
@@ -57,13 +58,23 @@ function FolderTree({
               [classes.title]: true,
               [classes.isCurrentTab]: currentTab === "input",
             })}
-            onClick={() => handleChangeTab("input")}
+            onClick={handleSelectInputTab}
           >
             Input
           </Typography>
           {listInput.length > 0 &&
             listInput.map((name, index) => (
-              <Typography className={classes.fileName} key={index}>
+              <Typography
+                className={clsx({
+                  [classes.fileName]: true,
+                  [classes.isCurrentFile]: name.name === currentFile,
+                })}
+                key={index}
+                onClick={() => {
+                  handleGetOutputContent(name);
+                  handleChangeTab("input");
+                }}
+              >
                 {name.name}
               </Typography>
             ))}
