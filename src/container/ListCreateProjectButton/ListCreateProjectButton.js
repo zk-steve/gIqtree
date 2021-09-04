@@ -8,17 +8,20 @@ const { ipcRenderer } = window.require("electron");
 function ListCreateProjectButton(props) {
   const classes = useStyles();
   const listButton = [
-    "Find Model",
-    "Merge Partitions",
-    "Infer Tree",
-    "Assess Support",
-    "Date Tree",
+    { name: "Find Model", type: "findModel" },
+    { name: "Merge Partitions", type: "mergePartition" },
+
+    { name: "Infer Tree", type: "inferTree" },
+    { name: "Assess Support", type: "assessSupport" },
+    { name: "Date Tree", type: "dateTree" },
   ];
   const [isOpen, setIsOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
+  const [projectType, setProjectType] = useState("");
   const history = useHistory();
-  const handleClick = (name) => {
-    setProjectName(name);
+  const handleClick = (project) => {
+    setProjectName(project.name);
+    setProjectType(project.type);
     setIsOpen(true);
   };
   const handleClose = () => {
@@ -39,7 +42,7 @@ function ListCreateProjectButton(props) {
         <div className={classes.list}>
           {listButton.map((button, index) => (
             <CreateProjectButton
-              name={button}
+              name={button.name}
               onClick={() => handleClick(button)}
               key={index}
             />
@@ -53,6 +56,7 @@ function ListCreateProjectButton(props) {
         confirmAction="Save"
         cancelAction="Cancel"
         handleClose={handleClose}
+        projectType={projectType}
       />
     </div>
   );

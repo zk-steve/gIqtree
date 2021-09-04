@@ -1,7 +1,8 @@
 import { Typography } from "@material-ui/core";
 import clsx from "clsx";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useStyles from "./styles";
+import { Rnd } from "react-rnd";
 const { ipcRenderer } = window.require("electron");
 
 function FolderTree({
@@ -18,7 +19,8 @@ function FolderTree({
   currentFile,
   handleSelectInputTab,
 }) {
-  const classes = useStyles();
+  const [size, setSize] = useState(299);
+  const classes = useStyles({ width: size });
   useEffect(() => {
     const selectFile = (event, data) => {
       const { message } = data;
@@ -50,48 +52,40 @@ function FolderTree({
   ]);
 
   return (
-    <div className={classes.root}>
-      <div className={classes.container}>
-        <div className={classes.inputAndOutputContainer}>
-          <Typography
-            className={clsx({
-              [classes.title]: true,
-              [classes.isCurrentTab]: currentTab === "input",
-            })}
-            onClick={handleSelectInputTab}
-          >
-            Input
-          </Typography>
-          {listInput.length > 0 &&
-            listInput.map((name, index) => (
-              <Typography
-                className={clsx({
-                  [classes.fileName]: true,
-                  [classes.isCurrentFile]: name.name === currentFile,
-                })}
-                key={index}
-                onClick={() => {
-                  handleGetOutputContent(name);
-                  handleChangeTab("input");
-                }}
-              >
-                {name.name}
-              </Typography>
-            ))}
-        </div>
-        {isDoneProcess && (
+    <div className={classes.root} style={{ width: `${size}px` }}>
+      <Rnd
+        size={{ width: "100%", height: "100%" }}
+        disableDragging={true}
+        onResize={(e, direction, ref, delta, position) => {
+          setSize(ref.offsetWidth);
+          console.log(ref.offsetWidth);
+        }}
+        maxWidth="310px"
+        minWidth="90px"
+        enableResizing={{
+          left: false,
+          right: true,
+          bottom: false,
+          top: false,
+          topLeft: false,
+          topRight: false,
+          bottomLeft: false,
+          bottomRight: false,
+        }}
+      >
+        <div className={classes.container}>
           <div className={classes.inputAndOutputContainer}>
             <Typography
               className={clsx({
                 [classes.title]: true,
-                [classes.isCurrentTab]: currentTab === "output",
+                [classes.isCurrentTab]: currentTab === "input",
               })}
-              onClick={() => handleChangeTab("output")}
+              onClick={handleSelectInputTab}
             >
-              Output
+              Input
             </Typography>
-            {listOutput.length > 0 &&
-              listOutput.map((name, index) => (
+            {listInput.length > 0 &&
+              listInput.map((name, index) => (
                 <Typography
                   className={clsx({
                     [classes.fileName]: true,
@@ -100,15 +94,44 @@ function FolderTree({
                   key={index}
                   onClick={() => {
                     handleGetOutputContent(name);
-                    handleChangeTab("output");
+                    handleChangeTab("input");
                   }}
                 >
                   {name.name}
                 </Typography>
               ))}
           </div>
-        )}
-      </div>
+          {isDoneProcess && (
+            <div className={classes.inputAndOutputContainer}>
+              <Typography
+                className={clsx({
+                  [classes.title]: true,
+                  [classes.isCurrentTab]: currentTab === "output",
+                })}
+                onClick={() => handleChangeTab("output")}
+              >
+                Output
+              </Typography>
+              {listOutput.length > 0 &&
+                listOutput.map((name, index) => (
+                  <Typography
+                    className={clsx({
+                      [classes.fileName]: true,
+                      [classes.isCurrentFile]: name.name === currentFile,
+                    })}
+                    key={index}
+                    onClick={() => {
+                      handleGetOutputContent(name);
+                      handleChangeTab("output");
+                    }}
+                  >
+                    {name.name}
+                  </Typography>
+                ))}
+            </div>
+          )}
+        </div>
+      </Rnd>
     </div>
   );
 }

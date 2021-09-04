@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "229px",
+    position: "relative",
   },
   container: {
     width: "100%",
@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "flex-start",
+    overflow: "hidden",
   },
   title: {
     fontWeight: 600,
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "nowrap",
     marginBottom: "10px",
     textAlign: "start",
-    width: "80%",
+    width: "calc(95% - 30px)",
     cursor: "default",
     "&:hover": {
       backgroundColor: "#EBECED",

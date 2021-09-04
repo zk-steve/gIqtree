@@ -20,6 +20,7 @@ function ProjectPopup({
   cancelAction,
   handleClose,
   isOpen,
+  projectType,
 }) {
   const classes = useStyles();
   const [name, setName] = useState("");
@@ -49,7 +50,7 @@ function ProjectPopup({
       setHelperTextPath("Invalid path!");
       return;
     }
-    let data = { name, filePath };
+    let data = { name, filePath, projectType };
     ipcRenderer.send("setProject", data);
   };
   useEffect(() => {

@@ -26,7 +26,7 @@ function SettingDetail({ handleCloseSetting, multiPartition }) {
     model: {
       modelFinder: "LC or JC69",
       proportionOfInvariableSites: "0",
-      rateCategories: "+G",
+      rateCategories: "Gamma",
       autoMerge: "no",
       mergingAlgorithm: "rclusterf",
     },
