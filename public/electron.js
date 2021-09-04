@@ -6,7 +6,6 @@ const homepage = require("./server/controller/homepage");
 const child_process = require("child_process");
 
 const { iqtreePath } = require("./server/db");
-const {storeSetting} = require("./server/command_line/store_json/store_json")
 const { v4: uuidv4 } = require("uuid");
 const { getOutputWhenExecuted } = require("./server/controller/execute");
 const { viewFile } = require("./server/controller/file_handler");
@@ -30,9 +29,8 @@ function createWindow() {
       contextIsolation: false,
       enableRemoteModule: true,
     },
-    icon: `${__dirname}/assets/icon.ico`
+    icon: `${__dirname}/assets/icon.ico`,
   });
-
 
   mainWindow.loadURL(
     isDev
@@ -44,11 +42,17 @@ function createWindow() {
   }
 
   ipcMain.on("viewFile", (event, filePath) => {
-    viewFile(filePath).then((data) => {
-      console.log({ readFile: data });
-      mainWindow.webContents.send("viewFileData", data)
-    }).catch(err => mainWindow.webContents.send("viewFileData", {message: "Does not read file"}))
-  })
+    viewFile(filePath)
+      .then((data) => {
+        console.log({ readFile: data });
+        mainWindow.webContents.send("viewFileData", data);
+      })
+      .catch((err) =>
+        mainWindow.webContents.send("viewFileData", {
+          message: "Does not read file",
+        })
+      );
+  });
 
   ipcMain.handle("executeProject", async (event, project_id) => {
     let project_path;
@@ -68,53 +72,50 @@ function createWindow() {
     let output_path = path.join(project_path, "output", "output");
 
     console.log("exec...");
-    const COMMAND = os.type() === "Windows_NT"
-      ? `${iqtreeExecute} -s ${input_path} -pre "${output_path}`
-      : `chmod 755 "${iqtreeExecute}" &&  "${iqtreeExecute}" -s "${input_path}" -pre "${output_path}"`;
-    await child_process.exec(
-      COMMAND,
-      async (err, stdout, stderr) => {
-        if (err) {
-          console.error(`exec error: ${err}`);
-          return;
-        }
-        console.log("done");
-        let data;
-        await getOutputWhenExecuted(project_path)
-          .then((result) => {
-            data = result;
-          })
-          .catch((err) => {
-            console.log({ errorExecuted: "does not get output" });
-          });
-        console.log({ data });
-        event.sender.send("executeResult", data);
+    const COMMAND =
+      os.type() === "Windows_NT"
+        ? `${iqtreeExecute} -s ${input_path} -pre "${output_path}`
+        : `chmod 755 "${iqtreeExecute}" &&  "${iqtreeExecute}" -s "${input_path}" -pre "${output_path}"`;
+    await child_process.exec(COMMAND, async (err, stdout, stderr) => {
+      if (err) {
+        console.error(`exec error: ${err}`);
+        return;
       }
-    );
+      console.log("done");
+      let data;
+      await getOutputWhenExecuted(project_path)
+        .then((result) => {
+          data = result;
+        })
+        .catch((err) => {
+          console.log({ errorExecuted: "does not get output" });
+        });
+      console.log({ data });
+      event.sender.send("executeResult", data);
+    });
   });
 
   ipcMain.on("selectDialog", async (event, project_id) => {
     try {
       // Step 1: Choose msa file and get path and name of it
       const filePath = dialog.showOpenDialogSync({
-        properties: ['openFile', 'multiSelections'],
-        filters: [{ name:"msa file", extensions: ["msa", "phy"] }],
+        properties: ["openFile", "multiSelections"],
+        filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
       });
       if (!filePath) {
         mainWindow.webContents.send("cancelSelect", { canceled: 1 });
       } else {
         const fileName = filePath.map((element) => {
-
-          console.log(element)
+          console.log(element);
           let result;
-          if (os.type() === "Windows_NT"){
+          if (os.type() === "Windows_NT") {
             result = element.split("\\");
-          }  else {
+          } else {
             result = element.split("/");
           }
           return result[result.length - 1];
         });
-        inputFileName = fileName[0]
+        inputFileName = fileName[0];
         // Step 2: Copy input file into folder input of project
         let projectPath;
         await homepage.getProjectById(project_id).then((data) => {
@@ -230,7 +231,6 @@ function createWindow() {
           console.log("created");
           const input = path.join(filePath, "input");
           const output = path.join(filePath, "output");
-          const setting = path.join(filePath, ".setting.json")
           fs.mkdir(input, { recursive: true }, (err) => {
             if (err) throw err;
             else console.log("Created input folder");
@@ -239,7 +239,6 @@ function createWindow() {
             if (err) throw err;
             else console.log("Created input folder");
           });
-          storeSetting(setting);
         }
       });
       let project_id = uuidv4();

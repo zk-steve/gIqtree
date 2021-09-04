@@ -22,6 +22,7 @@
   "main": "public/electron.js",
   "homepage": "./",
   "scripts": {
+    "test": "jest",
     "react-start": "react-scripts start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test --env=jsdom",
@@ -56,6 +57,7 @@
     "concurrently": "^6.2.0",
     "electron": "^13.1.7",
     "electron-builder": "^22.11.7",
+    "test": "^0.6.0",
     "wait-on": "^6.0.0"
   },
   "eslintConfig": {

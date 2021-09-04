@@ -412,8 +412,8 @@ function SettingDetail({ handleCloseSetting, multiPartition }) {
         },
       ],
       rateCategories: [
-        { label: "Gamma", value: "+G", id: "gamma" },
-        { label: "FreeRate", value: "+R", id: "freeRate" },
+        { label: "Gamma", value: "Gamma", id: "gamma" },
+        { label: "FreeRate", value: "FreeRate", id: "freeRate" },
       ],
       stateFrequency: [
         {
