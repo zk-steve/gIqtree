@@ -231,6 +231,7 @@ function createWindow() {
 
   ipcMain.on("setProject", (event, data) => {
     const { name, filePath, projectType } = data;
+    console.log({data})
     if (!fs.existsSync(filePath)) {
       fs.mkdir(filePath, { recursive: true }, (err) => {
         if (err) throw err;
