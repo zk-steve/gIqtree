@@ -2,14 +2,16 @@ const { app, BrowserWindow, ipcMain, dialog, screen } = require("electron");
 const fs = require("fs");
 const path = require("path");
 const isDev = require("electron-is-dev");
-const homepage = require("./server/controller/homepage");
 const child_process = require("child_process");
+const os = require("os");
 
+const homepage = require("./server/controller/homepage");
 const { iqtreePath } = require("./server/db");
 const { v4: uuidv4 } = require("uuid");
 const { getOutputWhenExecuted } = require("./server/controller/execute");
 const { viewFile } = require("./server/controller/file_handler");
-const os = require("os");
+
+let OBJECT_SETTING;
 
 let mainWindow;
 let inputFileName;
@@ -52,6 +54,11 @@ function createWindow() {
           message: "Does not read file",
         })
       );
+  });
+
+  ipcMain.handle("saveSetting", (event, object_model) => {
+    OBJECT_SETTING = object_model;
+    console.log({ OBJECT_SETTING });
   });
 
   ipcMain.handle("executeProject", async (event, project_id) => {
@@ -223,7 +230,7 @@ function createWindow() {
   });
 
   ipcMain.on("setProject", (event, data) => {
-    const { name, filePath } = data;
+    const { name, filePath, projectType } = data;
     if (!fs.existsSync(filePath)) {
       fs.mkdir(filePath, { recursive: true }, (err) => {
         if (err) throw err;
@@ -243,9 +250,11 @@ function createWindow() {
       });
       let project_id = uuidv4();
       console.log(project_id);
-      homepage.setProject(name, filePath, project_id).then((data) => {
-        mainWindow.webContents.send("setProjectSuccess", data);
-      });
+      homepage
+        .setProject(name, filePath, project_id, projectType)
+        .then((data) => {
+          mainWindow.webContents.send("setProjectSuccess", data);
+        });
     }
   });
 

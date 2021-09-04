@@ -3,7 +3,8 @@ module.exports.CREATE_TABLE_PROJECT = `CREATE TABLE IF NOT EXISTS project (
     name TEXT,
     time TEXT,
     process INTEGER,
-    path TEXT
+    path TEXT,
+    project_type TEXT
 )`;
 
 module.exports.CREATE_TABLE_INPUT = `CREATE TABLE IF NOT EXISTS input (

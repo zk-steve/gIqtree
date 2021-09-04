@@ -1,14 +1,9 @@
-const fs = require("fs");
-const os = require("os");
 const { assessment_mapping } = require("./mapping/assessment_mapping");
-
 const { data_mapping } = require("./mapping/data_mapping");
 const { dating_mapping } = require("./mapping/dating_mapping");
 const { model_mapping } = require("./mapping/model_mapping");
 const { other_mapping } = require("./mapping/other_mapping");
 const { tree_search_mapping } = require("./mapping/tree_search_mapping");
-
-const BASE_COMMAND = os.type() === "Windows_NT" ? "iqtree2.exe" : "iqtree2";
 
 const listInput = (project_path) => {
   return ["hihi", "haha"];
@@ -31,7 +26,7 @@ const mappingCommand = (object_model, listInput, output_path) => {
   // Step 7 - other/ enter command-line
   data.replace("-m MFP -n 0", "-m MF");
   data.replace("-m TEST -n 0", "-m TESTONLY");
-  return BASE_COMMAND + data;
+  return data;
 };
 
 const example = {
@@ -88,3 +83,5 @@ const example = {
 // store(base_command)
 const data = mappingCommand(example, listInput, "hihi");
 console.log(data);
+
+module.exports.mappingCommand = mappingCommand;

@@ -61,34 +61,31 @@ module.exports.getOutput = () => {
   });
 };
 
-module.exports.setProject = (name, path, project_id) => {
+module.exports.setProject = (name, path, project_id, projectType) => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
       let stmp = db.prepare(
         `INSERT INTO project 
-        VALUES(?,?, DATETIME("now"), ?, ?)`
+        VALUES(?,?, DATETIME("now"), ?, ?, ?)`
       );
-      stmp.run(project_id, name, 0, path);
+      stmp.run(project_id, name, 0, path, projectType);
 
       stmp.finalize();
-      resolve({ name, path, project_id });
+      resolve({ name, path, project_id, projectType });
     });
   });
 };
 
-module.exports.getInputByPath = async(storePath) => {
+module.exports.getInputByPath = async (storePath) => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
-      db.all(
-        `SELECT * FROM input WHERE path = "${storePath}"`,
-        (err, rows) => {
-          if (err) reject(err);
-          else resolve(rows);
-        }
-      );
+      db.all(`SELECT * FROM input WHERE path = "${storePath}"`, (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows);
+      });
     });
   });
-}
+};
 
 module.exports.getInputById = async (input_id) => {
   return new Promise((resolve, reject) => {
@@ -102,7 +99,7 @@ module.exports.getInputById = async (input_id) => {
       );
     });
   });
-}
+};
 
 module.exports.setInput = async (input_id, name, path, project_id) => {
   return new Promise((resolve, reject) => {
@@ -126,7 +123,7 @@ module.exports.deleteInput = async (input_id, project_id) => {
       );
     });
   });
-}
+};
 
 module.exports.getHistory = async () => {
   return new Promise((resolve, reject) => {
