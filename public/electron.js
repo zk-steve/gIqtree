@@ -56,11 +56,12 @@ function createWindow() {
     viewFile(filePath)
       .then((data) => {
         console.log({ readFile: data });
-        mainWindow.webContents.send("viewFileData", data);
+        mainWindow.webContents.send("viewFileData", {message: data, status: 1});
       })
       .catch((err) =>
         mainWindow.webContents.send("viewFileData", {
           message: "Does not read file",
+          status: 0
         })
       );
   });
@@ -79,7 +80,7 @@ function createWindow() {
         project_path = data[0].path;
       })
       .catch((err) => {
-        console.log({ error: "does not get project path" });
+        event.sender.send("executeResult", {message:"does not get project path" ,status:0});
       });
 
     console.log({ project_path });
@@ -98,6 +99,7 @@ function createWindow() {
       child_process.exec(COMMAND, async (err, stdout, stderr) => {
         if (err) {
           console.error(`exec error: ${err}`);
+          event.sender.send("executeResult", {message: "Does not execute", status: 0});
           return;
         }
         console.log("done");
@@ -109,11 +111,14 @@ function createWindow() {
           })
           .catch((err) => {
             console.log({ errorExecuted: "does not get output" });
+            event.sender.send("executeResult", {message: "Does not get output", status: 0});
           });
         console.log({ data });
-        event.sender.send("executeResult", data);
+        event.sender.send("executeResult", {message: data, status: 1});
       });
-    }).catch(err => {console.log(err)});
+    }).catch(err => {
+      event.sender.send("executeResult", {message: "Input is folder and contains files", status: 0});
+    });
     
   });
 
@@ -125,7 +130,7 @@ function createWindow() {
         filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
       });
       if (!filePath) {
-        mainWindow.webContents.send("cancelSelect", { canceled: 1 });
+        mainWindow.webContents.send("cancelSelect", { message: "File path is not true", status: 0 });
       } else {
         const fileName = filePath.map((element) => {
           console.log(element);
@@ -177,7 +182,7 @@ function createWindow() {
         }, 100);
       }
     } catch (err) {
-      console.log({ err });
+      console.log({ message: "Some thing was wrong", status: 0 });
     }
   });
 
@@ -234,14 +239,14 @@ function createWindow() {
 
   ipcMain.on("getHistory", (event) => {
     homepage.getHistory().then((data) => {
-      mainWindow.webContents.send("returnHistory", data);
+      mainWindow.webContents.send("returnHistory", {message:data, status:1});
     });
   });
   ipcMain.on("openDir", async (event, name) => {
     const { filePath } = await dialog.showSaveDialog({
       defaultPath: `./${name}`,
     });
-    mainWindow.webContents.send("openDirSuccess", { filePath });
+    mainWindow.webContents.send("openDirSuccess", { message:filePath, status:1 });
   });
 
   ipcMain.on("setProject", (event, data) => {
@@ -249,18 +254,24 @@ function createWindow() {
     console.log({data})
     if (!fs.existsSync(filePath)) {
       fs.mkdir(filePath, { recursive: true }, (err) => {
-        if (err) throw err;
+        if (err) {
+          mainWindow.webContents.send("setProjectSuccess", {message: "Does not create project", status: 0});
+        }
         else {
           console.log("created");
           const input = path.join(filePath, "input");
           const output = path.join(filePath, "output");
           fs.mkdir(input, { recursive: true }, (err) => {
-            if (err) throw err;
+            if (err) {
+              mainWindow.webContents.send("setProjectSuccess", {message: "Does not create input folder", status: 0});
+            }
             else console.log("Created input folder");
           });
           fs.mkdir(output, { recursive: true }, (err) => {
-            if (err) throw err;
-            else console.log("Created input folder");
+            if (err) {
+              mainWindow.webContents.send("setProjectSuccess", {message: "Does not create output folder", status: 0});
+            }
+            else console.log("Created ouput folder");
           });
         }
       });
@@ -269,7 +280,9 @@ function createWindow() {
       homepage
         .setProject(name, filePath, project_id, projectType)
         .then((data) => {
-          mainWindow.webContents.send("setProjectSuccess", data);
+          mainWindow.webContents.send("setProjectSuccess", {message: data, status: 1});
+        }).catch(err => {
+          mainWindow.webContents.send("setProjectSuccess", {message: "Does not store project into database", status: 0});
         });
     }
   });
@@ -303,13 +316,17 @@ function createWindow() {
           break;
       }
       console.log({ data });
-      mainWindow.webContents.send("returnProjectById", data);
+      mainWindow.webContents.send("returnProjectById", {message: data, status:1});
+    }).catch(err => {
+      mainWindow.webContents.send("returnProjectById", {message: "Can not get project", status: 0});
     });
   });
 
   ipcMain.on("search", (event, name) => {
     homepage.search(name).then((data) => {
-      mainWindow.webContents.send("searchProject", data);
+      mainWindow.webContents.send("searchProject", {message: data,status: 1});
+    }).catch(err => {
+      mainWindow.webContents.send("searchProject", {message: "Can not search",status: 1});
     });
   });
   mainWindow.on("closed", () => (mainWindow = null));
