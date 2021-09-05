@@ -23,6 +23,7 @@ function ProjectPage(props) {
   const [outputContent, setOutputContent] = useState("");
   const { id } = useParams();
   const [projectName, setProjectName] = useState();
+  const [projectSetting, setProjectSetting] = useState(null);
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
     ipcRenderer.send("getInputByProject", id);
@@ -34,8 +35,9 @@ function ProjectPage(props) {
       setOutputContent(data);
     };
     ipcRenderer.once("returnProjectById", (event, data) => {
-      const { name } = data[0];
+      const { name, object_model } = data[0];
       setProjectName(name);
+      setProjectSetting(object_model);
     });
     ipcRenderer.on("inputsOfProject", getProjectInput);
     ipcRenderer.on("viewFileData", viewFileData);
@@ -137,6 +139,7 @@ function ProjectPage(props) {
             <SettingDetail
               handleCloseSetting={handleCloseSetting}
               multiPartition={listInput.length > 1}
+              projectSetting={projectSetting}
             />
           )}
         </div>

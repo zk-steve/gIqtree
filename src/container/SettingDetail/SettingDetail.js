@@ -13,57 +13,9 @@ import React, { useState } from "react";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
-function SettingDetail({ handleCloseSetting, multiPartition }) {
+function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
   const classes = useStyles();
-  const [settingField, setSettingField] = useState({
-    data: {
-      alignment: "",
-      partition: "",
-      sequence: "autoDetect",
-      codon: "codon1",
-      partitionType: "edgeProportional",
-    },
-    model: {
-      modelFinder: "LC or JC69",
-      proportionOfInvariableSites: "0",
-      rateCategories: "Gamma",
-      autoMerge: "no",
-      mergingAlgorithm: "rclusterf",
-    },
-    tree: {
-      on: "no",
-      numberOfUnsuccessfulIterationsToStop: "100",
-      perturbationStrength: "0.5",
-      constrainedTreeFile: "",
-      referenceTree: "",
-    },
-    assessment: {
-      bootstrapMethod: "none",
-      ufbootOption: "no",
-      multiPartitionSamplingStrategy: "SITE",
-      singleBranchTest: {
-        parametric: false,
-        SHlike: false,
-        aBayes: false,
-        localBootstrap: false,
-      },
-      concordanceFactor: {
-        gCF: "",
-        sCF: "",
-      },
-    },
-    dating: {
-      availableDateInfoType: "none",
-      dateExtraction: "no",
-      dateFile: "",
-      branchContainingOutgroup: "autoDetect",
-    },
-    others: {
-      numberOfCPUCores: "",
-      prefix: "",
-      enterCommandLine: "",
-    },
-  });
+  const [settingField, setSettingField] = useState({ ...projectSetting });
   const [currentOption, setCurrentOption] = useState("data");
   const settingDetail = {
     data: {
