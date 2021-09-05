@@ -19,7 +19,7 @@ function FolderTree({
   currentFile,
   handleSelectInputTab,
 }) {
-  const [size, setSize] = useState(299);
+  const [size, setSize] = useState(210);
   const classes = useStyles({ width: size });
   useEffect(() => {
     const selectFile = (event, data) => {
