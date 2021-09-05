@@ -1,10 +1,12 @@
 module.exports.data_mapping = (object_model, inputs) => {
   let result = "";
   // Alignment
-  result += " -s";
-  inputs.forEach((input) => {
-    result += " " + input;
-  });
+  if (object_model["projectType"] !== "assessment") {
+    result += " -s";
+    inputs.forEach((input) => {
+      result += " " + input;
+    });
+  }
   // Partition file  - done
   // Sequence type
   console.log(object_model["data"]["sequence"]);

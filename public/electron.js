@@ -11,6 +11,12 @@ const { v4: uuidv4 } = require("uuid");
 const { getOutputWhenExecuted } = require("./server/controller/execute");
 const { viewFile } = require("./server/controller/file_handler");
 
+const FIND_MODEL = require("./server/command_line/default/find_model");
+const MERGE_PARTITION = require("./server/command_line/default/merger_partition");
+const INFER_TREE = require("./server/command_line/default/infer_tree");
+const ASSESS_SUPPORT = require("./server/command_line/default/assess_support");
+const DATE_TREE = require("./server/command_line/default/date_tree")
+
 let OBJECT_SETTING;
 
 let mainWindow;
@@ -261,6 +267,28 @@ function createWindow() {
 
   ipcMain.on("getProjectById", (event, id) => {
     homepage.getProjectById(id).then((data) => {
+      console.log(data[0].project_type)
+      switch (data[0].project_type) {
+        case "findModel":
+          data[0].object_model = FIND_MODEL;
+          break;
+        case "mergePartition":
+          console.log({ MERGE_PARTITION });
+          data[0].object_model = MERGE_PARTITION;
+          break;
+        case "inferTree":
+          data[0].object_model = INFER_TREE;
+          break;
+        case "assessSupport":
+          data[0].object_model = ASSESS_SUPPORT;
+          break;
+        case "dateTree":
+          data[0].object_model = DATE_TREE;
+          break;
+        default:
+          break;
+      }
+      console.log({ data });
       mainWindow.webContents.send("returnProjectById", data);
     });
   });
