@@ -11,6 +11,9 @@ const { v4: uuidv4 } = require("uuid");
 const { getOutputWhenExecuted } = require("./server/controller/execute");
 const { viewFile } = require("./server/controller/file_handler");
 
+
+const { mappingCommand } = require("./server/command_line/mapping_command");
+
 const FIND_MODEL = require("./server/command_line/default/find_model");
 const MERGE_PARTITION = require("./server/command_line/default/merger_partition");
 const INFER_TREE = require("./server/command_line/default/infer_tree");
@@ -67,7 +70,7 @@ function createWindow() {
     console.log({ OBJECT_SETTING });
   });
 
-  ipcMain.handle("executeProject", async (event, project_id) => {
+  ipcMain.handle("executeProject", async (event, project_id, object_model) => {
     let project_path;
     await homepage
       .getProjectById(project_id)
@@ -83,12 +86,18 @@ function createWindow() {
     let iqtreeExecute = path.join(iqtreePath, execName);
     let input_path = path.join(project_path, "input", inputFileName);
     let output_path = path.join(project_path, "output", "output");
-
+    let prefix = os.type() === "Windows_NT"
+      ? ""
+      : `chmod 755 "${iqtreeExecute}" &&`;
+    let mapping;
+    console.log({object_model, input_path, output_path})
+    await mappingCommand(object_model, input_path, output_path).then((data) => {
+      mapping = data
+    }).catch(err => {});
+    console.log({ mapping });
     console.log("exec...");
-    const COMMAND =
-      os.type() === "Windows_NT"
-        ? `${iqtreeExecute} -s ${input_path} -pre "${output_path}`
-        : `chmod 755 "${iqtreeExecute}" &&  "${iqtreeExecute}" -s "${input_path}" -pre "${output_path}"`;
+    const COMMAND = prefix + iqtreeExecute + mapping
+    console.log({ COMMAND });
     await child_process.exec(COMMAND, async (err, stdout, stderr) => {
       if (err) {
         console.error(`exec error: ${err}`);
