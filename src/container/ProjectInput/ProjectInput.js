@@ -30,8 +30,8 @@ function ProjectInput({
   };
   useEffect(() => {
     const selectFile = (event, data) => {
-      const { message } = data;
-      if (Array.isArray(message)) {
+      const { message, status } = data;
+      if (status === 1) {
         handleSetListInput(message);
       } else setIsOpenAlert(true);
     };

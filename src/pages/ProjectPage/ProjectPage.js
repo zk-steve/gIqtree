@@ -32,12 +32,13 @@ function ProjectPage(props) {
       if (status === 1) handleSetListInput(message);
     };
     const viewFileData = (event, data) => {
-      setOutputContent(data);
+      const { message, status } = data;
+      if (status === 1) setOutputContent(message);
     };
     ipcRenderer.once("returnProjectById", (event, data) => {
-      const { name, object_model } = data[0];
-      setProjectName(name);
-      setProjectSetting(object_model);
+      const { message, status } = data;
+      if (status === 1) setProjectName(message[0].name);
+      setProjectSetting(message[0].object_model);
     });
     ipcRenderer.on("inputsOfProject", getProjectInput);
     ipcRenderer.on("viewFileData", viewFileData);
@@ -122,7 +123,7 @@ function ProjectPage(props) {
             currentFile={currentFile}
             handleSelectInputTab={handleSelectInputTab}
           />
-          <Divider orientation="vertical" variant="fullWidth" />
+          <Divider orientation="vertical" className={classes.divider} />
           {!isSettingOpen && (
             <ProjectInput
               listInput={listInput}

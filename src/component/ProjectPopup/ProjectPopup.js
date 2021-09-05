@@ -55,8 +55,8 @@ function ProjectPopup({
   };
   useEffect(() => {
     ipcRenderer.once("openDirSuccess", (event, data) => {
-      const { filePath } = data;
-      setPath(filePath);
+      const { status, message } = data;
+      if (status === 1) setPath(message);
     });
   });
 

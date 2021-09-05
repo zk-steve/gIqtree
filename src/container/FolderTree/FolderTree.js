@@ -23,8 +23,8 @@ function FolderTree({
   const classes = useStyles({ width: size });
   useEffect(() => {
     const selectFile = (event, data) => {
-      const { message } = data;
-      if (Array.isArray(message)) handleSetListInput(message);
+      const { message, status } = data;
+      if (status === 1) handleSetListInput(message);
     };
     const deleteResult = (event, response) => {
       const { name, status } = response;
@@ -33,8 +33,11 @@ function FolderTree({
       }
     };
     const executeResult = (event, data) => {
-      handleSetListOutput(data);
-      setIsInProcess(false);
+      const { message, status } = data;
+      if (status === 1) {
+        handleSetListOutput(message);
+        setIsInProcess(false);
+      }
     };
     ipcRenderer.once("selectFile", selectFile);
     ipcRenderer.once("deleteResult", deleteResult);

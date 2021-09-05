@@ -29,7 +29,8 @@ function ListCreateProjectButton(props) {
   };
   useEffect(() => {
     ipcRenderer.once("setProjectSuccess", (event, data) => {
-      history.push(`/project/${data.project_id}`);
+      const { message, status } = data;
+      if (status === 1) history.push(`/project/${message.project_id}`);
     });
   });
 

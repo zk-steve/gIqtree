@@ -17,5 +17,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
     width: "calc(100% - 42px)",
   },
+  divider: {
+    height: "calc(100vh - 144px)",
+  },
 }));
 export default useStyles;

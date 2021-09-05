@@ -14,10 +14,12 @@ function ProjectHistoryTable(props) {
   useEffect(() => {
     ipcRenderer.send("getHistory");
     const returnHistory = (event, data) => {
-      setHistory(data);
+      const { message, status } = data;
+      if (status === 1) setHistory(message);
     };
     const searchProject = (event, data) => {
-      setHistory(data);
+      const { message, status } = data;
+      if (status === 1) setHistory(message);
     };
     ipcRenderer.on("returnHistory", returnHistory);
     ipcRenderer.on("searchProject", searchProject);
