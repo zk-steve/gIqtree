@@ -70,8 +70,9 @@ function createWindow() {
     console.log({ OBJECT_SETTING });
   });
 
-  ipcMain.handle("executeProject", async (event, project_id, object_model) => {
+  ipcMain.handle("executeProject", async (event, project_id) => {
     let project_path;
+    let object_model = OBJECT_SETTING;
     await homepage
       .getProjectById(project_id)
       .then((data) => {
@@ -84,37 +85,36 @@ function createWindow() {
     console.log({ project_path });
     let execName = os.type() === "Windows_NT" ? "iqtree2.exe" : "iqtree2";
     let iqtreeExecute = path.join(iqtreePath, execName);
-    let input_path = path.join(project_path, "input", inputFileName);
+    let input_path = path.join(project_path, "input");
     let output_path = path.join(project_path, "output", "output");
     let prefix = os.type() === "Windows_NT"
       ? ""
       : `chmod 755 "${iqtreeExecute}" &&`;
-    let mapping;
     console.log({object_model, input_path, output_path})
     await mappingCommand(object_model, input_path, output_path).then((data) => {
-      mapping = data
-    }).catch(err => {});
-    console.log({ mapping });
-    console.log("exec...");
-    const COMMAND = prefix + iqtreeExecute + mapping
-    console.log({ COMMAND });
-    await child_process.exec(COMMAND, async (err, stdout, stderr) => {
-      if (err) {
-        console.error(`exec error: ${err}`);
-        return;
-      }
-      console.log("done");
-      let data;
-      await getOutputWhenExecuted(project_path)
-        .then((result) => {
-          data = result;
-        })
-        .catch((err) => {
-          console.log({ errorExecuted: "does not get output" });
-        });
-      console.log({ data });
-      event.sender.send("executeResult", data);
-    });
+      console.log("exec...");
+      const COMMAND = prefix + iqtreeExecute + data
+      console.log({ COMMAND });
+      child_process.exec(COMMAND, async (err, stdout, stderr) => {
+        if (err) {
+          console.error(`exec error: ${err}`);
+          return;
+        }
+        console.log("done");
+        let data;
+        await getOutputWhenExecuted(project_path)
+          .then((result) => {
+            console.log({data})
+            data = result;
+          })
+          .catch((err) => {
+            console.log({ errorExecuted: "does not get output" });
+          });
+        console.log({ data });
+        event.sender.send("executeResult", data);
+      });
+    }).catch(err => {console.log(err)});
+    
   });
 
   ipcMain.on("selectDialog", async (event, project_id) => {
@@ -280,19 +280,24 @@ function createWindow() {
       switch (data[0].project_type) {
         case "findModel":
           data[0].object_model = FIND_MODEL;
+          OBJECT_SETTING = FIND_MODEL;
           break;
         case "mergePartition":
           console.log({ MERGE_PARTITION });
           data[0].object_model = MERGE_PARTITION;
+          OBJECT_SETTING = MERGE_PARTITION;
           break;
         case "inferTree":
           data[0].object_model = INFER_TREE;
+          OBJECT_SETTING = INFER_TREE;
           break;
         case "assessSupport":
           data[0].object_model = ASSESS_SUPPORT;
+          OBJECT_SETTING = ASSESS_SUPPORT;
           break;
         case "dateTree":
           data[0].object_model = DATE_TREE;
+          OBJECT_SETTING = DATE_TREE;
           break;
         default:
           break;

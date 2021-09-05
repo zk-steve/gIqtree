@@ -29,14 +29,14 @@ const mappingCommand = (object_model, input_path, output_path) => {
       let data = "";
       //Step 1: Mapping data
       data += data_mapping(object_model, inputFiles);
-      //Step 2: Mapping model
-      data += model_mapping(object_model, inputFiles);
-      //Step 3: Tree Search
-      data += tree_search_mapping(object_model, inputFiles);
-      //Step 4: Assessment
-      data += assessment_mapping(object_model, inputFiles);
-      //Step 5: Dating
-      data += dating_mapping(object_model, inputFiles);
+      // //Step 2: Mapping model
+      // data += model_mapping(object_model, inputFiles);
+      // //Step 3: Tree Search
+      // data += tree_search_mapping(object_model, inputFiles);
+      // //Step 4: Assessment
+      // data += assessment_mapping(object_model, inputFiles);
+      // //Step 5: Dating
+      // data += dating_mapping(object_model, inputFiles);
       //Step 6: Other
       data += other_mapping(object_model, inputFiles, output_path);
       // Step 7 - other/ enter command-line
@@ -100,10 +100,10 @@ const example = {
   },
 };
 
-// store(base_command)
-mappingCommand(example, "D:/TestIQTREE/asdas/input", "D:/TestIQTREE/asdas/output").then((data) => {
-  console.log(data);
-}).catch(err => console.log(err))
+// // store(base_command)
+// mappingCommand(example, "D:/TestIQTREE/asdas/input", "D:/TestIQTREE/asdas/output").then((data) => {
+//   console.log(data);
+// }).catch(err => console.log(err))
 
 
 module.exports.mappingCommand = mappingCommand;
