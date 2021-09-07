@@ -12,12 +12,13 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
   },
   settingDetail: {
-    marginLeft: "35px",
-    marginTop: "26px",
+    paddingLeft: "35px",
+    paddingTop: "26px",
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "flex-start",
+    boxSizing: "border-box",
   },
   settingDetailTitle: {
     fontSize: "24px",
@@ -27,6 +28,10 @@ const useStyles = makeStyles((theme) => ({
   textInput: {
     height: "37px",
     width: "435px",
+    "& svg": {
+      cursor: "pointer",
+      paddingRight: "8px",
+    },
   },
   inputLabel: {
     fontWeight: 600,
@@ -150,10 +155,11 @@ const useStyles = makeStyles((theme) => ({
     columnGap: "60px",
   },
   buttonContainer: {
+    boxSizing: "border-box",
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center",
-    marginLeft: "35px",
+    paddingLeft: "35px",
     marginTop: "50px",
   },
   button1: {
@@ -177,6 +183,11 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.grey[300],
     },
     transition: `0.15s ${theme.transitions.easing.easeIn}`,
+  },
+  settingOverflow: {
+    overflowY: "auto",
+    height: "calc(100vh - 144px)",
+    flex: 1,
   },
 }));
 export default useStyles;

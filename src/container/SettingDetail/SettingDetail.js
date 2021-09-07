@@ -9,7 +9,8 @@ import {
 } from "@material-ui/core";
 import clsx from "clsx";
 import SettingMenu from "component/SettingMenu/SettingMenu";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Directory } from "shared/icons";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
@@ -17,6 +18,9 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
   const classes = useStyles();
   const [settingField, setSettingField] = useState({ ...projectSetting });
   const [currentOption, setCurrentOption] = useState("data");
+  useEffect(() => {
+    console.log(settingField);
+  }, [settingField]);
   const settingDetail = {
     data: {
       textInput: [
@@ -466,7 +470,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
           handleCloseSetting={handleCloseSetting}
         />
         <Divider variant="fullWidth" orientation="vertical" />
-        <div>
+        <div className={classes.settingOverflow}>
           {currentOption === "data" && (
             <form className={classes.settingDetail}>
               <Typography className={classes.settingDetailTitle}>
@@ -481,6 +485,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   className={classes.textInput}
                   value={settingField.data.alignment}
                   onChange={(e) => handleChangeDataSetting(e, "alignment")}
+                  startAdornment={<Directory />}
                 />
               </div>
               {multiPartition && (
@@ -496,6 +501,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                     className={classes.textInput}
                     value={settingField.data.partition}
                     onChange={(e) => handleChangeDataSetting(e, "partition")}
+                    startAdornment={<Directory />}
                   />
                 </div>
               )}
@@ -905,6 +911,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   Number of unsuccesful iterations to stop:
                 </Typography>
                 <OutlinedInput
+                  type="number"
                   className={classes.shortTextInput}
                   value={settingField.tree.numberOfUnsuccessfulIterationsToStop}
                   onChange={(e) =>
@@ -920,6 +927,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   Perturbation strength (between 0 and 1) for randomized NNI:
                 </Typography>
                 <OutlinedInput
+                  type="number"
                   className={classes.shortTextInput}
                   value={settingField.tree.perturbationStrength}
                   onChange={(e) =>
@@ -937,6 +945,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   onChange={(e) =>
                     handleChangeTreeSetting(e, "constrainedTreeFile")
                   }
+                  startAdornment={<Directory />}
                 />
               </div>
               <div className={classes.textInputContainer}>
@@ -947,6 +956,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   className={classes.textInput}
                   value={settingField.tree.referenceTree}
                   onChange={(e) => handleChangeTreeSetting(e, "referenceTree")}
+                  startAdornment={<Directory />}
                 />
               </div>
             </form>
@@ -1179,10 +1189,12 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                         "gCF"
                       )
                     }
+                    startAdornment={<Directory />}
                   />
                 </div>
                 <div className={clsx(classes.radioInput, classes.selectMargin)}>
                   <OutlinedInput
+                    type="number"
                     className={classes.textInput}
                     placeholder="sCF"
                     value={settingField.assessment.concordanceFactor.sCF}
@@ -1245,6 +1257,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   value={settingField.dating.dateFile}
                   placeholder="Path"
                   onChange={(e) => handleChangeDatingSetting(e, "dateFile")}
+                  startAdornment={<Directory />}
                 />
               </div>
               <div className={classes.textInputContainer}>
@@ -1277,6 +1290,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   Number of CPU cores
                 </Typography>
                 <OutlinedInput
+                  type="number"
                   className={classes.textInput}
                   value={settingField.others.numberOfCPUCores}
                   placeholder="Number of cores"

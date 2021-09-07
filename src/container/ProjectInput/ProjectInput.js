@@ -60,11 +60,11 @@ function ProjectInput({
   return (
     <div className={classes.root}>
       <div className={classes.container}>
-        <Typography variant="h5" className={classes.title}>
+        {/* <Typography variant="h5" className={classes.title}>
           {isInProcess && "Input"}
           {!isInProcess && currentTab === "input" && projectName}
           {!isInProcess && currentTab === "output" && "Output"}
-        </Typography>
+        </Typography> */}
         <Typography className={classes.smallTitle}>
           {isInProcess && "Progression"}
           {!isInProcess &&
@@ -80,7 +80,7 @@ function ProjectInput({
             value={outputContent}
           />
         )}
-        {currentTab === "input" && currentFile === "" && (
+        {((currentTab === "input" && currentFile === "") || isInProcess) && (
           <div className={classes.inputContainer}>
             {listInput.length === 0 && (
               <div className={classes.input} onClick={handleSelectInput}>

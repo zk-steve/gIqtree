@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  background-color: white;
 }
 
 .App-logo {
@@ -34,4 +35,7 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #666;
+}
+body::-webkit-scrollbar {
+  display: none;
 }

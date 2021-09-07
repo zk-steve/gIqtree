@@ -19,6 +19,7 @@ function FolderTree({
   currentFile,
   handleSelectInputTab,
 }) {
+  const maxWidth = window.innerWidth / 5;
   const [size, setSize] = useState(210);
   const classes = useStyles({ width: size });
   useEffect(() => {
@@ -61,9 +62,8 @@ function FolderTree({
         disableDragging={true}
         onResize={(e, direction, ref, delta, position) => {
           setSize(ref.offsetWidth);
-          console.log(ref.offsetWidth);
         }}
-        maxWidth="310px"
+        maxWidth={maxWidth}
         minWidth="90px"
         enableResizing={{
           left: false,

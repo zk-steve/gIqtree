@@ -3,6 +3,8 @@ import { makeStyles } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   root: {
     position: "relative",
+    overflowY: "auto",
+    overflowX: "hidden",
   },
   container: {
     width: "100%",
