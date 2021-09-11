@@ -1,5 +1,7 @@
 const fs = require("fs");
 const path = require("path")
+const { dialog } = require("electron");
+const os = require("os")
 
 const homepage = require("./homepage");
 
@@ -32,6 +34,28 @@ module.exports.copyFilesInput = (fileName, filePath, project_id) => {
             })
         } catch (err) {
             reject(err);
+        }
+    })
+}
+
+module.exports.chooseFile = () => {
+    return new Promise((resolve, reject) => {
+        const filePath = dialog.showOpenDialogSync({
+            properties: ["openFile", "multiSelections"],
+            filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
+        });
+        if (!filePath) {
+            reject({ message: "File path is not true", status: 0 })
+        }
+        else {
+            console.log({ filePath })
+            if (os.type() === "Windows_NT") {
+                filePath = filePath.split("\\");
+            } else {
+                filePath = filePath.split("/");
+            }
+            console.log({ filePath })
+            resolve({message: filePath, status: 1})
         }
     })
 }
