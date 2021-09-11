@@ -35,11 +35,15 @@ function ProjectPage(props) {
       const { message, status } = data;
       if (status === 1) setOutputContent(message);
     };
+    const progressResult = (event, data) => {
+      console.log(data);
+    };
     ipcRenderer.once("returnProjectById", (event, data) => {
       const { message, status } = data;
       if (status === 1) setProjectName(message[0].name);
       setProjectSetting(message[0].object_model);
     });
+    ipcRenderer.once("progressResult", progressResult);
     ipcRenderer.on("inputsOfProject", getProjectInput);
     ipcRenderer.on("viewFileData", viewFileData);
   }, [id]); //get list input and get project name
@@ -63,6 +67,7 @@ function ProjectPage(props) {
     setIsExecuteDisabled(true);
     setIsPauseDisabled(false);
     setIsInProcess(true);
+    handleGetProjectProgress();
   };
   const handleSetListInput = (data) => {
     setListInput([...data]);
@@ -92,6 +97,9 @@ function ProjectPage(props) {
     handleChangeTab("input");
     setCurrentFile("");
     setOutputContent("");
+  };
+  const handleGetProjectProgress = () => {
+    ipcRenderer.invoke("progressProject", id);
   };
   return (
     <div className={classes.root}>

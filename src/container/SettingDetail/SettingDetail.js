@@ -461,6 +461,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
     console.log(settingField);
     ipcRenderer.invoke("saveSetting", settingField);
   };
+  const handleChooseFile = () => {};
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -485,7 +486,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   className={classes.textInput}
                   value={settingField.data.alignment}
                   onChange={(e) => handleChangeDataSetting(e, "alignment")}
-                  startAdornment={<Directory />}
+                  startAdornment={<Directory onClick={handleChooseFile} />}
                 />
               </div>
               {multiPartition && (
@@ -501,7 +502,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                     className={classes.textInput}
                     value={settingField.data.partition}
                     onChange={(e) => handleChangeDataSetting(e, "partition")}
-                    startAdornment={<Directory />}
+                    startAdornment={<Directory onClick={handleChooseFile} />}
                   />
                 </div>
               )}
@@ -945,7 +946,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   onChange={(e) =>
                     handleChangeTreeSetting(e, "constrainedTreeFile")
                   }
-                  startAdornment={<Directory />}
+                  startAdornment={<Directory onClick={handleChooseFile} />}
                 />
               </div>
               <div className={classes.textInputContainer}>
@@ -956,7 +957,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   className={classes.textInput}
                   value={settingField.tree.referenceTree}
                   onChange={(e) => handleChangeTreeSetting(e, "referenceTree")}
-                  startAdornment={<Directory />}
+                  startAdornment={<Directory onClick={handleChooseFile} />}
                 />
               </div>
             </form>
@@ -1189,7 +1190,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                         "gCF"
                       )
                     }
-                    startAdornment={<Directory />}
+                    startAdornment={<Directory onClick={handleChooseFile} />}
                   />
                 </div>
                 <div className={clsx(classes.radioInput, classes.selectMargin)}>
@@ -1257,7 +1258,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   value={settingField.dating.dateFile}
                   placeholder="Path"
                   onChange={(e) => handleChangeDatingSetting(e, "dateFile")}
-                  startAdornment={<Directory />}
+                  startAdornment={<Directory onClick={handleChooseFile} />}
                 />
               </div>
               <div className={classes.textInputContainer}>
