@@ -4,7 +4,6 @@ const path = require("path");
 const isDev = require("electron-is-dev");
 const child_process = require("child_process");
 const os = require("os");
-
 const homepage = require("./server/controller/homepage");
 const { iqtreePath } = require("./server/db");
 const { v4: uuidv4 } = require("uuid");
@@ -18,7 +17,8 @@ const FIND_MODEL = require("./server/command_line/default/find_model");
 const MERGE_PARTITION = require("./server/command_line/default/merger_partition");
 const INFER_TREE = require("./server/command_line/default/infer_tree");
 const ASSESS_SUPPORT = require("./server/command_line/default/assess_support");
-const DATE_TREE = require("./server/command_line/default/date_tree")
+const DATE_TREE = require("./server/command_line/default/date_tree");
+const { getProgress } = require("./server/controller/progress");
 
 let OBJECT_SETTING;
 
@@ -65,6 +65,14 @@ function createWindow() {
         })
       );
   });
+  
+  ipcMain.handle("progressProject", async(event, project_id) => {
+    await getProgress(project_id).then(data => {
+      event.sender.send("progressResult", data)
+    }).catch(err => {
+      event.sender.send("progressResult", err)
+    })
+  })
 
   ipcMain.handle("saveSetting", (event, object_model) => {
     OBJECT_SETTING = object_model;
