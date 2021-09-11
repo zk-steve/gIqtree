@@ -18,9 +18,39 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
   const classes = useStyles();
   const [settingField, setSettingField] = useState({ ...projectSetting });
   const [currentOption, setCurrentOption] = useState("data");
+  const [currentPathOption, setCurrentPathOption] = useState([]);
+
   useEffect(() => {
     console.log(settingField);
   }, [settingField]);
+  useEffect(() => {
+    const handleChangePathOption = (option, subOption, path) => {
+      if (subOption !== "concordanceFactor") {
+        setSettingField({
+          ...settingField,
+          [option]: { ...settingField[option], [subOption]: path },
+        });
+      } else
+        setSettingField({
+          ...settingField,
+          [option]: {
+            ...settingField[option],
+            [subOption]: { ...settingField[option][subOption], gCF: path },
+          },
+        });
+    };
+    const chooseFileResult = (event, data) => {
+      const { status, message } = data;
+      console.log(data);
+      if (status === 1)
+        handleChangePathOption(
+          currentPathOption[0],
+          currentPathOption[1],
+          message
+        );
+    };
+    ipcRenderer.once("chooseFileResult", chooseFileResult);
+  }, [currentPathOption, settingField]);
   const settingDetail = {
     data: {
       textInput: [
@@ -461,7 +491,11 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
     console.log(settingField);
     ipcRenderer.invoke("saveSetting", settingField);
   };
-  const handleChooseFile = () => {};
+  const handleChooseFile = (option, subOption) => {
+    ipcRenderer.send("chooseFile");
+    setCurrentPathOption([option, subOption]);
+  };
+
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -486,7 +520,11 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   className={classes.textInput}
                   value={settingField.data.alignment}
                   onChange={(e) => handleChangeDataSetting(e, "alignment")}
-                  startAdornment={<Directory onClick={handleChooseFile} />}
+                  startAdornment={
+                    <Directory
+                      onClick={() => handleChooseFile("data", "alignment")}
+                    />
+                  }
                 />
               </div>
               {multiPartition && (
@@ -502,7 +540,11 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                     className={classes.textInput}
                     value={settingField.data.partition}
                     onChange={(e) => handleChangeDataSetting(e, "partition")}
-                    startAdornment={<Directory onClick={handleChooseFile} />}
+                    startAdornment={
+                      <Directory
+                        onClick={() => handleChooseFile("data", "partition")}
+                      />
+                    }
                   />
                 </div>
               )}
@@ -946,7 +988,13 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   onChange={(e) =>
                     handleChangeTreeSetting(e, "constrainedTreeFile")
                   }
-                  startAdornment={<Directory onClick={handleChooseFile} />}
+                  startAdornment={
+                    <Directory
+                      onClick={() =>
+                        handleChooseFile("tree", "constrainedTreeFile")
+                      }
+                    />
+                  }
                 />
               </div>
               <div className={classes.textInputContainer}>
@@ -957,7 +1005,11 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   className={classes.textInput}
                   value={settingField.tree.referenceTree}
                   onChange={(e) => handleChangeTreeSetting(e, "referenceTree")}
-                  startAdornment={<Directory onClick={handleChooseFile} />}
+                  startAdornment={
+                    <Directory
+                      onClick={() => handleChooseFile("tree", "referenceTree")}
+                    />
+                  }
                 />
               </div>
             </form>
@@ -1190,7 +1242,13 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                         "gCF"
                       )
                     }
-                    startAdornment={<Directory onClick={handleChooseFile} />}
+                    startAdornment={
+                      <Directory
+                        onClick={() =>
+                          handleChooseFile("assessment", "concordanceFactor")
+                        }
+                      />
+                    }
                   />
                 </div>
                 <div className={clsx(classes.radioInput, classes.selectMargin)}>
@@ -1258,7 +1316,11 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                   value={settingField.dating.dateFile}
                   placeholder="Path"
                   onChange={(e) => handleChangeDatingSetting(e, "dateFile")}
-                  startAdornment={<Directory onClick={handleChooseFile} />}
+                  startAdornment={
+                    <Directory
+                      onClick={() => handleChooseFile("dating", "dateFile")}
+                    />
+                  }
                 />
               </div>
               <div className={classes.textInputContainer}>

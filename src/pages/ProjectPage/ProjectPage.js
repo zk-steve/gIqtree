@@ -99,7 +99,9 @@ function ProjectPage(props) {
     setOutputContent("");
   };
   const handleGetProjectProgress = () => {
-    ipcRenderer.invoke("progressProject", id);
+    const getProgress = setInterval(() => {
+      ipcRenderer.invoke("progressProject", id);
+    }, 500);
   };
   return (
     <div className={classes.root}>
