@@ -24,6 +24,8 @@ function ProjectPage(props) {
   const { id } = useParams();
   const [projectName, setProjectName] = useState();
   const [projectSetting, setProjectSetting] = useState(null);
+  const [progressPercentage, setProgressPercentage] = useState(0);
+  var getProgress;
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
     ipcRenderer.send("getInputByProject", id);
@@ -36,14 +38,18 @@ function ProjectPage(props) {
       if (status === 1) setOutputContent(message);
     };
     const progressResult = (event, data) => {
+      const { status, message } = data;
       console.log(data);
+      if (status === 1) {
+        setProgressPercentage(message);
+      }
     };
     ipcRenderer.once("returnProjectById", (event, data) => {
       const { message, status } = data;
       if (status === 1) setProjectName(message[0].name);
       setProjectSetting(message[0].object_model);
     });
-    ipcRenderer.once("progressResult", progressResult);
+    ipcRenderer.on("progressResult", progressResult);
     ipcRenderer.on("inputsOfProject", getProjectInput);
     ipcRenderer.on("viewFileData", viewFileData);
   }, [id]); //get list input and get project name
@@ -56,6 +62,9 @@ function ProjectPage(props) {
       setIsDoneProcess(true);
     }
   }, [listInput, listOutput]); //change button status
+  useEffect(() => {
+    if (!isInProcess) clearInterval(getProgress);
+  }, [getProgress, isInProcess]);
   const handleOpenSetting = () => {
     if (!isSettingOpen) setIsSettingOpen(true);
   };
@@ -99,7 +108,11 @@ function ProjectPage(props) {
     setOutputContent("");
   };
   const handleGetProjectProgress = () => {
+<<<<<<< HEAD
+    getProgress = setInterval(() => {
+=======
     const getProgress = setInterval(() => {
+>>>>>>> dev
       ipcRenderer.invoke("progressProject", id);
     }, 500);
   };
@@ -144,6 +157,7 @@ function ProjectPage(props) {
               outputContent={outputContent}
               currentTab={currentTab}
               currentFile={currentFile}
+              progressPercentage={progressPercentage}
             />
           )}
           {isSettingOpen && (

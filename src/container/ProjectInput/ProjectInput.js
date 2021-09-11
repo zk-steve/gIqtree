@@ -21,6 +21,7 @@ function ProjectInput({
   outputContent,
   currentTab,
   currentFile,
+  progressPercentage,
 }) {
   const classes = useStyles();
   const { id } = useParams();
@@ -106,13 +107,13 @@ function ProjectInput({
               <div className={classes.progressContainer}>
                 <div className={classes.progress}>
                   <CircularProgressbarWithChildren
-                    value={66}
+                    value={progressPercentage}
                     styles={buildStyles({
                       pathTransition: "0.25s ease",
                       pathColor: "#DC3A61",
                     })}
                   >
-                    <Typography>66%</Typography>
+                    <Typography>{progressPercentage}%</Typography>
                   </CircularProgressbarWithChildren>
                 </div>
               </div>
