@@ -40,22 +40,25 @@ module.exports.copyFilesInput = (fileName, filePath, project_id) => {
 
 module.exports.chooseFile = () => {
     return new Promise((resolve, reject) => {
-        const filePath = dialog.showOpenDialogSync({
-            properties: ["openFile", "multiSelections"],
-            filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
-        });
-        if (!filePath) {
-            reject({ message: "File path is not true", status: 0 })
-        }
-        else {
-            console.log({ filePath })
-            if (os.type() === "Windows_NT") {
-                filePath = filePath.split("\\");
-            } else {
-                filePath = filePath.split("/");
+        try {
+            const filePath = dialog.showOpenDialogSync({
+                properties: ["openFile", "multiSelections"],
+                filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
+            });
+            if (!filePath) {
+                reject({ message: "File path is not true", status: 0 })
             }
-            console.log({ filePath })
-            resolve({message: filePath, status: 1})
+            else {
+                if (os.type() === "Windows_NT") {
+                    filePath = filePath.split("\\");
+                } else {
+                    filePath = filePath.split("/");
+                }
+                console.log({ filePath })
+                resolve({message: filePath, status: 1})
+            }
+        } catch (err) {
+            reject({message: "Something was wrong", status: 0})
         }
     })
 }

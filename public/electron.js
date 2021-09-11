@@ -19,6 +19,7 @@ const INFER_TREE = require("./server/command_line/default/infer_tree");
 const ASSESS_SUPPORT = require("./server/command_line/default/assess_support");
 const DATE_TREE = require("./server/command_line/default/date_tree");
 const { getProgress } = require("./server/controller/progress");
+const { chooseFile } = require("./server/controller/dialog");
 
 let OBJECT_SETTING;
 
@@ -71,6 +72,14 @@ function createWindow() {
       event.sender.send("progressResult", data)
     }).catch(err => {
       event.sender.send("progressResult", err)
+    })
+  })
+
+  ipcMain.on("chooseFile", (event) => {
+    chooseFile().then(data => {
+      mainWindow.webContents.send("chooseFileResult", data)
+    }).catch(err => {
+      mainWindow.webContents.send("chooseFileResult", err);
     })
   })
 
