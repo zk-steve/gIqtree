@@ -17,6 +17,9 @@ const processLineByLine = async (path) => {
 
     for await (const line of rl) {
       // Each line in input.txt will be successively available here as `line`.
+      if (line.includes("ERROR")) {
+        return line;
+      }
       if (line.includes("****  TOTAL")) {
         progress =
           progress >= 0 && progress + 12 < 100 ? progress + 12 : progress;
@@ -38,6 +41,10 @@ module.exports.getProgress = (project_id) => {
       .then((data) => {
         processLineByLine(path.join(data[0].path, "output", "output.log"))
           .then((data) => {
+            console.log({ data })
+            if (typeof(data) === "string") {
+              reject({ message: data, status: 0 })
+            }
             let result = { message: data, status: 1 };
             resolve(result);
           })

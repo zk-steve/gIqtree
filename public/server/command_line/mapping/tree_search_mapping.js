@@ -7,7 +7,7 @@ module.exports.tree_search_mapping = (object_model, inputs) => {
   //Step 2: Number of unsuccessful iterations to stop
   if (
     object_model["tree"]["numberOfUnsuccessfulIterationsToStop"] !== "100" &&
-    object_model["tree"]["numberOfUnsuccessfulIterationsToStop"] !== ""
+    object_model["tree"]["numberOfUnsuccessfulIterationsToStop"] !== "" && typeof(object_model["tree"]["numberOfUnsuccessfulIterationsToStop"]) === "number"
   ) {
     result +=
       " --nstop " +
@@ -16,12 +16,12 @@ module.exports.tree_search_mapping = (object_model, inputs) => {
   //Step 3: Perturbation strength (between 0 and 1) for randomized NNI
   if (
     object_model["tree"]["perturbationStrength"] !== "0.5" &&
-    object_model["tree"]["perturbationStrength"] !== ""
+    object_model["tree"]["perturbationStrength"] !== "" && typeof(object_model["tree"]["perturbationStrength"]) === "number"
   ) {
     result += " --perturb " + object_model["tree"]["perturbationStrength"];
   }
   //Step 4: Constrained tree file
-  if (object_model["tree"]["constrainedTreeFile"] !== "") {
+  if (object_model["tree"]["constrainedTreeFile"] !== "" && object_model["tree"]["constrainedTreeFile"] !== "none") {
     result += " -g " + object_model["tree"]["constrainedTreeFile"];
   }
   //Step 5: Reference tree

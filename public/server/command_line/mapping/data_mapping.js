@@ -2,7 +2,7 @@ module.exports.data_mapping = (object_model, inputs) => {
   let result = "";
   // Alignment
   if (object_model["projectType"] !== "assessment") {
-    result += " -s";
+    result += "-s";
     inputs.forEach((input) => {
       result += " " + input;
     });

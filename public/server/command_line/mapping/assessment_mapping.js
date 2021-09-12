@@ -2,9 +2,9 @@ module.exports.assessment_mapping = (object_model, inputs) => {
   let result = "";
   //Step 1: Bootstrap method
   if (object_model["assessment"]["bootstrapMethod"] !== "none") {
-    if (object_model["assessment"]["bootstrapMethod"] === "ufboot") {
+    if (object_model["assessment"]["bootstrapMethod"] === "ufboot" && object_model["assessment"]["replicates"]) {
       result += " -B " + object_model["assessment"]["replicates"];
-    } else if (object_model["assessment"]["bootstrapMethod"] === "standard") {
+    } else if (object_model["assessment"]["bootstrapMethod"] === "standard" && object_model["assessment"]["replicates"]) {
       result += " -b " + object_model["assessment"]["replicates"];
     }
   }
@@ -30,13 +30,13 @@ module.exports.assessment_mapping = (object_model, inputs) => {
   if (object_model["assessment"]["singleBranchTest"]["parametric"]) {
     result += " --alrt 0"
   }
-  if (object_model["assessment"]["singleBranchTest"]["SHlike"]) {
+  if (object_model["assessment"]["singleBranchTest"]["SHlike"] && typeof(object_model["assessment"]["singleBranchTest"]["SHlike"]) === "number") {
     result += " --alrt " + object_model["assessment"]["singleBranchTest"]["SHlike"]
   }
   if (object_model["assessment"]["singleBranchTest"]["aBayes"]) {
     result += " --alrt abayes"
   }
-  if (object_model["assessment"]["singleBranchTest"]["localBootstrap"]) {
+  if (object_model["assessment"]["singleBranchTest"]["localBootstrap"] && typeof(object_model["assessment"]["singleBranchTest"]["localBootstrap"]) === "number") {
     result += " --lbp " + object_model["assessment"]["singleBranchTest"]["localBootstrap"]
   }
   //Step 5: Concordance factor
@@ -44,7 +44,7 @@ module.exports.assessment_mapping = (object_model, inputs) => {
     result +=
       " --gcf " + object_model["assessment"]["concordanceFactor"]["gCF"];
   }
-  if (object_model["assessment"]["concordanceFactor"]["sCF"] !== "") {
+  if (object_model["assessment"]["concordanceFactor"]["sCF"] !== "" && typeof(object_model["assessment"]["concordanceFactor"]["sCF"]) === "number") {
     result +=
       " --scf " + object_model["assessment"]["concordanceFactor"]["sCF"];
   }
