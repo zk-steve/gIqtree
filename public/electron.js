@@ -13,7 +13,7 @@ const { getOutputWhenExecuted } = require("./server/controller/execute");
 const { viewFile } = require("./server/controller/file_handler");
 
 
-const { mappingCommand } = require("./server/command_line/mapping_command");
+const { mappingCommand, baseCommand } = require("./server/command_line/mapping_command");
 
 const FIND_MODEL = require("./server/command_line/default/find_model");
 const MERGE_PARTITION = require("./server/command_line/default/merger_partition");
@@ -110,6 +110,25 @@ function createWindow() {
       .catch(err => {
         mainWindow.webContents.send("openProjectResult", err);
       })
+  })
+
+  ipcMain.handle("testSetting", async (event, project_id, object_model) => {
+    OBJECT_SETTING = object_model
+    let project_path;
+    await homepage
+      .getProjectById(project_id)
+      .then((data) => {
+        project_path = data[0].path;
+      })
+      .catch((err) => {
+        event.sender.send("progressResult", {message: "ERROR", status: 0})
+      });
+    console.log({ project_path });
+    let input_path = path.join(project_path, "input");
+    let output_path = path.join(project_path, "output", "output");
+    let command = baseCommand() + mappingCommand(OBJECT_SETTING, input_path, output_path)
+    console.log({command})
+    event.sender.send("progressResult", {message: command, status: 1})
   })
 
   ipcMain.handle("saveSetting", (event, object_model) => {
