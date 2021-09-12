@@ -134,11 +134,11 @@ function createWindow() {
     let output_path = path.join(project_path, "output", "output");
     let prefix = os.type() === "Windows_NT"
       ? ""
-      : `chmod 755 "${iqtreeExecute}" &&`;
+      : `chmod 755 "${iqtreeExecute}" && `;
     console.log({object_model, input_path, output_path})
     await mappingCommand(object_model, input_path, output_path).then((data) => {
       console.log("exec...");
-      const COMMAND = prefix + iqtreeExecute + data
+      const COMMAND = prefix + `"${iqtreeExecute}" ${data}`
       console.log({ COMMAND });
       child_process.exec(COMMAND, async (err, stdout, stderr) => {
         if (err) {
