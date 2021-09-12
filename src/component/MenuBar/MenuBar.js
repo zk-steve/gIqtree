@@ -32,9 +32,8 @@ function MenuBar(props) {
     ipcRenderer.once("unmaximize", () => {
       setIsMaximize(false);
     });
-    ipcRenderer.once("openProjectResult", (event, data) => {
+    ipcRenderer.on("openProjectResult", (event, data) => {
       const { status, message } = data;
-      console.log(data);
       if (status === 1) {
         history.push(`/project/${message.project_id}`);
       }

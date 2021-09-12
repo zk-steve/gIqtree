@@ -10,6 +10,7 @@ import {
   CircularProgressbarWithChildren,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import TreeView from "component/TreeView/TreeView";
 const { ipcRenderer } = window.require("electron");
 
 function ProjectInput({
@@ -74,13 +75,22 @@ function ProjectInput({
             "Select input file(s)"}
           {!isInProcess && currentFile !== "" && currentFile}
         </Typography>
-        {!isInProcess && outputContent !== "" && (
-          <textarea
-            readOnly
-            className={classes.outputContent}
-            value={outputContent}
-          />
-        )}
+        {!isInProcess &&
+          outputContent !== "" &&
+          !["bionj", "treefile"].includes(currentFile.split(".")[1]) && (
+            <textarea
+              readOnly
+              className={classes.outputContent}
+              value={outputContent}
+            />
+          )}
+        {!isInProcess &&
+          outputContent !== "" &&
+          ["bionj", "treefile"].includes(currentFile.split(".")[1]) && (
+            <div className={classes.outputContent}>
+              <TreeView content={outputContent} />
+            </div>
+          )}
         {((currentTab === "input" && currentFile === "") || isInProcess) && (
           <div className={classes.inputContainer}>
             {listInput.length === 0 && (

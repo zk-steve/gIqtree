@@ -44,7 +44,6 @@ function ProjectPage(props) {
     };
     const progressResult = (event, data) => {
       const { status, message } = data;
-      console.log(data);
       if (status === 1) {
         setProgressPercentage(message);
       }
@@ -75,7 +74,10 @@ function ProjectPage(props) {
     }
   }, [listInput, listOutput]); //change button status
   useEffect(() => {
-    if (!isInProcess) clearInterval(progressInterval);
+    if (!isInProcess) {
+      clearInterval(progressInterval);
+      setProgressPercentage(0);
+    }
   }, [isInProcess, progressInterval]);
   const handleOpenSetting = () => {
     if (!isSettingOpen) setIsSettingOpen(true);
