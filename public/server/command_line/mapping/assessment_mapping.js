@@ -26,7 +26,19 @@ module.exports.assessment_mapping = (object_model, inputs) => {
         "multiPartitionSamplingStrategy"
       ].toUpperCase();
   }
-  //Step 4: Single branch tests - pending
+  //Step 4: Single branch tests
+  if (object_model["assessment"]["singleBranchTest"]["parametric"]) {
+    result += " --alrt 0"
+  }
+  if (object_model["assessment"]["singleBranchTest"]["SHlike"]) {
+    result += " --alrt " + object_model["assessment"]["singleBranchTest"]["SHlike"]
+  }
+  if (object_model["assessment"]["singleBranchTest"]["aBayes"]) {
+    result += " --alrt abayes"
+  }
+  if (object_model["assessment"]["singleBranchTest"]["localBootstrap"]) {
+    result += " --lbp " + object_model["assessment"]["singleBranchTest"]["localBootstrap"]
+  }
   //Step 5: Concordance factor
   if (object_model["assessment"]["concordanceFactor"]["gCF"] !== "") {
     result +=
