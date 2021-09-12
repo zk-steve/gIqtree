@@ -112,7 +112,7 @@ function createWindow() {
 
   ipcMain.handle("saveSetting", (event, object_model) => {
     OBJECT_SETTING = object_model;
-    console.log({ OBJECT_SETTING });
+    mainWindow.webContents.send("saveSettingResult", {message: OBJECT_SETTING, status: 1})
   });
 
   ipcMain.handle("executeProject", async (event, project_id) => {
