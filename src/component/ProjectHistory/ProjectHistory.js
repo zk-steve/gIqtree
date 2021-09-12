@@ -3,10 +3,10 @@ import React from "react";
 import { File } from "shared/icons";
 import useStyles from "./styles";
 
-function ProjectHistory({ projectName, percent, time }) {
+function ProjectHistory({ projectName, percent, time, onClick }) {
   const classes = useStyles();
   return (
-    <div className={classes.root}>
+    <div className={classes.root} onClick={onClick}>
       <div className={classes.container}>
         <div className={classes.fileIcon}>
           <File />

@@ -28,10 +28,15 @@ function ProjectPage(props) {
   const [progressInterval, setProgressInterval] = useState(null);
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
-    ipcRenderer.send("getInputByProject", id);
-    const getProjectInput = (event, data) => {
+    ipcRenderer.send("reopenProject", id);
+    const reopenProjectResult = (event, data) => {
       const { status, message } = data;
-      if (status === 1) handleSetListInput(message);
+      if (status === 1) {
+        if (message.inputFiles.length > 0)
+          handleSetListInput(message.inputFiles);
+        if (message.outputFiles.length > 0)
+          handleSetListOutput(message.outputFiles);
+      }
     };
     const viewFileData = (event, data) => {
       const { message, status } = data;
@@ -50,7 +55,7 @@ function ProjectPage(props) {
       setProjectSetting(message[0].object_model);
     });
     ipcRenderer.on("progressResult", progressResult);
-    ipcRenderer.on("inputsOfProject", getProjectInput);
+    ipcRenderer.on("reopenProjectResult", reopenProjectResult);
     ipcRenderer.on("viewFileData", viewFileData);
   }, [id]); //get list input and get project name
   useEffect(() => {

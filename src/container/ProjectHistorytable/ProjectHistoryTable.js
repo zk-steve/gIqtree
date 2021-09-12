@@ -1,25 +1,30 @@
 import { Divider, Tab, Tabs, Typography } from "@material-ui/core";
 import ProjectHistory from "component/ProjectHistory/ProjectHistory";
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import { SmallFile } from "shared/icons";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 function ProjectHistoryTable(props) {
   const classes = useStyles();
   const [value, setValue] = useState(0);
-  const [history, setHistory] = useState([]);
+  const [listHistory, setListHistory] = useState([]);
+  const history = useHistory();
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+  const handleChooseHistory = (id) => {
+    history.push(`/project/${id}`);
   };
   useEffect(() => {
     ipcRenderer.send("getHistory");
     const returnHistory = (event, data) => {
       const { message, status } = data;
-      if (status === 1) setHistory(message);
+      if (status === 1) setListHistory(message);
     };
     const searchProject = (event, data) => {
       const { message, status } = data;
-      if (status === 1) setHistory(message);
+      if (status === 1) setListHistory(message);
     };
     ipcRenderer.on("returnHistory", returnHistory);
     ipcRenderer.on("searchProject", searchProject);
@@ -51,12 +56,13 @@ function ProjectHistoryTable(props) {
         </div>
         <Divider variant="fullWidth" className={classes.divider} />
       </div>
-      {history.map((project, index) => (
+      {listHistory.map((project, index) => (
         <ProjectHistory
           projectName={project.name}
           percent={project.process}
           time={project.time}
           key={index}
+          onClick={() => handleChooseHistory(project.project_id)}
         />
       ))}
     </div>

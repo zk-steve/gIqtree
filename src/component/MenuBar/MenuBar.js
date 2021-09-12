@@ -5,11 +5,12 @@ import useStyles from "./styles";
 import clsx from "clsx";
 import ProjectPopup from "component/ProjectPopup/ProjectPopup";
 import Logo from "shared/img/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 const ipcRenderer = window.require("electron").ipcRenderer;
 function MenuBar(props) {
   const classes = useStyles();
   const [isMaximize, setIsMaximize] = useState(false);
+  const history = useHistory();
   const onMinimize = () => {
     ipcRenderer.send("minimizeApp");
   };
@@ -31,8 +32,17 @@ function MenuBar(props) {
     ipcRenderer.once("unmaximize", () => {
       setIsMaximize(false);
     });
-  }, []);
-
+    ipcRenderer.once("openProjectResult", (event, data) => {
+      const { status, message } = data;
+      console.log(data);
+      if (status === 1) {
+        history.push(`/project/${message.project_id}`);
+      }
+    });
+  }, [history]);
+  const handleOpenProject = () => {
+    ipcRenderer.send("openProject");
+  };
   return (
     <>
       <div className={classes.root}>
@@ -59,7 +69,10 @@ function MenuBar(props) {
               </Typography>
             </div>
           </Link>
-          <div className={clsx(classes.button, classes.leftButton)}>
+          <div
+            className={clsx(classes.button, classes.leftButton)}
+            onClick={handleOpenProject}
+          >
             <Typography variant="body2" className={classes.text}>
               Open
             </Typography>
