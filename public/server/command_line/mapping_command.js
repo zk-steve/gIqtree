@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
 
+const {iqtreePath} = require("../db")
 const { assessment_mapping } = require("./mapping/assessment_mapping");
 const { data_mapping } = require("./mapping/data_mapping");
 const { dating_mapping } = require("./mapping/dating_mapping");
@@ -22,6 +24,19 @@ const listInput = (input_path) => {
     });
   })
 };
+
+// '"C:\\Users\\nguye\\AppData\\iqtree\\iqtree-2.0.6-Windows\\bin\\iqtree2.exe" '
+// '"C:\\Users\\nguye\\AppData\\iqtree\\iqtree-2.0.6-Windows\\bin\\iqtree2.exe" '
+
+const baseCommand = () => {
+  let execName = os.type() === "Windows_NT" ? "iqtree2.exe" : "iqtree2";
+    let iqtreeExecute = path.join(iqtreePath, execName);
+    let prefix = os.type() === "Windows_NT"
+      ? ""
+    : `chmod 755 "${iqtreeExecute}" && `;
+  console.log({baseCommand: prefix + `"${iqtreeExecute}" `})
+  return prefix + `"${iqtreeExecute}" `
+}
 
 const mappingCommand = (object_model, input_path, output_path) => {
   return new Promise((resolve, reject) => {
@@ -106,4 +121,7 @@ const example = {
 // }).catch(err => console.log(err))
 
 
-module.exports.mappingCommand = mappingCommand;
+module.exports = {
+  mappingCommand,
+  baseCommand
+}

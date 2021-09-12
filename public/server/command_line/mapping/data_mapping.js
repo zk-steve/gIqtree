@@ -4,7 +4,7 @@ module.exports.data_mapping = (object_model, inputs) => {
   if (object_model["projectType"] !== "assessment") {
     result += "-s";
     inputs.forEach((input) => {
-      result += " " + input;
+      result += " " + `"${input}"`;
     });
   }
   // Partition file  - done

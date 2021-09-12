@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const child_process = require("child_process");
+const {kill} = require("process")
 const os = require("os");
 const homepage = require("./server/controller/homepage");
 const project = require("./server/controller/project")
@@ -23,6 +24,7 @@ const { getProgress } = require("./server/controller/progress");
 const { chooseFile } = require("./server/controller/dialog");
 
 let OBJECT_SETTING;
+let COMMAND = "";
 
 let mainWindow;
 let inputFileName;
@@ -112,59 +114,36 @@ function createWindow() {
 
   ipcMain.handle("saveSetting", (event, object_model) => {
     OBJECT_SETTING = object_model;
-    mainWindow.webContents.send("saveSettingResult", {message: OBJECT_SETTING, status: 1})
+    mainWindow.webContents.send("saveSettingResult", {message: OBJECT_SETTING, status: 1, command: COMMAND})
   });
 
-  ipcMain.handle("executeProject", async (event, project_id) => {
-    let project_path;
+  ipcMain.on("restart", (event, project_id) => {
+    let type = "restart";
     let object_model = OBJECT_SETTING;
-    await homepage
-      .getProjectById(project_id)
-      .then((data) => {
-        project_path = data[0].path;
+    project.executeProject(project_id, object_model, type)
+      .then(data => {
+        COMMAND = data.command
+        console.log({BBB: COMMAND})
+        event.sender.send("executeResult", data)
       })
-      .catch((err) => {
-        event.sender.send("executeResult", {message:"does not get project path" ,status:0});
-      });
+        .catch(err => event.sender.send("executeResult", err))
+  })
 
-    console.log({ project_path });
-    let execName = os.type() === "Windows_NT" ? "iqtree2.exe" : "iqtree2";
-    let iqtreeExecute = path.join(iqtreePath, execName);
-    let input_path = path.join(project_path, "input");
-    let output_path = path.join(project_path, "output", "output");
-    let prefix = os.type() === "Windows_NT"
-      ? ""
-      : `chmod 755 "${iqtreeExecute}" && `;
-    console.log({object_model, input_path, output_path})
-    await mappingCommand(object_model, input_path, output_path).then((data) => {
-      console.log("exec...");
-      const COMMAND = prefix + `"${iqtreeExecute}" ${data}`
-      console.log({ COMMAND });
-      child_process.exec(COMMAND, async (err, stdout, stderr) => {
-        if (err) {
-          console.error(`exec error: ${err}`);
-          event.sender.send("executeResult", {message: "Does not execute", status: 0});
-          return;
-        }
-        console.log("done");
-        let data;
-        await getOutputWhenExecuted(project_path)
-          .then((result) => {
-            console.log({data})
-            data = result;
-          })
-          .catch((err) => {
-            console.log({ errorExecuted: "does not get output" });
-            event.sender.send("executeResult", {message: "Does not get output", status: 0});
-          });
-        console.log({ data });
-        data = Object.assign(data, {command: COMMAND})
-        event.sender.send("executeResult", {message: data, status: 1});
-      });
-    }).catch(err => {
-      event.sender.send("executeResult", {message: "Input is folder and contains files", status: 0});
-    });
-    
+  ipcMain.on("pauseProject", (event, process_id) => {
+    kill(process_id, 'SIGINT')
+    mainWindow.webContents.send({message: "Pause", status: 1})
+  })
+
+  ipcMain.handle("executeProject", async (event, project_id) => {
+    let type = "first"
+    let object_model = OBJECT_SETTING;
+    project.executeProject(project_id, object_model, type)
+      .then(data => {
+        COMMAND = data.command
+        console.log({BBB: data})
+        event.sender.send("executeResult", data)
+      })
+        .catch(err => event.sender.send("executeResult", err))
   });
 
   ipcMain.on("selectDialog", async (event, project_id) => {
