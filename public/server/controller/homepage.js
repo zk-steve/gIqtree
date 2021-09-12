@@ -87,6 +87,20 @@ module.exports.getInputByPath = async (storePath) => {
   });
 };
 
+module.exports.getProjectByPath = (path) => {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.all(
+        `SELECT * FROM project WHERE path = "${path}"`,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
+      );
+    });
+  });
+};
+
 module.exports.getInputById = async (input_id) => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {

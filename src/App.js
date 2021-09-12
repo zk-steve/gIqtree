@@ -4,7 +4,7 @@ import ProjectPage from "pages/ProjectPage/ProjectPage";
 import { Route, Switch, HashRouter } from "react-router-dom";
 import "./App.css";
 const { ipcRenderer } = window.require("electron");
-ipcRenderer.send("getProjectById", "d6b78fca-291b-4435-9bea-4397cefbf9fc")
+// ipcRenderer.send("openProject")
 function App() {
   return (
     <HashRouter>

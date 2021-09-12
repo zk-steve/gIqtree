@@ -5,6 +5,7 @@ const isDev = require("electron-is-dev");
 const child_process = require("child_process");
 const os = require("os");
 const homepage = require("./server/controller/homepage");
+const project = require("./server/controller/project")
 const { iqtreePath } = require("./server/db");
 const { v4: uuidv4 } = require("uuid");
 const { getOutputWhenExecuted } = require("./server/controller/execute");
@@ -81,6 +82,32 @@ function createWindow() {
     }).catch(err => {
       mainWindow.webContents.send("chooseFileResult", err);
     })
+  })
+
+  ipcMain.on("reopenProject", (event, project_id) => {
+    project.reopenProject(project_id)
+      .then(data => {
+        mainWindow.webContents.send("reopenProjectResult", {
+          message: data,
+          status: 1,
+        });
+      })
+      .catch(err => {
+        mainWindow.webContents.send("reopenProjectResult", err);
+      })
+  })
+
+  ipcMain.on("openProject", (event) => {
+    project.openProject()
+      .then(data => {
+        mainWindow.webContents.send("openProjectResult", {
+          message: data,
+          status: 1,
+        });
+      })
+      .catch(err => {
+        mainWindow.webContents.send("openProjectResult", err);
+      })
   })
 
   ipcMain.handle("saveSetting", (event, object_model) => {
@@ -204,32 +231,16 @@ function createWindow() {
   });
 
   ipcMain.on("getInputByProject", (event, project_id) => {
-    try {
-      homepage.getProjectById(project_id).then((data) => {
-        console.log(data);
-        const inputFolder = path.join(data[0].path, "input");
-        console.log({ inputFolder });
-        fs.readdir(inputFolder, "utf-8", (err, files) => {
-          if (err) throw err;
-          let fileName = files.map((file) => {
-            return {
-              name: file,
-              path: path.join(inputFolder, file),
-            };
-          });
-          console.log({ fileName });
+    project.getInputByProject(project_id)
+      .then(fileName => {
           mainWindow.webContents.send("inputsOfProject", {
             message: fileName,
             status: 1,
           });
-        });
-      });
-    } catch (err) {
-      mainWindow.webContents.send("inputsOfProject", {
-        message: "Error",
-        status: 0,
-      });
-    }
+      })
+      .catch(err => {
+        mainWindow.webContents.send("inputsOfProject", err);
+      })
   });
 
   ipcMain.on("deleteInput", async (event, inputData) => {
@@ -267,41 +278,12 @@ function createWindow() {
   });
 
   ipcMain.on("setProject", (event, data) => {
-    const { name, filePath, projectType } = data;
-    console.log({data})
-    if (!fs.existsSync(filePath)) {
-      fs.mkdir(filePath, { recursive: true }, (err) => {
-        if (err) {
-          mainWindow.webContents.send("setProjectSuccess", {message: "Does not create project", status: 0});
-        }
-        else {
-          console.log("created");
-          const input = path.join(filePath, "input");
-          const output = path.join(filePath, "output");
-          fs.mkdir(input, { recursive: true }, (err) => {
-            if (err) {
-              mainWindow.webContents.send("setProjectSuccess", {message: "Does not create input folder", status: 0});
-            }
-            else console.log("Created input folder");
-          });
-          fs.mkdir(output, { recursive: true }, (err) => {
-            if (err) {
-              mainWindow.webContents.send("setProjectSuccess", {message: "Does not create output folder", status: 0});
-            }
-            else console.log("Created ouput folder");
-          });
-        }
-      });
-      let project_id = uuidv4();
-      console.log(project_id);
-      homepage
-        .setProject(name, filePath, project_id, projectType)
-        .then((data) => {
-          mainWindow.webContents.send("setProjectSuccess", {message: data, status: 1});
-        }).catch(err => {
-          mainWindow.webContents.send("setProjectSuccess", {message: "Does not store project into database", status: 0});
-        });
-    }
+    project.setProject(data)
+      .then(result => {
+        mainWindow.webContents.send("setProjectSuccess", result);
+      }).catch(err => {
+        mainWindow.webContents.send("setProjectSuccess", err);
+      })
   });
 
   ipcMain.on("getProjectById", (event, id) => {
