@@ -90,7 +90,7 @@ function ProjectPage(props) {
     setIsExecuteDisabled(true);
     setIsPauseDisabled(false);
     setIsInProcess(true);
-    handleGetProjectProgress();
+    // handleGetProjectProgress();
   };
   const handleSetListInput = (data) => {
     setListInput([...data]);

@@ -124,8 +124,8 @@ function FolderTree({
                     })}
                     key={index}
                     onClick={() => {
-                      handleGetOutputContent(name);
                       handleChangeTab("output");
+                      handleGetOutputContent(name);
                     }}
                   >
                     {name.name}
