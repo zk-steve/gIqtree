@@ -108,11 +108,7 @@ function ProjectPage(props) {
     setOutputContent("");
   };
   const handleGetProjectProgress = () => {
-<<<<<<< HEAD
     getProgress = setInterval(() => {
-=======
-    const getProgress = setInterval(() => {
->>>>>>> dev
       ipcRenderer.invoke("progressProject", id);
     }, 500);
   };
