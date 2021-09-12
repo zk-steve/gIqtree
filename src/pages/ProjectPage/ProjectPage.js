@@ -25,7 +25,7 @@ function ProjectPage(props) {
   const [projectName, setProjectName] = useState();
   const [projectSetting, setProjectSetting] = useState(null);
   const [progressPercentage, setProgressPercentage] = useState(0);
-  var getProgress;
+  const [progressInterval, setProgressInterval] = useState(null);
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
     ipcRenderer.send("getInputByProject", id);
@@ -63,8 +63,8 @@ function ProjectPage(props) {
     }
   }, [listInput, listOutput]); //change button status
   useEffect(() => {
-    if (!isInProcess) clearInterval(getProgress);
-  }, [getProgress, isInProcess]);
+    if (!isInProcess) clearInterval(progressInterval);
+  }, [isInProcess, progressInterval]);
   const handleOpenSetting = () => {
     if (!isSettingOpen) setIsSettingOpen(true);
   };
@@ -108,9 +108,10 @@ function ProjectPage(props) {
     setOutputContent("");
   };
   const handleGetProjectProgress = () => {
-    getProgress = setInterval(() => {
+    let getProgress = setInterval(() => {
       ipcRenderer.invoke("progressProject", id);
-    }, 500);
+    }, 1000);
+    setProgressInterval(getProgress);
   };
   return (
     <div className={classes.root}>
