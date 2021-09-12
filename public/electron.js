@@ -158,6 +158,7 @@ function createWindow() {
             event.sender.send("executeResult", {message: "Does not get output", status: 0});
           });
         console.log({ data });
+        data = Object.assign(data, {command: COMMAND})
         event.sender.send("executeResult", {message: data, status: 1});
       });
     }).catch(err => {
