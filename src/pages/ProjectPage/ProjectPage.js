@@ -130,6 +130,12 @@ function ProjectPage(props) {
     }, 1000);
     setProgressInterval(getProgress);
   };
+  const handleRestartProject = () => {
+    ipcRenderer.invoke("restart", id);
+    setIsExecuteDisabled(true);
+    setIsPauseDisabled(false);
+    setIsInProcess(true);
+  };
   const handleTestSetting = (setting) => {
     ipcRenderer.invoke("testSetting", id, setting);
   };
@@ -145,6 +151,7 @@ function ProjectPage(props) {
         isDoneProcess={isDoneProcess}
         projectName={projectName}
         handlePauseProject={handlePauseProject}
+        handleRestartProject={handleRestartProject}
       />
       <Divider variant="fullWidth" />
       <div className={classes.container}>

@@ -138,13 +138,18 @@ function createWindow() {
     let input_path = path.join(project_path, "input");
     let output_path = path.join(project_path, "output", "output");
     let command = baseCommand();
-    mappingCommand(OBJECT_SETTING, input_path, output_path).then(data => {
-      command += data
-      console.log({command})
-      event.sender.send("testSettingResult", { message: command, status: 1 });
-    }).catch(err => {
-      event.sender.send("testSettingResult", { message: "Command fail", status: 0 });
-    })
+    mappingCommand(OBJECT_SETTING, input_path, output_path)
+      .then((data) => {
+        command += data;
+        console.log({ command });
+        event.sender.send("testSettingResult", { message: command, status: 1 });
+      })
+      .catch((err) => {
+        event.sender.send("testSettingResult", {
+          message: "Command fail",
+          status: 0,
+        });
+      });
   });
 
   ipcMain.handle("saveSetting", (event, object_model) => {
@@ -156,7 +161,7 @@ function createWindow() {
     });
   });
 
-  ipcMain.on("restart", (event, project_id) => {
+  ipcMain.handle("restart", (event, project_id) => {
     let type = "restart";
     let object_model = OBJECT_SETTING;
     project

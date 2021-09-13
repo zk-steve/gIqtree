@@ -13,6 +13,7 @@ function ProjectSetting({
   isDoneProcess,
   projectName,
   handlePauseProject,
+  handleRestartProject,
 }) {
   const classes = useStyles();
   return (
@@ -31,7 +32,7 @@ function ProjectSetting({
             color="secondary"
             variant="contained"
             className={classes.button}
-            onClick={handleExecute}
+            onClick={isDoneProcess ? handleRestartProject : handleExecute}
             disabled={isExecuteDisabled}
           >
             {isDoneProcess ? "Restart" : "Execute"}
