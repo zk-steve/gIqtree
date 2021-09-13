@@ -14,15 +14,20 @@ import { Directory } from "shared/icons";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
-function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
+function SettingDetail({
+  handleCloseSetting,
+  multiPartition,
+  projectSetting,
+  handleTestSetting,
+}) {
   const classes = useStyles();
   const [settingField, setSettingField] = useState({ ...projectSetting });
   const [currentOption, setCurrentOption] = useState("data");
   const [currentPathOption, setCurrentPathOption] = useState([]);
 
   useEffect(() => {
-    console.log(settingField);
-  }, [settingField]);
+    handleTestSetting(settingField);
+  }, [handleTestSetting, settingField]);
   useEffect(() => {
     const handleChangePathOption = (option, subOption, path) => {
       if (subOption !== "concordanceFactor") {
@@ -646,6 +651,7 @@ function SettingDetail({ handleCloseSetting, multiPartition, projectSetting }) {
                         id={input.id}
                         value={input.value}
                         checked
+                        readOnly
                       />
                       <InputLabel
                         htmlFor={input.id}

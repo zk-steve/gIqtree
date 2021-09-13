@@ -3,17 +3,19 @@ const fs = require("fs");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const child_process = require("child_process");
-const {kill} = require("process")
+const { kill } = require("process");
 const os = require("os");
 const homepage = require("./server/controller/homepage");
-const project = require("./server/controller/project")
+const project = require("./server/controller/project");
 const { iqtreePath } = require("./server/db");
 const { v4: uuidv4 } = require("uuid");
 const { getOutputWhenExecuted } = require("./server/controller/execute");
 const { viewFile } = require("./server/controller/file_handler");
 
-
-const { mappingCommand, baseCommand } = require("./server/command_line/mapping_command");
+const {
+  mappingCommand,
+  baseCommand,
+} = require("./server/command_line/mapping_command");
 
 const FIND_MODEL = require("./server/command_line/default/find_model");
 const MERGE_PARTITION = require("./server/command_line/default/merger_partition");
@@ -60,60 +62,69 @@ function createWindow() {
     viewFile(filePath)
       .then((data) => {
         console.log({ readFile: data });
-        mainWindow.webContents.send("viewFileData", {message: data, status: 1});
+        mainWindow.webContents.send("viewFileData", {
+          message: data,
+          status: 1,
+        });
       })
       .catch((err) =>
         mainWindow.webContents.send("viewFileData", {
           message: "Does not read file",
-          status: 0
+          status: 0,
         })
       );
   });
-  
-  ipcMain.handle("progressProject", async(event, project_id) => {
-    await getProgress(project_id).then(data => {
-      event.sender.send("progressResult", data)
-    }).catch(err => {
-      event.sender.send("progressResult", err)
-    })
-  })
+
+  ipcMain.handle("progressProject", async (event, project_id) => {
+    await getProgress(project_id)
+      .then((data) => {
+        event.sender.send("progressResult", data);
+      })
+      .catch((err) => {
+        event.sender.send("progressResult", err);
+      });
+  });
 
   ipcMain.on("chooseFile", (event) => {
-    chooseFile().then(data => {
-      mainWindow.webContents.send("chooseFileResult", data)
-    }).catch(err => {
-      mainWindow.webContents.send("chooseFileResult", err);
-    })
-  })
+    chooseFile()
+      .then((data) => {
+        mainWindow.webContents.send("chooseFileResult", data);
+      })
+      .catch((err) => {
+        mainWindow.webContents.send("chooseFileResult", err);
+      });
+  });
 
   ipcMain.on("reopenProject", (event, project_id) => {
-    project.reopenProject(project_id)
-      .then(data => {
+    project
+      .reopenProject(project_id)
+      .then((data) => {
         mainWindow.webContents.send("reopenProjectResult", {
           message: data,
           status: 1,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         mainWindow.webContents.send("reopenProjectResult", err);
-      })
-  })
+      });
+  });
 
   ipcMain.on("openProject", (event) => {
-    project.openProject()
-      .then(data => {
+    project
+      .openProject()
+      .then((data) => {
         mainWindow.webContents.send("openProjectResult", {
           message: data,
           status: 1,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         mainWindow.webContents.send("openProjectResult", err);
-      })
-  })
+      });
+  });
 
   ipcMain.handle("testSetting", async (event, project_id, object_model) => {
-    OBJECT_SETTING = object_model
+    OBJECT_SETTING = object_model;
     let project_path;
     await homepage
       .getProjectById(project_id)
@@ -121,48 +132,55 @@ function createWindow() {
         project_path = data[0].path;
       })
       .catch((err) => {
-        event.sender.send("progressResult", {message: "ERROR", status: 0})
+        event.sender.send("testSettingResult", { message: "ERROR", status: 0 });
       });
     console.log({ project_path });
     let input_path = path.join(project_path, "input");
     let output_path = path.join(project_path, "output", "output");
-    let command = baseCommand() + mappingCommand(OBJECT_SETTING, input_path, output_path)
-    console.log({command})
-    event.sender.send("progressResult", {message: command, status: 1})
-  })
+    let command =
+      baseCommand() + mappingCommand(OBJECT_SETTING, input_path, output_path);
+    console.log({ command });
+    event.sender.send("testSettingResult", { message: command, status: 1 });
+  });
 
   ipcMain.handle("saveSetting", (event, object_model) => {
     OBJECT_SETTING = object_model;
-    mainWindow.webContents.send("saveSettingResult", {message: OBJECT_SETTING, status: 1, command: COMMAND})
+    mainWindow.webContents.send("saveSettingResult", {
+      message: OBJECT_SETTING,
+      status: 1,
+      command: COMMAND,
+    });
   });
 
   ipcMain.on("restart", (event, project_id) => {
     let type = "restart";
     let object_model = OBJECT_SETTING;
-    project.executeProject(project_id, object_model, type)
-      .then(data => {
-        COMMAND = data.command
-        console.log({BBB: COMMAND})
-        event.sender.send("executeResult", data)
+    project
+      .executeProject(project_id, object_model, type)
+      .then((data) => {
+        COMMAND = data.command;
+        console.log({ BBB: COMMAND });
+        event.sender.send("executeResult", data);
       })
-        .catch(err => event.sender.send("executeResult", err))
-  })
+      .catch((err) => event.sender.send("executeResult", err));
+  });
 
   ipcMain.on("pauseProject", (event, process_id) => {
-    kill(process_id, 'SIGINT')
-    mainWindow.webContents.send({message: "Pause", status: 1})
-  })
+    kill(process_id, "SIGINT");
+    mainWindow.webContents.send({ message: "Pause", status: 1 });
+  });
 
   ipcMain.handle("executeProject", async (event, project_id) => {
-    let type = "first"
+    let type = "first";
     let object_model = OBJECT_SETTING;
-    project.executeProject(project_id, object_model, type)
-      .then(data => {
-        COMMAND = data.command
-        console.log({BBB: data})
-        event.sender.send("executeResult", data)
+    project
+      .executeProject(project_id, object_model, type)
+      .then((data) => {
+        COMMAND = data.command;
+        console.log({ BBB: data });
+        event.sender.send("executeResult", data);
       })
-        .catch(err => event.sender.send("executeResult", err))
+      .catch((err) => event.sender.send("executeResult", err));
   });
 
   ipcMain.on("selectDialog", async (event, project_id) => {
@@ -173,7 +191,10 @@ function createWindow() {
         filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
       });
       if (!filePath) {
-        mainWindow.webContents.send("cancelSelect", { message: "File path is not true", status: 0 });
+        mainWindow.webContents.send("cancelSelect", {
+          message: "File path is not true",
+          status: 0,
+        });
       } else {
         const fileName = filePath.map((element) => {
           console.log(element);
@@ -230,16 +251,17 @@ function createWindow() {
   });
 
   ipcMain.on("getInputByProject", (event, project_id) => {
-    project.getInputByProject(project_id)
-      .then(fileName => {
-          mainWindow.webContents.send("inputsOfProject", {
-            message: fileName,
-            status: 1,
-          });
+    project
+      .getInputByProject(project_id)
+      .then((fileName) => {
+        mainWindow.webContents.send("inputsOfProject", {
+          message: fileName,
+          status: 1,
+        });
       })
-      .catch(err => {
+      .catch((err) => {
         mainWindow.webContents.send("inputsOfProject", err);
-      })
+      });
   });
 
   ipcMain.on("deleteInput", async (event, inputData) => {
@@ -266,66 +288,92 @@ function createWindow() {
 
   ipcMain.on("getHistory", (event) => {
     homepage.getHistory().then((data) => {
-      mainWindow.webContents.send("returnHistory", {message:data, status:1});
+      mainWindow.webContents.send("returnHistory", {
+        message: data,
+        status: 1,
+      });
     });
   });
   ipcMain.on("openDir", async (event, name) => {
     const { filePath } = await dialog.showSaveDialog({
       defaultPath: `./${name}`,
     });
-    mainWindow.webContents.send("openDirSuccess", { message:filePath, status:1 });
+    mainWindow.webContents.send("openDirSuccess", {
+      message: filePath,
+      status: 1,
+    });
   });
 
   ipcMain.on("setProject", (event, data) => {
-    project.setProject(data)
-      .then(result => {
+    project
+      .setProject(data)
+      .then((result) => {
         mainWindow.webContents.send("setProjectSuccess", result);
-      }).catch(err => {
-        mainWindow.webContents.send("setProjectSuccess", err);
       })
+      .catch((err) => {
+        mainWindow.webContents.send("setProjectSuccess", err);
+      });
   });
 
   ipcMain.on("getProjectById", (event, id) => {
-    homepage.getProjectById(id).then((data) => {
-      console.log(data[0].project_type)
-      switch (data[0].project_type) {
-        case "findModel":
-          data[0].object_model = FIND_MODEL;
-          OBJECT_SETTING = FIND_MODEL;
-          break;
-        case "mergePartition":
-          console.log({ MERGE_PARTITION });
-          data[0].object_model = MERGE_PARTITION;
-          OBJECT_SETTING = MERGE_PARTITION;
-          break;
-        case "inferTree":
-          data[0].object_model = INFER_TREE;
-          OBJECT_SETTING = INFER_TREE;
-          break;
-        case "assessSupport":
-          data[0].object_model = ASSESS_SUPPORT;
-          OBJECT_SETTING = ASSESS_SUPPORT;
-          break;
-        case "dateTree":
-          data[0].object_model = DATE_TREE;
-          OBJECT_SETTING = DATE_TREE;
-          break;
-        default:
-          break;
-      }
-      console.log({ data });
-      mainWindow.webContents.send("returnProjectById", {message: data, status:1});
-    }).catch(err => {
-      mainWindow.webContents.send("returnProjectById", {message: "Can not get project", status: 0});
-    });
+    homepage
+      .getProjectById(id)
+      .then((data) => {
+        console.log(data[0].project_type);
+        switch (data[0].project_type) {
+          case "findModel":
+            data[0].object_model = FIND_MODEL;
+            OBJECT_SETTING = FIND_MODEL;
+            break;
+          case "mergePartition":
+            console.log({ MERGE_PARTITION });
+            data[0].object_model = MERGE_PARTITION;
+            OBJECT_SETTING = MERGE_PARTITION;
+            break;
+          case "inferTree":
+            data[0].object_model = INFER_TREE;
+            OBJECT_SETTING = INFER_TREE;
+            break;
+          case "assessSupport":
+            data[0].object_model = ASSESS_SUPPORT;
+            OBJECT_SETTING = ASSESS_SUPPORT;
+            break;
+          case "dateTree":
+            data[0].object_model = DATE_TREE;
+            OBJECT_SETTING = DATE_TREE;
+            break;
+          default:
+            break;
+        }
+        console.log({ data });
+        mainWindow.webContents.send("returnProjectById", {
+          message: data,
+          status: 1,
+        });
+      })
+      .catch((err) => {
+        mainWindow.webContents.send("returnProjectById", {
+          message: "Can not get project",
+          status: 0,
+        });
+      });
   });
 
   ipcMain.on("search", (event, name) => {
-    homepage.search(name).then((data) => {
-      mainWindow.webContents.send("searchProject", {message: data,status: 1});
-    }).catch(err => {
-      mainWindow.webContents.send("searchProject", {message: "Can not search",status: 1});
-    });
+    homepage
+      .search(name)
+      .then((data) => {
+        mainWindow.webContents.send("searchProject", {
+          message: data,
+          status: 1,
+        });
+      })
+      .catch((err) => {
+        mainWindow.webContents.send("searchProject", {
+          message: "Can not search",
+          status: 1,
+        });
+      });
   });
   mainWindow.on("closed", () => (mainWindow = null));
   ipcMain.on("minimizeApp", () => {

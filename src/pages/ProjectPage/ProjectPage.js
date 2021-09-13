@@ -63,6 +63,9 @@ function ProjectPage(props) {
     ipcRenderer.on("reopenProjectResult", reopenProjectResult);
     ipcRenderer.on("viewFileData", viewFileData);
     ipcRenderer.on("saveSettingResult", saveSettingResult);
+    ipcRenderer.on("testSettingResult", (event, data) => {
+      console.log(data);
+    });
   }, [id]); //get list input and get project name
   useEffect(() => {
     if (listInput.length > 0) setIsExecuteDisabled(false);
@@ -127,6 +130,9 @@ function ProjectPage(props) {
     }, 1000);
     setProgressInterval(getProgress);
   };
+  const handleTestSetting = (setting) => {
+    ipcRenderer.invoke("testSetting", id, setting);
+  };
   return (
     <div className={classes.root}>
       <ProjectSetting
@@ -176,6 +182,7 @@ function ProjectPage(props) {
               handleCloseSetting={handleCloseSetting}
               multiPartition={listInput.length > 1}
               projectSetting={projectSetting}
+              handleTestSetting={handleTestSetting}
             />
           )}
         </div>
