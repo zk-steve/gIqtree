@@ -243,9 +243,9 @@ const executeProject = async (project_id, object_model, type) => {
     await mappingCommand(object_model, input_path, output_path).then((data) => {
       console.log("exec...");
       let pre = baseCommand()
-      let COMMAND = pre + `${data}`
+      let COMMAND = pre + data
       if (type === "restart") {
-        COMMAND += " -redo"
+        COMMAND += " --redo"
       }
       let process_id = child_process.exec(COMMAND, async (err, stdout, stderr) => {
         if (err) {

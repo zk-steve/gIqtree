@@ -116,8 +116,8 @@ const example = {
 };
 
 // // store(base_command)
-// mappingCommand(example, "D:/TestIQTREE/asdas/input", "D:/TestIQTREE/asdas/output").then((data) => {
-//   console.log(data);
+// mappingCommand(example, "D:/TestIQTREE/IQTREE/input", "D:/TestIQTREE/IQTREE/output").then((data) => {
+//   console.log({data});
 // }).catch(err => console.log(err))
 
 

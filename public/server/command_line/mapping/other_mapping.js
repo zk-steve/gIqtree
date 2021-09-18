@@ -10,9 +10,9 @@ module.exports.other_mapping = (object_model, inputs, output_path) => {
   }
   //Step 2: Prefix for all output files
   if (object_model["others"]["prefix"] === "") {
-    result += " --prefix " + output_path;
+    result += " --prefix " + `"${output_path}"`;
   } else {
-    result += " --prefix " + object_model["others"]["prefix"];
+    result += " --prefix " + `"${object_model["others"]["prefix"]}"`;
   }
   //Step 3: Enter command-line - done
   if (object_model["others"]["enterCommandLine"] === "--redo") {
