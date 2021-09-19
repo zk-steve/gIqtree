@@ -38,8 +38,6 @@ function createWindow() {
     minHeight: 600,
     width: dimensions.width,
     height: dimensions.height,
-    maxWidth: dimensions.width,
-    maxHeight: dimensions.height,
     frame: false,
     webPreferences: {
       nodeIntegration: true,

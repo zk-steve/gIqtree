@@ -189,5 +189,18 @@ const useStyles = makeStyles((theme) => ({
     height: "calc(100vh - 144px)",
     flex: 1,
   },
+  importButton: {
+    borderColor: theme.palette.grey[900],
+    width: "110px",
+    height: "28px",
+    textTransform: "none",
+    "&:hover": {
+      backgroundColor: theme.palette.grey[300],
+    },
+    transition: `0.15s ${theme.transitions.easing.easeIn}`,
+    "& svg": {
+      marginRight: "4px",
+    },
+  },
 }));
 export default useStyles;

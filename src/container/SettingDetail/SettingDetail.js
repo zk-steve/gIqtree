@@ -19,9 +19,10 @@ function SettingDetail({
   multiPartition,
   projectSetting,
   handleTestSetting,
+  id,
 }) {
   const classes = useStyles();
-  const [settingField, setSettingField] = useState({ ...projectSetting });
+  const [settingField, setSettingField] = useState({ ...projectSetting } || {});
   const [currentOption, setCurrentOption] = useState("data");
   const [currentPathOption, setCurrentPathOption] = useState([]);
 
@@ -500,39 +501,44 @@ function SettingDetail({
     ipcRenderer.send("chooseFile");
     setCurrentPathOption([option, subOption]);
   };
-
+  const handleResetSetting = () => {
+    setSettingField({ ...projectSetting });
+  };
+  const handleSelectFile = () => {
+    ipcRenderer.send("selectDialog", id);
+  };
   return (
-    <div className={classes.root}>
-      <div className={classes.container}>
-        <SettingMenu
-          currentOption={currentOption}
-          handleSelectNavigatorOption={handleSelectNavigatorOption}
-          handleCloseSetting={handleCloseSetting}
-        />
-        <Divider variant="fullWidth" orientation="vertical" />
-        <div className={classes.settingOverflow}>
-          {currentOption === "data" && (
-            <form className={classes.settingDetail}>
-              <Typography className={classes.settingDetailTitle}>
-                Data
-              </Typography>
-              <div className={classes.textInputContainer}>
-                <InputLabel htmlFor="alignment" className={classes.inputLabel}>
-                  Alignment file(s) and folder
-                </InputLabel>
-                <OutlinedInput
-                  id="alignment"
-                  className={classes.textInput}
-                  value={settingField.data.alignment}
-                  onChange={(e) => handleChangeDataSetting(e, "alignment")}
-                  startAdornment={
-                    <Directory
-                      onClick={() => handleChooseFile("data", "alignment")}
-                    />
-                  }
-                />
-              </div>
-              {multiPartition && (
+    settingField && (
+      <div className={classes.root}>
+        <div className={classes.container}>
+          <SettingMenu
+            currentOption={currentOption}
+            handleSelectNavigatorOption={handleSelectNavigatorOption}
+            handleCloseSetting={handleCloseSetting}
+          />
+          <Divider variant="fullWidth" orientation="vertical" />
+          <div className={classes.settingOverflow}>
+            {currentOption === "data" && (
+              <form className={classes.settingDetail}>
+                <Typography className={classes.settingDetailTitle}>
+                  Data
+                </Typography>
+                <div className={classes.textInputContainer}>
+                  <InputLabel
+                    htmlFor="alignment"
+                    className={classes.inputLabel}
+                  >
+                    Alignment file(s) and folder
+                  </InputLabel>
+                  <Button
+                    variant="outlined"
+                    className={classes.importButton}
+                    onClick={handleSelectFile}
+                  >
+                    <Directory />
+                    <Typography>Browse</Typography>
+                  </Button>
+                </div>
                 <div className={classes.textInputContainer}>
                   <InputLabel
                     htmlFor="partition"
@@ -540,259 +546,316 @@ function SettingDetail({
                   >
                     Partition file
                   </InputLabel>
-                  <OutlinedInput
-                    id="partition"
-                    className={classes.textInput}
-                    value={settingField.data.partition}
-                    onChange={(e) => handleChangeDataSetting(e, "partition")}
-                    startAdornment={
-                      <Directory
-                        onClick={() => handleChooseFile("data", "partition")}
-                      />
-                    }
-                  />
-                </div>
-              )}
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Sequence type
-                </Typography>
-                <div className={classes.dataRadioContainer}>
-                  {data.sequenceType.map((input, index) => (
-                    <div className={classes.radioInput} key={index}>
-                      <input
-                        type="radio"
-                        name={input.name}
-                        id={input.id}
-                        value={input.value}
-                        checked={input.value === settingField.data.sequence}
-                        onChange={(e) => handleChangeDataSetting(e, "sequence")}
-                      />
-                      <InputLabel
-                        htmlFor={input.id}
-                        className={classes.radioLabel}
-                      >
-                        {input.label}
-                      </InputLabel>
-                    </div>
-                  ))}
-                </div>
-                {settingField.data.sequence === "CODON" && (
-                  <div className={classes.codonList}>
-                    {data.codonList.map((input, index) => (
-                      <div className={classes.radioInput} key={index}>
-                        <input
-                          type="radio"
-                          name={input.name}
-                          id={input.id}
-                          value={input.value}
-                          checked={input.value === settingField.data.codon}
-                          onChange={(e) => handleChangeDataSetting(e, "codon")}
-                        />
-                        <InputLabel
-                          htmlFor={input.id}
-                          className={clsx(
-                            classes.radioLabel,
-                            classes.fontSmall
-                          )}
-                        >
-                          {input.label}
-                        </InputLabel>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              {multiPartition && (
-                <div className={classes.textInputContainer}>
-                  <InputLabel
-                    htmlFor="partitionType"
-                    className={classes.inputLabel}
-                  >
-                    Partition type
-                  </InputLabel>
-                  <Select
-                    id="partitionType"
+                  <Button
                     variant="outlined"
-                    className={classes.textInput}
-                    value={settingField.data.partitionType}
-                    onChange={(e) =>
-                      handleChangeDataSetting(e, "partitionType")
-                    }
+                    className={classes.importButton}
+                    onClick={handleSelectFile}
                   >
-                    <MenuItem value="separateGeneTrees">
-                      Separate-gene-tree
-                    </MenuItem>
-                    <MenuItem value="edgeProportional">
-                      Edge-proportional
-                    </MenuItem>
-                    <MenuItem value="edgeEqual">Edge-equal</MenuItem>
-                    <MenuItem value="edgeUnlinked">Edge-unlinked</MenuItem>
-                  </Select>
-                </div>
-              )}
-            </form>
-          )}
-          {currentOption === "model" && (
-            <form className={classes.settingDetail}>
-              <Typography className={classes.settingDetailTitle}>
-                Model
-              </Typography>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Substitution model
-                </Typography>
-                <div className={classes.dataRadioContainer}>
-                  {model.substitutionModel.map((input, index) => (
-                    <div className={classes.radioInput} key={index}>
-                      <input
-                        type="radio"
-                        name={input.name}
-                        id={input.id}
-                        value={input.value}
-                        checked
-                        readOnly
-                      />
-                      <InputLabel
-                        htmlFor={input.id}
-                        className={classes.radioLabel}
-                      >
-                        {input.label}
-                      </InputLabel>
-                    </div>
-                  ))}
-                </div>
-                <div className={clsx(classes.codonList, classes.modelTable)}>
-                  <div
-                    className={clsx(
-                      classes.modelFinderHead,
-                      classes.modelTableHead
-                    )}
-                  >
-                    <Typography id="model">Model</Typography>
-                    <Typography id="df">df</Typography>
-                    <Typography id="explanation">Explanation</Typography>
-                  </div>
-                  <div className={clsx(classes.listModel)}>
-                    {model.modelFinder.map((input, index) => (
-                      <div className={classes.radioInput} key={index}>
-                        <input
-                          type="radio"
-                          name={input.name}
-                          id={input.id}
-                          value={input.value}
-                          checked={
-                            input.value === settingField.model.modelFinder
-                          }
-                          onChange={(e) =>
-                            handleChangeModelSetting(e, "modelFinder")
-                          }
-                        />
-                        <InputLabel
-                          htmlFor={input.id}
-                          className={clsx(
-                            classes.radioLabel,
-                            classes.modelMargin,
-                            classes.fontSmall
-                          )}
-                        >
-                          {input.label}
-                        </InputLabel>
-                        <InputLabel
-                          htmlFor={input.id}
-                          className={clsx(
-                            classes.radioLabel,
-                            classes.df,
-                            classes.fontSmall
-                          )}
-                        >
-                          {input.df}
-                        </InputLabel>
-                        <InputLabel
-                          htmlFor={input.id}
-                          className={clsx(
-                            classes.radioLabel,
-                            classes.expl,
-                            classes.fontSmall
-                          )}
-                        >
-                          {input.explanation}
-                        </InputLabel>
-                      </div>
-                    ))}
-                  </div>
+                    <Directory />
+                    <Typography>Browse</Typography>
+                  </Button>
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
-                    Rate heterogeneity across sites:
+                    Sequence type
                   </Typography>
-                  <div className={classes.shortPath}>
-                    <Typography align="left">
-                      Proportion of invariable sites
+                  <div className={classes.dataRadioContainer}>
+                    {data.sequenceType.map((input, index) => (
+                      <div className={classes.radioInput} key={index}>
+                        <input
+                          type="radio"
+                          name={input.name}
+                          id={input.id}
+                          value={input.value}
+                          checked={input.value === settingField.data.sequence}
+                          onChange={(e) =>
+                            handleChangeDataSetting(e, "sequence")
+                          }
+                        />
+                        <InputLabel
+                          htmlFor={input.id}
+                          className={classes.radioLabel}
+                        >
+                          {input.label}
+                        </InputLabel>
+                      </div>
+                    ))}
+                  </div>
+                  {settingField.data.sequence === "CODON" && (
+                    <div className={classes.codonList}>
+                      {data.codonList.map((input, index) => (
+                        <div className={classes.radioInput} key={index}>
+                          <input
+                            type="radio"
+                            name={input.name}
+                            id={input.id}
+                            value={input.value}
+                            checked={input.value === settingField.data.codon}
+                            onChange={(e) =>
+                              handleChangeDataSetting(e, "codon")
+                            }
+                          />
+                          <InputLabel
+                            htmlFor={input.id}
+                            className={clsx(
+                              classes.radioLabel,
+                              classes.fontSmall
+                            )}
+                          >
+                            {input.label}
+                          </InputLabel>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {multiPartition && (
+                  <div className={classes.textInputContainer}>
+                    <InputLabel
+                      htmlFor="partitionType"
+                      className={classes.inputLabel}
+                    >
+                      Partition type
+                    </InputLabel>
+                    <Select
+                      id="partitionType"
+                      variant="outlined"
+                      className={classes.textInput}
+                      value={settingField.data.partitionType}
+                      onChange={(e) =>
+                        handleChangeDataSetting(e, "partitionType")
+                      }
+                    >
+                      <MenuItem value="separateGeneTrees">
+                        Separate-gene-tree
+                      </MenuItem>
+                      <MenuItem value="edgeProportional">
+                        Edge-proportional
+                      </MenuItem>
+                      <MenuItem value="edgeEqual">Edge-equal</MenuItem>
+                      <MenuItem value="edgeUnlinked">Edge-unlinked</MenuItem>
+                    </Select>
+                  </div>
+                )}
+              </form>
+            )}
+            {currentOption === "model" && (
+              <form className={classes.settingDetail}>
+                <Typography className={classes.settingDetailTitle}>
+                  Model
+                </Typography>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Substitution model
+                  </Typography>
+                  <div className={classes.dataRadioContainer}>
+                    {model.substitutionModel.map((input, index) => (
+                      <div className={classes.radioInput} key={index}>
+                        <input
+                          type="radio"
+                          name={input.name}
+                          id={input.id}
+                          value={input.value}
+                          checked
+                          readOnly
+                        />
+                        <InputLabel
+                          htmlFor={input.id}
+                          className={classes.radioLabel}
+                        >
+                          {input.label}
+                        </InputLabel>
+                      </div>
+                    ))}
+                  </div>
+                  <div className={clsx(classes.codonList, classes.modelTable)}>
+                    <div
+                      className={clsx(
+                        classes.modelFinderHead,
+                        classes.modelTableHead
+                      )}
+                    >
+                      <Typography id="model">Model</Typography>
+                      <Typography id="df">df</Typography>
+                      <Typography id="explanation">Explanation</Typography>
+                    </div>
+                    <div className={clsx(classes.listModel)}>
+                      {model.modelFinder.map((input, index) => (
+                        <div className={classes.radioInput} key={index}>
+                          <input
+                            type="radio"
+                            name={input.name}
+                            id={input.id}
+                            value={input.value}
+                            checked={
+                              input.value === settingField.model.modelFinder
+                            }
+                            onChange={(e) =>
+                              handleChangeModelSetting(e, "modelFinder")
+                            }
+                          />
+                          <InputLabel
+                            htmlFor={input.id}
+                            className={clsx(
+                              classes.radioLabel,
+                              classes.modelMargin,
+                              classes.fontSmall
+                            )}
+                          >
+                            {input.label}
+                          </InputLabel>
+                          <InputLabel
+                            htmlFor={input.id}
+                            className={clsx(
+                              classes.radioLabel,
+                              classes.df,
+                              classes.fontSmall
+                            )}
+                          >
+                            {input.df}
+                          </InputLabel>
+                          <InputLabel
+                            htmlFor={input.id}
+                            className={clsx(
+                              classes.radioLabel,
+                              classes.expl,
+                              classes.fontSmall
+                            )}
+                          >
+                            {input.explanation}
+                          </InputLabel>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className={classes.textInputContainer}>
+                    <Typography className={classes.inputLabel}>
+                      Rate heterogeneity across sites:
+                    </Typography>
+                    <div className={classes.shortPath}>
+                      <Typography align="left">
+                        Proportion of invariable sites
+                      </Typography>
+                      <OutlinedInput
+                        className={classes.shortTextInput}
+                        value={settingField.model.proportionOfInvariableSites}
+                        onChange={(e) => {
+                          handleChangeModelSetting(
+                            e,
+                            "proportionOfInvariableSites"
+                          );
+                        }}
+                      />
+                    </div>
+                    <div
+                      className={clsx(classes.shortPath, classes.selectMargin)}
+                    >
+                      <Typography align="left">Rate categories</Typography>
+                      <Select
+                        variant="outlined"
+                        className={classes.shortTextInput}
+                        value={settingField.model.rateCategories}
+                        onChange={(e) =>
+                          handleChangeModelSetting(e, "rateCategories")
+                        }
+                      >
+                        {model.rateCategories.map((input, index) => (
+                          <MenuItem value={input.value}>{input.label}</MenuItem>
+                        ))}
+                      </Select>
+                    </div>
+                  </div>
+                  <div className={classes.textInputContainer}>
+                    <Typography className={classes.inputLabel}>
+                      State frequency
+                    </Typography>
+                    {model.stateFrequency.map((input, index) => (
+                      <div
+                        className={clsx(
+                          classes.radioInput,
+                          classes.selectMargin
+                        )}
+                        key={index}
+                      >
+                        <InputLabel
+                          className={clsx(classes.radioLabel, classes.expl)}
+                        >
+                          {input.label}
+                        </InputLabel>
+                      </div>
+                    ))}
+                  </div>
+                  <div className={classes.textInputContainer}>
+                    <Typography className={classes.inputLabel}>
+                      Ascertainment bias correction
                     </Typography>
                     <OutlinedInput
                       className={classes.shortTextInput}
-                      value={settingField.model.proportionOfInvariableSites}
-                      onChange={(e) => {
-                        handleChangeModelSetting(
-                          e,
-                          "proportionOfInvariableSites"
-                        );
-                      }}
-                    />
+                      defaultValue="+ASC"
+                      placeholder="+ASC"
+                      disabled
+                    ></OutlinedInput>
                   </div>
-                  <div
-                    className={clsx(classes.shortPath, classes.selectMargin)}
-                  >
-                    <Typography align="left">Rate categories</Typography>
-                    <Select
-                      variant="outlined"
-                      className={classes.shortTextInput}
-                      value={settingField.model.rateCategories}
-                      onChange={(e) =>
-                        handleChangeModelSetting(e, "rateCategories")
-                      }
-                    >
-                      {model.rateCategories.map((input, index) => (
-                        <MenuItem value={input.value}>{input.label}</MenuItem>
-                      ))}
-                    </Select>
-                  </div>
-                </div>
-                <div className={classes.textInputContainer}>
-                  <Typography className={classes.inputLabel}>
-                    State frequency
-                  </Typography>
-                  {model.stateFrequency.map((input, index) => (
-                    <div
-                      className={clsx(classes.radioInput, classes.selectMargin)}
-                      key={index}
-                    >
-                      <InputLabel
-                        className={clsx(classes.radioLabel, classes.expl)}
-                      >
-                        {input.label}
-                      </InputLabel>
+                  {multiPartition && (
+                    <div className={classes.textInputContainer}>
+                      <Typography className={classes.inputLabel}>
+                        Auto-merge partitions
+                      </Typography>
+                      <div className={classes.twoOption}>
+                        <div
+                          className={clsx(
+                            classes.radioInput,
+                            classes.selectMargin
+                          )}
+                        >
+                          <input
+                            type="radio"
+                            name="autoMerge"
+                            id="yes"
+                            value="yes"
+                            checked={settingField.model.autoMerge === "yes"}
+                            onChange={(e) =>
+                              handleChangeModelSetting(e, "autoMerge")
+                            }
+                          />
+                          <InputLabel
+                            htmlFor="yes"
+                            className={classes.radioLabel}
+                          >
+                            Yes
+                          </InputLabel>
+                        </div>
+                        <div
+                          className={clsx(
+                            classes.radioInput,
+                            classes.selectMargin
+                          )}
+                        >
+                          <input
+                            type="radio"
+                            name="autoMerge"
+                            id="no"
+                            value="no"
+                            checked={settingField.model.autoMerge === "no"}
+                            onChange={(e) =>
+                              handleChangeModelSetting(e, "autoMerge")
+                            }
+                          />
+                          <InputLabel
+                            htmlFor="no"
+                            className={classes.radioLabel}
+                          >
+                            No
+                          </InputLabel>
+                        </div>
+                      </div>
                     </div>
-                  ))}
-                </div>
-                <div className={classes.textInputContainer}>
-                  <Typography className={classes.inputLabel}>
-                    Ascertainment bias correction
-                  </Typography>
-                  <OutlinedInput
-                    className={classes.shortTextInput}
-                    defaultValue="+ASC"
-                    placeholder="+ASC"
-                    disabled
-                  ></OutlinedInput>
-                </div>
-                {multiPartition && (
-                  <div className={classes.textInputContainer}>
-                    <Typography className={classes.inputLabel}>
-                      Auto-merge partitions
-                    </Typography>
-                    <div className={classes.twoOption}>
+                  )}
+                  {multiPartition && (
+                    <div className={classes.textInputContainer}>
+                      <Typography className={classes.inputLabel}>
+                        Merging algorithm
+                      </Typography>
                       <div
                         className={clsx(
                           classes.radioInput,
@@ -801,19 +864,21 @@ function SettingDetail({
                       >
                         <input
                           type="radio"
-                          name="autoMerge"
-                          id="yes"
-                          value="yes"
-                          checked={settingField.model.autoMerge === "yes"}
+                          name="mergeAlgorithm"
+                          id="greedy"
+                          value="greedy"
+                          checked={
+                            settingField.model.mergingAlgorithm === "greedy"
+                          }
                           onChange={(e) =>
-                            handleChangeModelSetting(e, "autoMerge")
+                            handleChangeModelSetting(e, "mergingAlgorithm")
                           }
                         />
                         <InputLabel
-                          htmlFor="yes"
+                          htmlFor="greedy"
                           className={classes.radioLabel}
                         >
-                          Yes
+                          Greedy
                         </InputLabel>
                       </div>
                       <div
@@ -824,46 +889,74 @@ function SettingDetail({
                       >
                         <input
                           type="radio"
-                          name="autoMerge"
-                          id="no"
-                          value="no"
-                          checked={settingField.model.autoMerge === "no"}
+                          name="mergeAlgorithm"
+                          id="rcluster"
+                          value="rcluster"
+                          checked={
+                            settingField.model.mergingAlgorithm === "rcluster"
+                          }
                           onChange={(e) =>
-                            handleChangeModelSetting(e, "autoMerge")
+                            handleChangeModelSetting(e, "mergingAlgorithm")
                           }
                         />
-                        <InputLabel htmlFor="no" className={classes.radioLabel}>
-                          No
+                        <InputLabel
+                          htmlFor="rcluster"
+                          className={classes.radioLabel}
+                        >
+                          RCluster
+                        </InputLabel>
+                      </div>
+                      <div
+                        className={clsx(
+                          classes.radioInput,
+                          classes.selectMargin
+                        )}
+                      >
+                        <input
+                          type="radio"
+                          name="mergeAlgorithm"
+                          id="rclusterf"
+                          value="rclusterf"
+                          checked={
+                            settingField.model.mergingAlgorithm === "rclusterf"
+                          }
+                          onChange={(e) =>
+                            handleChangeModelSetting(e, "mergingAlgorithm")
+                          }
+                        />
+                        <InputLabel
+                          htmlFor="rclusterf"
+                          className={classes.radioLabel}
+                        >
+                          RClusterf
                         </InputLabel>
                       </div>
                     </div>
-                  </div>
-                )}
-                {multiPartition && (
-                  <div className={classes.textInputContainer}>
-                    <Typography className={classes.inputLabel}>
-                      Merging algorithm
-                    </Typography>
+                  )}
+                </div>
+              </form>
+            )}
+            {currentOption === "tree" && (
+              <form className={classes.settingDetail}>
+                <Typography className={classes.settingDetailTitle}>
+                  Tree search
+                </Typography>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>On</Typography>
+                  <div className={classes.twoOption}>
                     <div
                       className={clsx(classes.radioInput, classes.selectMargin)}
                     >
                       <input
                         type="radio"
-                        name="mergeAlgorithm"
-                        id="greedy"
-                        value="greedy"
-                        checked={
-                          settingField.model.mergingAlgorithm === "greedy"
-                        }
-                        onChange={(e) =>
-                          handleChangeModelSetting(e, "mergingAlgorithm")
-                        }
+                        name="on"
+                        id="yes"
+                        value="yes"
+                        checked={settingField.tree.on === "yes"}
+                        onChange={(e) => handleChangeTreeSetting(e, "on")}
                       />
-                      <InputLabel
-                        htmlFor="greedy"
-                        className={classes.radioLabel}
-                      >
-                        Greedy
+                      <InputLabel htmlFor="yes" className={classes.radioLabel}>
+                        Yes
                       </InputLabel>
                     </div>
                     <div
@@ -871,548 +964,504 @@ function SettingDetail({
                     >
                       <input
                         type="radio"
-                        name="mergeAlgorithm"
-                        id="rcluster"
-                        value="rcluster"
-                        checked={
-                          settingField.model.mergingAlgorithm === "rcluster"
-                        }
-                        onChange={(e) =>
-                          handleChangeModelSetting(e, "mergingAlgorithm")
-                        }
+                        name="on"
+                        id="no"
+                        value="no"
+                        checked={settingField.tree.on === "no"}
+                        onChange={(e) => handleChangeTreeSetting(e, "on")}
                       />
-                      <InputLabel
-                        htmlFor="rcluster"
-                        className={classes.radioLabel}
-                      >
-                        RCluster
-                      </InputLabel>
-                    </div>
-                    <div
-                      className={clsx(classes.radioInput, classes.selectMargin)}
-                    >
-                      <input
-                        type="radio"
-                        name="mergeAlgorithm"
-                        id="rclusterf"
-                        value="rclusterf"
-                        checked={
-                          settingField.model.mergingAlgorithm === "rclusterf"
-                        }
-                        onChange={(e) =>
-                          handleChangeModelSetting(e, "mergingAlgorithm")
-                        }
-                      />
-                      <InputLabel
-                        htmlFor="rclusterf"
-                        className={classes.radioLabel}
-                      >
-                        RClusterf
+                      <InputLabel htmlFor="no" className={classes.radioLabel}>
+                        No
                       </InputLabel>
                     </div>
                   </div>
-                )}
-              </div>
-            </form>
-          )}
-          {currentOption === "tree" && (
-            <form className={classes.settingDetail}>
-              <Typography className={classes.settingDetailTitle}>
-                Tree search
-              </Typography>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>On</Typography>
-                <div className={classes.twoOption}>
-                  <div
-                    className={clsx(classes.radioInput, classes.selectMargin)}
-                  >
-                    <input
-                      type="radio"
-                      name="on"
-                      id="yes"
-                      value="yes"
-                      checked={settingField.tree.on === "yes"}
-                      onChange={(e) => handleChangeTreeSetting(e, "on")}
-                    />
-                    <InputLabel htmlFor="yes" className={classes.radioLabel}>
-                      Yes
-                    </InputLabel>
-                  </div>
-                  <div
-                    className={clsx(classes.radioInput, classes.selectMargin)}
-                  >
-                    <input
-                      type="radio"
-                      name="on"
-                      id="no"
-                      value="no"
-                      checked={settingField.tree.on === "no"}
-                      onChange={(e) => handleChangeTreeSetting(e, "on")}
-                    />
-                    <InputLabel htmlFor="no" className={classes.radioLabel}>
-                      No
-                    </InputLabel>
-                  </div>
                 </div>
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Number of unsuccesful iterations to stop:
-                </Typography>
-                <OutlinedInput
-                  type="number"
-                  className={classes.shortTextInput}
-                  value={settingField.tree.numberOfUnsuccessfulIterationsToStop}
-                  onChange={(e) =>
-                    handleChangeTreeSetting(
-                      e,
-                      "numberOfUnsuccessfulIterationsToStop"
-                    )
-                  }
-                />
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Perturbation strength (between 0 and 1) for randomized NNI:
-                </Typography>
-                <OutlinedInput
-                  type="number"
-                  className={classes.shortTextInput}
-                  value={settingField.tree.perturbationStrength}
-                  onChange={(e) =>
-                    handleChangeTreeSetting(e, "perturbationStrength")
-                  }
-                />
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Constrained tree file
-                </Typography>
-                <OutlinedInput
-                  className={classes.textInput}
-                  value={settingField.tree.constrainedTreeFile}
-                  onChange={(e) =>
-                    handleChangeTreeSetting(e, "constrainedTreeFile")
-                  }
-                  startAdornment={
-                    <Directory
-                      onClick={() =>
-                        handleChooseFile("tree", "constrainedTreeFile")
-                      }
-                    />
-                  }
-                />
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Reference tree
-                </Typography>
-                <OutlinedInput
-                  className={classes.textInput}
-                  value={settingField.tree.referenceTree}
-                  onChange={(e) => handleChangeTreeSetting(e, "referenceTree")}
-                  startAdornment={
-                    <Directory
-                      onClick={() => handleChooseFile("tree", "referenceTree")}
-                    />
-                  }
-                />
-              </div>
-            </form>
-          )}
-          {currentOption === "assessment" && (
-            <form className={classes.settingDetail}>
-              <Typography className={classes.settingDetailTitle}>
-                Assessment
-              </Typography>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Boostrap method:
-                </Typography>
-                <Select
-                  className={classes.shortTextInput}
-                  variant="outlined"
-                  value={settingField.assessment.bootstrapMethod}
-                  onChange={(e) =>
-                    handleChangeAssessmentSetting(e, "bootstrapMethod")
-                  }
-                >
-                  <MenuItem value="ufboot">UFBoot </MenuItem>
-                  <MenuItem value="standard">Standard</MenuItem>
-                  <MenuItem value="none">None</MenuItem>
-                </Select>
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  UFBoot option for reducing impact of severe model violation
-                </Typography>
-                <div className={classes.twoOption}>
-                  <div
-                    className={clsx(classes.radioInput, classes.selectMargin)}
-                  >
-                    <input
-                      type="radio"
-                      name="ufboot"
-                      id="yes"
-                      value="yes"
-                      checked={settingField.assessment.ufbootOption === "yes"}
-                      onChange={(e) =>
-                        handleChangeAssessmentSetting(e, "ufbootOption")
-                      }
-                    />
-                    <InputLabel htmlFor="yes" className={classes.radioLabel}>
-                      Yes
-                    </InputLabel>
-                  </div>
-                  <div
-                    className={clsx(classes.radioInput, classes.selectMargin)}
-                  >
-                    <input
-                      type="radio"
-                      name="ufboot"
-                      id="no"
-                      value="no"
-                      checked={settingField.assessment.ufbootOption === "no"}
-                      onChange={(e) =>
-                        handleChangeAssessmentSetting(e, "ufbootOption")
-                      }
-                    />
-                    <InputLabel htmlFor="no" className={classes.radioLabel}>
-                      No
-                    </InputLabel>
-                  </div>
-                </div>
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Multi-partition sampling strategy:
-                </Typography>
-                <div className={clsx(classes.radioInput, classes.selectMargin)}>
-                  <input
-                    type="radio"
-                    name="strategy"
-                    id="site"
-                    value="SITE"
-                    checked={
-                      settingField.assessment.multiPartitionSamplingStrategy ===
-                      "SITE"
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Number of unsuccesful iterations to stop:
+                  </Typography>
+                  <OutlinedInput
+                    type="number"
+                    className={classes.shortTextInput}
+                    value={
+                      settingField.tree.numberOfUnsuccessfulIterationsToStop
                     }
                     onChange={(e) =>
-                      handleChangeAssessmentSetting(
+                      handleChangeTreeSetting(
                         e,
-                        "multiPartitionSamplingStrategy"
+                        "numberOfUnsuccessfulIterationsToStop"
                       )
                     }
                   />
-                  <InputLabel htmlFor="site" className={classes.radioLabel}>
-                    Resampling the sites within partitions
-                  </InputLabel>
                 </div>
-                <div className={clsx(classes.radioInput, classes.selectMargin)}>
-                  <input
-                    type="radio"
-                    name="strategy"
-                    id="gene"
-                    value="GENE"
-                    checked={
-                      settingField.assessment.multiPartitionSamplingStrategy ===
-                      "GENE"
-                    }
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Perturbation strength (between 0 and 1) for randomized NNI:
+                  </Typography>
+                  <OutlinedInput
+                    type="number"
+                    className={classes.shortTextInput}
+                    value={settingField.tree.perturbationStrength}
                     onChange={(e) =>
-                      handleChangeAssessmentSetting(
-                        e,
-                        "multiPartitionSamplingStrategy"
-                      )
+                      handleChangeTreeSetting(e, "perturbationStrength")
                     }
                   />
-                  <InputLabel htmlFor="gene" className={classes.radioLabel}>
-                    Resampling partitions
-                  </InputLabel>
                 </div>
-                <div className={clsx(classes.radioInput, classes.selectMargin)}>
-                  <input
-                    type="radio"
-                    name="strategy"
-                    id="genesite"
-                    value="GENESITE"
-                    checked={
-                      settingField.assessment.multiPartitionSamplingStrategy ===
-                      "GENESITE"
-                    }
-                    onChange={(e) =>
-                      handleChangeAssessmentSetting(
-                        e,
-                        "multiPartitionSamplingStrategy"
-                      )
-                    }
-                  />
-                  <InputLabel htmlFor="genesite" className={classes.radioLabel}>
-                    Resampling partitions and then sites
-                  </InputLabel>
-                </div>
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Single branch tests:
-                </Typography>
-                <div className={clsx(classes.radioInput, classes.selectMargin)}>
-                  <input
-                    type="checkbox"
-                    id="test1"
-                    value="alrt 0"
-                    checked={
-                      settingField.assessment.singleBranchTest.parametric
-                    }
-                    onChange={(e) =>
-                      handleChangeAssessmentMultiple(
-                        e,
-                        "singleBranchTest",
-                        "parametric"
-                      )
-                    }
-                  />
-                  <InputLabel htmlFor="test1" className={classes.radioLabel}>
-                    Parametric aLRT test
-                  </InputLabel>
-                </div>
-                <div className={clsx(classes.radioInput, classes.selectMargin)}>
-                  <input
-                    type="checkbox"
-                    id="test2"
-                    value="alrt NUM"
-                    checked={settingField.assessment.singleBranchTest.SHlike}
-                    onChange={(e) =>
-                      handleChangeAssessmentMultiple(
-                        e,
-                        "singleBranchTest",
-                        "SHlike"
-                      )
-                    }
-                  />
-                  <InputLabel htmlFor="test2" className={classes.radioLabel}>
-                    SH-like approximate likelihood ratio test
-                  </InputLabel>
-                </div>
-                <div className={clsx(classes.radioInput, classes.selectMargin)}>
-                  <input
-                    type="checkbox"
-                    id="test3"
-                    value="abayes"
-                    checked={settingField.assessment.singleBranchTest.aBayes}
-                    onChange={(e) =>
-                      handleChangeAssessmentMultiple(
-                        e,
-                        "singleBranchTest",
-                        "aBayes"
-                      )
-                    }
-                  />
-                  <InputLabel htmlFor="test3" className={classes.radioLabel}>
-                    aBayes test
-                  </InputLabel>
-                </div>
-                <div className={clsx(classes.radioInput, classes.selectMargin)}>
-                  <input
-                    type="checkbox"
-                    id="test4"
-                    value="lbp NUM"
-                    checked={
-                      settingField.assessment.singleBranchTest.localBootstrap
-                    }
-                    onChange={(e) =>
-                      handleChangeAssessmentMultiple(
-                        e,
-                        "singleBranchTest",
-                        "localBootstrap"
-                      )
-                    }
-                  />
-                  <InputLabel htmlFor="test4" className={classes.radioLabel}>
-                    Local bootstrap test
-                  </InputLabel>
-                </div>
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Concordance factor:
-                </Typography>
-                <div className={clsx(classes.radioInput, classes.selectMargin)}>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Constrained tree file
+                  </Typography>
                   <OutlinedInput
                     className={classes.textInput}
-                    placeholder="gCF"
-                    value={settingField.assessment.concordanceFactor.gCF}
+                    value={settingField.tree.constrainedTreeFile}
                     onChange={(e) =>
-                      handleChangeAssessmentMultiple(
-                        e,
-                        "concordanceFactor",
-                        "gCF"
-                      )
+                      handleChangeTreeSetting(e, "constrainedTreeFile")
                     }
                     startAdornment={
                       <Directory
                         onClick={() =>
-                          handleChooseFile("assessment", "concordanceFactor")
+                          handleChooseFile("tree", "constrainedTreeFile")
                         }
                       />
                     }
                   />
                 </div>
-                <div className={clsx(classes.radioInput, classes.selectMargin)}>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Reference tree
+                  </Typography>
                   <OutlinedInput
-                    type="number"
                     className={classes.textInput}
-                    placeholder="sCF"
-                    value={settingField.assessment.concordanceFactor.sCF}
+                    value={settingField.tree.referenceTree}
                     onChange={(e) =>
-                      handleChangeAssessmentMultiple(
-                        e,
-                        "concordanceFactor",
-                        "sCF"
-                      )
+                      handleChangeTreeSetting(e, "referenceTree")
+                    }
+                    startAdornment={
+                      <Directory
+                        onClick={() =>
+                          handleChooseFile("tree", "referenceTree")
+                        }
+                      />
                     }
                   />
                 </div>
-              </div>
-            </form>
-          )}
-          {currentOption === "dating" && (
-            <form className={classes.settingDetail}>
-              <Typography className={classes.settingDetailTitle}>
-                Dating
-              </Typography>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Available date info type
+              </form>
+            )}
+            {currentOption === "assessment" && (
+              <form className={classes.settingDetail}>
+                <Typography className={classes.settingDetailTitle}>
+                  Assessment
                 </Typography>
-                <Select
-                  className={classes.shortTextInput}
-                  variant="outlined"
-                  value={settingField.dating.availableDateInfoType}
-                  onChange={(e) =>
-                    handleChangeDatingSetting(e, "availableDateInfoType")
-                  }
-                >
-                  <MenuItem value="tip">Tip dates </MenuItem>
-                  <MenuItem value="ancestral">Ancestral date</MenuItem>
-                  <MenuItem value="none">None</MenuItem>
-                </Select>
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Date extraction from taxon names in alignment file
-                </Typography>
-                <Select
-                  className={classes.shortTextInput}
-                  variant="outlined"
-                  value={settingField.dating.dateExtraction}
-                  onChange={(e) =>
-                    handleChangeDatingSetting(e, "dateExtraction")
-                  }
-                >
-                  <MenuItem value="yes">Yes</MenuItem>
-                  <MenuItem value="no">No</MenuItem>
-                </Select>
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Date file
-                </Typography>
-                <OutlinedInput
-                  className={classes.textInput}
-                  value={settingField.dating.dateFile}
-                  placeholder="Path"
-                  onChange={(e) => handleChangeDatingSetting(e, "dateFile")}
-                  startAdornment={
-                    <Directory
-                      onClick={() => handleChooseFile("dating", "dateFile")}
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Boostrap method:
+                  </Typography>
+                  <Select
+                    className={classes.shortTextInput}
+                    variant="outlined"
+                    value={settingField.assessment.bootstrapMethod}
+                    onChange={(e) =>
+                      handleChangeAssessmentSetting(e, "bootstrapMethod")
+                    }
+                  >
+                    <MenuItem value="ufboot">UFBoot </MenuItem>
+                    <MenuItem value="standard">Standard</MenuItem>
+                    <MenuItem value="none">None</MenuItem>
+                  </Select>
+                </div>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    UFBoot option for reducing impact of severe model violation
+                  </Typography>
+                  <div className={classes.twoOption}>
+                    <div
+                      className={clsx(classes.radioInput, classes.selectMargin)}
+                    >
+                      <input
+                        type="radio"
+                        name="ufboot"
+                        id="yes"
+                        value="yes"
+                        checked={settingField.assessment.ufbootOption === "yes"}
+                        onChange={(e) =>
+                          handleChangeAssessmentSetting(e, "ufbootOption")
+                        }
+                      />
+                      <InputLabel htmlFor="yes" className={classes.radioLabel}>
+                        Yes
+                      </InputLabel>
+                    </div>
+                    <div
+                      className={clsx(classes.radioInput, classes.selectMargin)}
+                    >
+                      <input
+                        type="radio"
+                        name="ufboot"
+                        id="no"
+                        value="no"
+                        checked={settingField.assessment.ufbootOption === "no"}
+                        onChange={(e) =>
+                          handleChangeAssessmentSetting(e, "ufbootOption")
+                        }
+                      />
+                      <InputLabel htmlFor="no" className={classes.radioLabel}>
+                        No
+                      </InputLabel>
+                    </div>
+                  </div>
+                </div>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Multi-partition sampling strategy:
+                  </Typography>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="strategy"
+                      id="site"
+                      value="SITE"
+                      checked={
+                        settingField.assessment
+                          .multiPartitionSamplingStrategy === "SITE"
+                      }
+                      onChange={(e) =>
+                        handleChangeAssessmentSetting(
+                          e,
+                          "multiPartitionSamplingStrategy"
+                        )
+                      }
                     />
-                  }
-                />
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Branch containing outgroup
+                    <InputLabel htmlFor="site" className={classes.radioLabel}>
+                      Resampling the sites within partitions
+                    </InputLabel>
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="strategy"
+                      id="gene"
+                      value="GENE"
+                      checked={
+                        settingField.assessment
+                          .multiPartitionSamplingStrategy === "GENE"
+                      }
+                      onChange={(e) =>
+                        handleChangeAssessmentSetting(
+                          e,
+                          "multiPartitionSamplingStrategy"
+                        )
+                      }
+                    />
+                    <InputLabel htmlFor="gene" className={classes.radioLabel}>
+                      Resampling partitions
+                    </InputLabel>
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="strategy"
+                      id="genesite"
+                      value="GENESITE"
+                      checked={
+                        settingField.assessment
+                          .multiPartitionSamplingStrategy === "GENESITE"
+                      }
+                      onChange={(e) =>
+                        handleChangeAssessmentSetting(
+                          e,
+                          "multiPartitionSamplingStrategy"
+                        )
+                      }
+                    />
+                    <InputLabel
+                      htmlFor="genesite"
+                      className={classes.radioLabel}
+                    >
+                      Resampling partitions and then sites
+                    </InputLabel>
+                  </div>
+                </div>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Single branch tests:
+                  </Typography>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="checkbox"
+                      id="test1"
+                      value="alrt 0"
+                      checked={
+                        settingField.assessment.singleBranchTest.parametric
+                      }
+                      onChange={(e) =>
+                        handleChangeAssessmentMultiple(
+                          e,
+                          "singleBranchTest",
+                          "parametric"
+                        )
+                      }
+                    />
+                    <InputLabel htmlFor="test1" className={classes.radioLabel}>
+                      Parametric aLRT test
+                    </InputLabel>
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="checkbox"
+                      id="test2"
+                      value="alrt NUM"
+                      checked={settingField.assessment.singleBranchTest.SHlike}
+                      onChange={(e) =>
+                        handleChangeAssessmentMultiple(
+                          e,
+                          "singleBranchTest",
+                          "SHlike"
+                        )
+                      }
+                    />
+                    <InputLabel htmlFor="test2" className={classes.radioLabel}>
+                      SH-like approximate likelihood ratio test
+                    </InputLabel>
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="checkbox"
+                      id="test3"
+                      value="abayes"
+                      checked={settingField.assessment.singleBranchTest.aBayes}
+                      onChange={(e) =>
+                        handleChangeAssessmentMultiple(
+                          e,
+                          "singleBranchTest",
+                          "aBayes"
+                        )
+                      }
+                    />
+                    <InputLabel htmlFor="test3" className={classes.radioLabel}>
+                      aBayes test
+                    </InputLabel>
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="checkbox"
+                      id="test4"
+                      value="lbp NUM"
+                      checked={
+                        settingField.assessment.singleBranchTest.localBootstrap
+                      }
+                      onChange={(e) =>
+                        handleChangeAssessmentMultiple(
+                          e,
+                          "singleBranchTest",
+                          "localBootstrap"
+                        )
+                      }
+                    />
+                    <InputLabel htmlFor="test4" className={classes.radioLabel}>
+                      Local bootstrap test
+                    </InputLabel>
+                  </div>
+                </div>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Concordance factor:
+                  </Typography>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <OutlinedInput
+                      className={classes.textInput}
+                      placeholder="gCF"
+                      value={settingField.assessment.concordanceFactor.gCF}
+                      onChange={(e) =>
+                        handleChangeAssessmentMultiple(
+                          e,
+                          "concordanceFactor",
+                          "gCF"
+                        )
+                      }
+                      startAdornment={
+                        <Directory
+                          onClick={() =>
+                            handleChooseFile("assessment", "concordanceFactor")
+                          }
+                        />
+                      }
+                    />
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <OutlinedInput
+                      type="number"
+                      className={classes.textInput}
+                      placeholder="sCF"
+                      value={settingField.assessment.concordanceFactor.sCF}
+                      onChange={(e) =>
+                        handleChangeAssessmentMultiple(
+                          e,
+                          "concordanceFactor",
+                          "sCF"
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+              </form>
+            )}
+            {currentOption === "dating" && (
+              <form className={classes.settingDetail}>
+                <Typography className={classes.settingDetailTitle}>
+                  Dating
                 </Typography>
-                <Select
-                  className={classes.textInput}
-                  variant="outlined"
-                  value={settingField.dating.branchContainingOutgroup}
-                  onChange={(e) =>
-                    handleChangeDatingSetting(e, "branchContainingOutgroup")
-                  }
-                >
-                  <MenuItem value="autoDetect">Auto-detect</MenuItem>
-                  <MenuItem value="Taxa_name_1, Taxa_name_2">
-                    Taxa_name_1, Taxa_name_2
-                  </MenuItem>
-                </Select>
-              </div>
-            </form>
-          )}
-          {currentOption === "others" && (
-            <form className={classes.settingDetail}>
-              <Typography className={classes.settingDetailTitle}>
-                Others
-              </Typography>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Number of CPU cores
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Available date info type
+                  </Typography>
+                  <Select
+                    className={classes.shortTextInput}
+                    variant="outlined"
+                    value={settingField.dating.availableDateInfoType}
+                    onChange={(e) =>
+                      handleChangeDatingSetting(e, "availableDateInfoType")
+                    }
+                  >
+                    <MenuItem value="tip">Tip dates </MenuItem>
+                    <MenuItem value="ancestral">Ancestral date</MenuItem>
+                    <MenuItem value="none">None</MenuItem>
+                  </Select>
+                </div>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Date extraction from taxon names in alignment file
+                  </Typography>
+                  <Select
+                    className={classes.shortTextInput}
+                    variant="outlined"
+                    value={settingField.dating.dateExtraction}
+                    onChange={(e) =>
+                      handleChangeDatingSetting(e, "dateExtraction")
+                    }
+                  >
+                    <MenuItem value="yes">Yes</MenuItem>
+                    <MenuItem value="no">No</MenuItem>
+                  </Select>
+                </div>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Date file
+                  </Typography>
+                  <OutlinedInput
+                    className={classes.textInput}
+                    value={settingField.dating.dateFile}
+                    placeholder="Path"
+                    onChange={(e) => handleChangeDatingSetting(e, "dateFile")}
+                    startAdornment={
+                      <Directory
+                        onClick={() => handleChooseFile("dating", "dateFile")}
+                      />
+                    }
+                  />
+                </div>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Branch containing outgroup
+                  </Typography>
+                  <Select
+                    className={classes.textInput}
+                    variant="outlined"
+                    value={settingField.dating.branchContainingOutgroup}
+                    onChange={(e) =>
+                      handleChangeDatingSetting(e, "branchContainingOutgroup")
+                    }
+                  >
+                    <MenuItem value="autoDetect">Auto-detect</MenuItem>
+                    <MenuItem value="Taxa_name_1, Taxa_name_2">
+                      Taxa_name_1, Taxa_name_2
+                    </MenuItem>
+                  </Select>
+                </div>
+              </form>
+            )}
+            {currentOption === "others" && (
+              <form className={classes.settingDetail}>
+                <Typography className={classes.settingDetailTitle}>
+                  Others
                 </Typography>
-                <OutlinedInput
-                  type="number"
-                  className={classes.textInput}
-                  value={settingField.others.numberOfCPUCores}
-                  placeholder="Number of cores"
-                  onChange={(e) =>
-                    handleChangeOthersSetting(e, "numberOfCPUCores")
-                  }
-                />
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Prefix for all output files
-                </Typography>
-                <OutlinedInput
-                  className={classes.textInput}
-                  value={settingField.others.prefix}
-                  placeholder="Prefix"
-                  onChange={(e) => handleChangeOthersSetting(e, "prefix")}
-                />
-              </div>
-              <div className={classes.textInputContainer}>
-                <Typography className={classes.inputLabel}>
-                  Enter command line
-                </Typography>
-                <OutlinedInput
-                  className={classes.textInput}
-                  value={settingField.others.enterCommandLine}
-                  placeholder="Command line"
-                  onChange={(e) =>
-                    handleChangeOthersSetting(e, "enterCommandLine")
-                  }
-                />
-              </div>
-            </form>
-          )}
-          <div className={classes.buttonContainer}>
-            <Button
-              variant="contained"
-              className={classes.button1}
-              onClick={handleSaveSetting}
-            >
-              Save
-            </Button>
-            <Button
-              variant="outlined"
-              className={classes.button2}
-              onClick={handleCloseSetting}
-            >
-              Cancel
-            </Button>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Number of CPU cores
+                  </Typography>
+                  <OutlinedInput
+                    type="number"
+                    className={classes.textInput}
+                    value={settingField.others.numberOfCPUCores}
+                    placeholder="Number of cores"
+                    onChange={(e) =>
+                      handleChangeOthersSetting(e, "numberOfCPUCores")
+                    }
+                  />
+                </div>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Prefix for all output files
+                  </Typography>
+                  <OutlinedInput
+                    className={classes.textInput}
+                    value={settingField.others.prefix}
+                    placeholder="Prefix"
+                    onChange={(e) => handleChangeOthersSetting(e, "prefix")}
+                  />
+                </div>
+                <div className={classes.textInputContainer}>
+                  <Typography className={classes.inputLabel}>
+                    Enter command line
+                  </Typography>
+                  <OutlinedInput
+                    className={classes.textInput}
+                    value={settingField.others.enterCommandLine}
+                    placeholder="Command line"
+                    onChange={(e) =>
+                      handleChangeOthersSetting(e, "enterCommandLine")
+                    }
+                  />
+                </div>
+              </form>
+            )}
+            <div className={classes.buttonContainer}>
+              <Button
+                variant="contained"
+                className={classes.button1}
+                onClick={handleSaveSetting}
+              >
+                Save
+              </Button>
+              <Button
+                variant="outlined"
+                className={classes.button2}
+                onClick={handleResetSetting}
+              >
+                Reset
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    )
   );
 }
 

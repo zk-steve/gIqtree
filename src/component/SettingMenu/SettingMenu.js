@@ -23,7 +23,6 @@ function SettingMenu({
       <div className={classes.container}>
         <div className={classes.settingTitle}>
           <Typography>Setting</Typography>
-          <SettingClose onClick={handleCloseSetting} />
         </div>
         <div>
           {listOption.map((option, index) => (

@@ -93,7 +93,7 @@ function ProjectInput({
           )}
         {((currentTab === "input" && currentFile === "") || isInProcess) && (
           <div className={classes.inputContainer}>
-            {listInput.length === 0 && (
+            {/* {listInput.length === 0 && (
               <div className={classes.input} onClick={handleSelectInput}>
                 <InputFileIcon />
                 <div className={classes.textContainer}>
@@ -106,7 +106,7 @@ function ProjectInput({
                   </Typography>
                 </div>
               </div>
-            )}
+            )} */}
             {listInput.length > 0 && !isInProcess && currentTab === "input" && (
               <ListInputFiles
                 listInput={listInput}

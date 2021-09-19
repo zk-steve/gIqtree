@@ -12,7 +12,7 @@ function ProjectPage(props) {
   const classes = useStyles();
   const [currentTab, setCurrentTab] = useState("input");
   const [currentFile, setCurrentFile] = useState("");
-  const [isSettingOpen, setIsSettingOpen] = useState(false);
+  const [isSettingOpen, setIsSettingOpen] = useState(true);
   const [listInput, setListInput] = useState([]);
   const [listOutput, setListOutput] = useState([]);
   const [isExecuteDisabled, setIsExecuteDisabled] = useState(true);
@@ -84,6 +84,7 @@ function ProjectPage(props) {
   }, [isInProcess, progressInterval]);
   const handleOpenSetting = () => {
     if (!isSettingOpen) setIsSettingOpen(true);
+    if (currentFile !== "") setCurrentFile("");
   };
   const handleCloseSetting = () => {
     setIsSettingOpen(false);
@@ -112,6 +113,7 @@ function ProjectPage(props) {
   const handleGetOutputContent = (file) => {
     ipcRenderer.send("viewFile", file.path);
     setCurrentFile(file.name);
+    if (isSettingOpen) setIsSettingOpen(false);
   };
   const handleChangeTab = (tab) => {
     if (currentTab !== tab) setCurrentTab(tab);
@@ -184,8 +186,9 @@ function ProjectPage(props) {
               progressPercentage={progressPercentage}
             />
           )}
-          {isSettingOpen && (
+          {isSettingOpen && projectSetting && (
             <SettingDetail
+              id={id}
               handleCloseSetting={handleCloseSetting}
               multiPartition={listInput.length > 1}
               projectSetting={projectSetting}

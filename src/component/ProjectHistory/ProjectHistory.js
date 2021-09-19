@@ -13,9 +13,9 @@ function ProjectHistory({ projectName, percent, time, onClick }) {
         </div>
         <div className={classes.project}>
           <Typography>{projectName}</Typography>
-          <Typography className={classes.progress}>
+          {/* <Typography className={classes.progress}>
             {percent < 100 ? `Processed ${percent}%` : `${percent}%`}
-          </Typography>
+          </Typography> */}
         </div>
         <Typography align="left" className={classes.lastColumn}>
           {time}
