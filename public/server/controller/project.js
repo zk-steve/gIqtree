@@ -174,11 +174,16 @@ const addSettingFile = (projectPath, object_model) => {
 const readSettingObject = (projectPath) => {
   return new Promise(async (resolve, reject) => {
     const settingPath = path.join(projectPath, "setting.json")
-    await fs.readFile(settingPath, (err, data) => {
-      if (err) reject({ message: "Something was wrong", status: 0 })
-      data = JSON.parse(data)
-      resolve(data)
-  })
+    if (fs.existsSync(projectPath)) {
+      await fs.readFile(settingPath, (err, data) => {
+        if (err) reject({ message: "Something was wrong", status: 0 })
+        data = JSON.parse(data)
+        resolve(data)
+      })
+    }
+    else {
+      reject({ message: "Can not find setting.json", status: 0 })
+    }
   })
 }
 

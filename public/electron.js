@@ -2,14 +2,10 @@ const { app, BrowserWindow, ipcMain, dialog, screen } = require("electron");
 const fs = require("fs");
 const path = require("path");
 const isDev = require("electron-is-dev");
-const child_process = require("child_process");
 const { kill } = require("process");
 const os = require("os");
 const homepage = require("./server/controller/homepage");
 const project = require("./server/controller/project");
-const { iqtreePath } = require("./server/db");
-const { v4: uuidv4 } = require("uuid");
-const { getOutputWhenExecuted } = require("./server/controller/execute");
 const { viewFile } = require("./server/controller/file_handler");
 
 const {
@@ -17,11 +13,6 @@ const {
   baseCommand,
 } = require("./server/command_line/mapping_command");
 
-const FIND_MODEL = require("./server/command_line/default/find_model");
-const MERGE_PARTITION = require("./server/command_line/default/merger_partition");
-const INFER_TREE = require("./server/command_line/default/infer_tree");
-const ASSESS_SUPPORT = require("./server/command_line/default/assess_support");
-const DATE_TREE = require("./server/command_line/default/date_tree");
 const { getProgress } = require("./server/controller/progress");
 const { chooseFile, chooseFolder, chooseFileAndFolder } = require("./server/controller/dialog");
 
@@ -105,17 +96,6 @@ function createWindow() {
       });
   });
 
-  ipcMain.on("chooseFileAndFolder", (event) => {
-    chooseFileAndFolder()
-      .then((data) => {
-        console.log({file_and_folder: data})
-        mainWindow.webContents.send("chooseFileAndFolderResult", data);
-      })
-      .catch((err) => {
-        mainWindow.webContents.send("chooseFileAndFolderResult", err);
-      });
-  });
-
   ipcMain.on("reopenProject", (event, project_id) => {
     project
       .reopenProject(project_id)
@@ -144,36 +124,37 @@ function createWindow() {
       });
   });
 
-  ipcMain.handle("testSetting", async (event, project_id, object_model) => {
-    OBJECT_SETTING = object_model;
-    let project_path;
-    await homepage
-      .getProjectById(project_id)
-      .then((data) => {
-        project_path = data[0].path;
-      })
-      .catch((err) => {
-        event.sender.send("testSettingResult", { message: "ERROR", status: 0 });
-      });
-    console.log({ project_path });
-    let input_path = path.join(project_path, "input");
-    let output_path = path.join(project_path, "output", "output");
-    let command = baseCommand();
-    mappingCommand(OBJECT_SETTING, input_path, output_path)
-      .then((data) => {
-        command += data;
-        console.log({ command });
-        event.sender.send("testSettingResult", { message: command, status: 1 });
-      })
-      .catch((err) => {
-        event.sender.send("testSettingResult", {
-          message: "Command fail",
-          status: 0,
-        });
-      });
-  });
+  // ipcMain.handle("testSetting", async (event, project_id, object_model) => {
+  //   OBJECT_SETTING = object_model;
+  //   let project_path;
+  //   await homepage
+  //     .getProjectById(project_id)
+  //     .then((data) => {
+  //       project_path = data[0].path;
+  //     })
+  //     .catch((err) => {
+  //       event.sender.send("testSettingResult", { message: "ERROR", status: 0 });
+  //     });
+  //   console.log({ project_path });
+  //   let input_path = path.join(project_path, "input");
+  //   let output_path = path.join(project_path, "output", "output");
+  //   let command = baseCommand();
+  //   mappingCommand(OBJECT_SETTING, input_path, output_path)
+  //     .then((data) => {
+  //       command += data;
+  //       console.log({ command });
+  //       event.sender.send("testSettingResult", { message: command, status: 1 });
+  //     })
+  //     .catch((err) => {
+  //       event.sender.send("testSettingResult", {
+  //         message: "Command fail",
+  //         status: 0,
+  //       });
+  //     });
+  // });
 
-  ipcMain.handle("saveSetting", (event, object_model) => {
+  ipcMain.handle("saveSetting", (event, project_path, object_model) => {
+    project.addSettingFile()
     OBJECT_SETTING = object_model;
     mainWindow.webContents.send("saveSettingResult", {
       message: OBJECT_SETTING,
