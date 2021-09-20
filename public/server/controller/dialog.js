@@ -4,6 +4,7 @@ const { dialog } = require("electron");
 const os = require("os");
 
 const homepage = require("./homepage");
+const { filterName, copyFile } = require("./project");
 
 module.exports.copyFilesInput = (fileName, filePath, project_id) => {
   return new Promise(async (resolve, reject) => {
@@ -38,22 +39,30 @@ module.exports.copyFilesInput = (fileName, filePath, project_id) => {
   });
 };
 
-module.exports.chooseFile = () => {
+module.exports.chooseFile = (project_path) => {
   return new Promise((resolve, reject) => {
     try {
-      const filePath = dialog.showOpenDialogSync({
+      const sourcePath = dialog.showOpenDialogSync({
         properties: ["openFile"],
         filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
       });
-      console.log({ filePath });
-      resolve(filePath);
+      filterName(sourcePath)
+        .then(data => {
+          const destPath = path.join(project_path, "input", )
+          copyFile(sourcePath, destPath)
+            .then(data => {
+              resolve(sourcePath);
+            })
+            .catch(err => reject({ message: "Something was wrong", status: 0 }))
+        })
+        .catch(err => reject(err))
     } catch (err) {
       reject({ message: "Something was wrong", status: 0 });
     }
   });
 };
 
-module.exports.chooseFolder = () => {
+module.exports.chooseFolder = (project_path) => {
   return new Promise((resolve, reject) => {
     try {
       const filePath = dialog.showOpenDialogSync({

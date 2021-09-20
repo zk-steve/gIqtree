@@ -161,6 +161,33 @@ const initObjectModel = (projectPath, projectType = "findModel") => {
   })
 }
 
+const filterName = (path) => {
+  return new Promise((resolve, reject) => {
+    if(!path) reject({message: "Can not get path", staus: 0})
+    let result
+    if (os.type() === "Windows_NT") {
+      result = path.split("\\");
+    } else {
+      result = path.split("/");
+    }
+    resolve(result[result.length - 1])
+  })
+}
+
+const copyFile = (sourcePath, destPath) => {
+  return new Promise(async(resolve, reject) => {
+    await fs.copyFileSync(sourcePath, destPath)
+    console.log("Copy File")
+    resolve("Copy file")
+  })
+}
+
+// const copyFolder = (sourcePath, destPath) => {
+//   return new Promise(async(resolve, reject) => {
+//     fs.readdir
+//   })
+// }
+
 const addSettingFile = (projectPath, object_model) => {
   return new Promise(async (resolve, reject) => {
     const settingPath = path.join(projectPath, "setting.json")
@@ -294,17 +321,8 @@ const openProject = () => {
   });
 };
 
-const executeProject = async (project_id, object_model, type) => {
+const executeProject = async (project_path, object_model, type) => {
   return new Promise(async(resolve, reject) => {
-    let project_path;
-    await homepage
-      .getProjectById(project_id)
-      .then((data) => {
-        project_path = data[0].path;
-      })
-      .catch((err) => {
-        reject({message:"does not get project path" ,status:0});
-      });
     console.log({ project_path });
     let input_path = path.join(project_path, "input");
     let output_path = path.join(project_path, "output", "output");
@@ -361,5 +379,7 @@ module.exports = {
   executeProject,
   initObjectModel,
   addSettingFile,
-  readSettingObject
+  readSettingObject,
+  filterName,
+  copyFile
 };

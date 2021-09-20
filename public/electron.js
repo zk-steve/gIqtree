@@ -74,22 +74,28 @@ function createWindow() {
       });
   });
 
-  ipcMain.on("chooseFile", (event) => {
-    chooseFile()
+  ipcMain.on("chooseFile", (event, project_path) => {
+    chooseFile(project_path)
       .then((data) => {
         console.log({file: data})
-        mainWindow.webContents.send("chooseFileResult", data);
+        mainWindow.webContents.send("chooseFileResult", {
+          message: data,
+          status: 1,
+        });
       })
       .catch((err) => {
         mainWindow.webContents.send("chooseFileResult", err);
       });
   });
 
-  ipcMain.on("chooseFolder", (event) => {
-    chooseFolder()
+  ipcMain.on("chooseFolder", (event, project_path) => {
+    chooseFolder(project_path)
       .then((data) => {
         console.log({folder: data})
-        mainWindow.webContents.send("chooseFolderResult", data);
+        mainWindow.webContents.send("chooseFolderResult", {
+          message: data,
+          status: 1,
+        });
       })
       .catch((err) => {
         mainWindow.webContents.send("chooseFolderResult", err);
@@ -124,56 +130,33 @@ function createWindow() {
       });
   });
 
-  // ipcMain.handle("testSetting", async (event, project_id, object_model) => {
-  //   OBJECT_SETTING = object_model;
-  //   let project_path;
-  //   await homepage
-  //     .getProjectById(project_id)
-  //     .then((data) => {
-  //       project_path = data[0].path;
-  //     })
-  //     .catch((err) => {
-  //       event.sender.send("testSettingResult", { message: "ERROR", status: 0 });
-  //     });
-  //   console.log({ project_path });
-  //   let input_path = path.join(project_path, "input");
-  //   let output_path = path.join(project_path, "output", "output");
-  //   let command = baseCommand();
-  //   mappingCommand(OBJECT_SETTING, input_path, output_path)
-  //     .then((data) => {
-  //       command += data;
-  //       console.log({ command });
-  //       event.sender.send("testSettingResult", { message: command, status: 1 });
-  //     })
-  //     .catch((err) => {
-  //       event.sender.send("testSettingResult", {
-  //         message: "Command fail",
-  //         status: 0,
-  //       });
-  //     });
-  // });
-
   ipcMain.handle("saveSetting", (event, project_path, object_model) => {
-    project.addSettingFile()
-    OBJECT_SETTING = object_model;
-    mainWindow.webContents.send("saveSettingResult", {
-      message: OBJECT_SETTING,
-      status: 1,
-      command: COMMAND,
-    });
+    project.addSettingFile(project_path, object_model)
+      .then(data => {
+        mainWindow.webContents.send("saveSettingResult", {
+          message: object_model,
+          status: 1
+        });
+      })
+      .catch(err => {
+        mainWindow.webContents.send("saveSettingResult", {message: err, status: 0});
+      })
   });
 
-  ipcMain.handle("restart", (event, project_id) => {
+  ipcMain.handle("restart", (event, project_path) => {
     let type = "restart";
-    let object_model = OBJECT_SETTING;
-    project
-      .executeProject(project_id, object_model, type)
-      .then((data) => {
-        COMMAND = data.command;
-        console.log({ BBB: COMMAND });
-        event.sender.send("executeResult", data);
+    project.readSettingObject(project_path)
+      .then(object_model => {
+        project
+        .executeProject(project_path, object_model, type)
+        .then((data) => {
+          COMMAND = data.command;
+          console.log({ BBB: COMMAND });
+          event.sender.send("executeResult", data);
+        })
+        .catch((err) => event.sender.send("executeResult", err));
       })
-      .catch((err) => event.sender.send("executeResult", err));
+      .catch(err => event.sender.send("executeResult", err))
   });
 
   ipcMain.on("pauseProject", (event, process_id) => {
@@ -181,24 +164,27 @@ function createWindow() {
     mainWindow.webContents.send({ message: "Pause", status: 1 });
   });
 
-  ipcMain.handle("executeProject", async (event, project_id) => {
+  ipcMain.handle("executeProject", async (event, project_path) => {
     let type = "first";
-    let object_model = OBJECT_SETTING;
-    project
-      .executeProject(project_id, object_model, type)
-      .then((data) => {
-        COMMAND = data.command;
-        console.log({ BBB: data });
-        event.sender.send("executeResult", data);
+    project.readSettingObject(project_path)
+      .then(object_model => {
+        project
+        .executeProject(project_path, object_model, type)
+        .then((data) => {
+          COMMAND = data.command;
+          console.log({ BBB: COMMAND });
+          event.sender.send("executeResult", data);
+        })
+        .catch((err) => event.sender.send("executeResult", err));
       })
-      .catch((err) => event.sender.send("executeResult", err));
+      .catch(err => event.sender.send("executeResult", err))
   });
 
   ipcMain.on("selectDialog", async (event, project_id) => {
     try {
       // Step 1: Choose msa file and get path and name of it
       const filePath = dialog.showOpenDialogSync({
-        properties: ["openFile", "multiSelections", 'openDirectory'],
+        properties: ["openFile", "multiSelections"],
         filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
       });
       if (!filePath) {
