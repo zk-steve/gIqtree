@@ -42,13 +42,27 @@ module.exports.chooseFile = () => {
   return new Promise((resolve, reject) => {
     try {
       const filePath = dialog.showOpenDialogSync({
-        properties: ["openFile", "multiSelections"],
+        properties: ["openFile"],
         filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
       });
       console.log({ filePath });
-      resolve({ message: filePath, status: 1 });
+      resolve(filePath);
     } catch (err) {
       reject({ message: "Something was wrong", status: 0 });
     }
   });
 };
+
+module.exports.chooseFolder = () => {
+  return new Promise((resolve, reject) => {
+    try {
+      const filePath = dialog.showOpenDialogSync({
+        properties: ["openDirectory"]
+      });
+      console.log({ filePath });
+      resolve(filePath);
+    } catch (err) {
+      reject({ message: "Something was wrong", status: 0 });
+    }
+  });
+}

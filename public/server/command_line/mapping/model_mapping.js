@@ -93,6 +93,9 @@ module.exports.model_mapping = (object_model, inputs) => {
     }
   }
   //Step 3: State frequency -pending
+  if (!default_flag) {
+    
+  }
   //Step 4: Ascertainment bias correction
   if (!default_flag) {
     result += "+ASC";

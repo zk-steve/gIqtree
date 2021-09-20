@@ -23,7 +23,7 @@ const INFER_TREE = require("./server/command_line/default/infer_tree");
 const ASSESS_SUPPORT = require("./server/command_line/default/assess_support");
 const DATE_TREE = require("./server/command_line/default/date_tree");
 const { getProgress } = require("./server/controller/progress");
-const { chooseFile } = require("./server/controller/dialog");
+const { chooseFile, chooseFolder, chooseFileAndFolder } = require("./server/controller/dialog");
 
 let OBJECT_SETTING;
 let COMMAND = "";
@@ -86,10 +86,33 @@ function createWindow() {
   ipcMain.on("chooseFile", (event) => {
     chooseFile()
       .then((data) => {
+        console.log({file: data})
         mainWindow.webContents.send("chooseFileResult", data);
       })
       .catch((err) => {
         mainWindow.webContents.send("chooseFileResult", err);
+      });
+  });
+
+  ipcMain.on("chooseFolder", (event) => {
+    chooseFolder()
+      .then((data) => {
+        console.log({folder: data})
+        mainWindow.webContents.send("chooseFolderResult", data);
+      })
+      .catch((err) => {
+        mainWindow.webContents.send("chooseFolderResult", err);
+      });
+  });
+
+  ipcMain.on("chooseFileAndFolder", (event) => {
+    chooseFileAndFolder()
+      .then((data) => {
+        console.log({file_and_folder: data})
+        mainWindow.webContents.send("chooseFileAndFolderResult", data);
+      })
+      .catch((err) => {
+        mainWindow.webContents.send("chooseFileAndFolderResult", err);
       });
   });
 
@@ -194,7 +217,7 @@ function createWindow() {
     try {
       // Step 1: Choose msa file and get path and name of it
       const filePath = dialog.showOpenDialogSync({
-        properties: ["openFile", "multiSelections"],
+        properties: ["openFile", "multiSelections", 'openDirectory'],
         filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
       });
       if (!filePath) {
@@ -203,6 +226,7 @@ function createWindow() {
           status: 0,
         });
       } else {
+        console.log({filePath, type: typeof(filePath)})
         const fileName = filePath.map((element) => {
           console.log(element);
           let result;
@@ -326,37 +350,14 @@ function createWindow() {
     homepage
       .getProjectById(id)
       .then((data) => {
-        console.log(data[0].project_type);
-        switch (data[0].project_type) {
-          case "findModel":
-            data[0].object_model = FIND_MODEL;
-            OBJECT_SETTING = FIND_MODEL;
-            break;
-          case "mergePartition":
-            console.log({ MERGE_PARTITION });
-            data[0].object_model = MERGE_PARTITION;
-            OBJECT_SETTING = MERGE_PARTITION;
-            break;
-          case "inferTree":
-            data[0].object_model = INFER_TREE;
-            OBJECT_SETTING = INFER_TREE;
-            break;
-          case "assessSupport":
-            data[0].object_model = ASSESS_SUPPORT;
-            OBJECT_SETTING = ASSESS_SUPPORT;
-            break;
-          case "dateTree":
-            data[0].object_model = DATE_TREE;
-            OBJECT_SETTING = DATE_TREE;
-            break;
-          default:
-            break;
-        }
-        console.log({ data });
-        mainWindow.webContents.send("returnProjectById", {
-          message: data,
-          status: 1,
-        });
+        project.readSettingObject(data[0].path)
+          .then(object_model => {
+            data[0].object_model = object_model
+            mainWindow.webContents.send("returnProjectById", {
+              message: data,
+              status: 1,
+            });
+          })
       })
       .catch((err) => {
         mainWindow.webContents.send("returnProjectById", {

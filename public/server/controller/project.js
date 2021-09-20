@@ -5,9 +5,13 @@ const os = require("os");
 const { v4: uuidv4 } = require("uuid");
 const child_process = require("child_process");
 
-const { iqtreePath } = require("../db")
 const { getOutputWhenExecuted } = require("../controller/execute")
 const { mappingCommand, baseCommand } = require("../command_line/mapping_command");
+const FIND_MODEL = require("../command_line/default/find_model");
+const MERGE_PARTITION = require("../command_line/default/merger_partition");
+const INFER_TREE = require("../command_line/default/infer_tree");
+const ASSESS_SUPPORT = require("../command_line/default/assess_support");
+const DATE_TREE = require("../command_line/default/date_tree");
 
 const homepage = require("./homepage");
 
@@ -115,8 +119,67 @@ const reopenProject = (project_id) => {
   });
 };
 
-const storeSetting = (project_path, object_model) => {
-  
+const createFolders = async(paths) => {
+  return new Promise(async (resolve, reject) => {
+    if (Array.isArray(paths)) {
+      paths.forEach(async path => {
+        await fs.mkdir(path, { recursive: true }, (err) => {
+          if (err) {
+            reject({ message: "Does not create input folder", status: 0 });
+          }
+        });
+      })
+      resolve(`Created`)
+    }
+  })
+}
+
+const initObjectModel = (projectPath, projectType = "findModel") => {
+  return new Promise(async (resolve, reject) => {
+    let object_model
+    switch (projectType) {
+      case "findModel":
+        object_model = FIND_MODEL
+        break;  
+      case "mergePartition":
+        object_model = MERGE_PARTITION
+        break;
+      case "inferTree":
+        object_model = INFER_TREE
+        break;
+      case "assessSupport":
+        object_model = ASSESS_SUPPORT
+        break;
+      case "dateTree":
+        object_model = DATE_TREE
+        break;
+      default:
+        object_model = FIND_MODEL
+        break;
+    }
+    resolve(object_model)
+  })
+}
+
+const addSettingFile = (projectPath, object_model) => {
+  return new Promise(async (resolve, reject) => {
+    const settingPath = path.join(projectPath, "setting.json")
+    await fs.writeFile(settingPath, JSON.stringify(object_model), (err) => {
+      if (err) reject({ message: "Something was wrong", status: 0 })
+      resolve("Created")
+    })
+  })
+}
+
+const readSettingObject = (projectPath) => {
+  return new Promise(async (resolve, reject) => {
+    const settingPath = path.join(projectPath, "setting.json")
+    await fs.readFile(settingPath, (err, data) => {
+      if (err) reject({ message: "Something was wrong", status: 0 })
+      data = JSON.parse(data)
+      resolve(data)
+  })
+  })
 }
 
 const setProject = (data) => {
@@ -133,19 +196,19 @@ const setProject = (data) => {
     }
     const input = path.join(filePath, "input");
     const output = path.join(filePath, "output");
-    fs.mkdir(input, { recursive: true }, (err) => {
-      if (err) {
-        reject({ message: "Does not create input folder", status: 0 });
-      } else console.log("Created input folder");
-    });
-    await fs.mkdir(output, { recursive: true }, (err) => {
-      if (err) {
-        reject("setProjectSuccess", {
-          message: "Does not create output folder",
-          status: 0,
-        });
-      } else console.log("Created ouput folder");
-    });
+    const alignments = path.join(filePath, "input", "alignments")
+    await createFolders([input, output, alignments])
+      .then(data => console.log(data))
+      .catch(err => reject(err))
+    await initObjectModel(filePath, projectType)
+      .then(object_model => {
+        addSettingFile(filePath, object_model)
+          .then(message => console.log(message))
+          .catch(err => reject({ message: "Does not create project", status: 0 }))
+      })
+      .catch(err => {
+        reject({ message: "Does not create project", status: 0 });
+      })
     let project_id = uuidv4();
     console.log(project_id);
     homepage
@@ -290,5 +353,8 @@ module.exports = {
   reopenProject,
   setProject,
   openProject,
-  executeProject
+  executeProject,
+  initObjectModel,
+  addSettingFile,
+  readSettingObject
 };
