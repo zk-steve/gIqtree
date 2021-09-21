@@ -109,6 +109,9 @@ const useStyles = makeStyles((theme) => ({
   },
   modelTable: {
     padding: 0,
+    width: "200px !important",
+    height: "auto !important",
+    maxHeight: "300px",
   },
   listModel: {
     paddingLeft: "36px",
@@ -191,7 +194,7 @@ const useStyles = makeStyles((theme) => ({
   },
   importButton: {
     borderColor: theme.palette.grey[900],
-    width: "110px",
+    width: "170px",
     height: "28px",
     textTransform: "none",
     "&:hover": {

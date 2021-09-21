@@ -27,7 +27,8 @@ function SettingDetail({
   const [currentPathOption, setCurrentPathOption] = useState([]);
 
   useEffect(() => {
-    handleTestSetting(settingField);
+    // handleTestSetting(settingField);
+    console.log(settingField);
   }, [handleTestSetting, settingField]);
   useEffect(() => {
     const handleChangePathOption = (option, subOption, path) => {
@@ -207,200 +208,467 @@ function SettingDetail({
     model: {
       substitutionModel: [
         {
-          label: "Model Finder",
-          value: "modelFinder",
-          id: "modelFinder",
-          name: "modelFinder",
+          label: "Auto",
+          value: "auto",
+          id: "auto",
+          name: "auto",
         },
       ],
       modelFinder: [
         {
-          label: "LC or JC69",
-          value: "LC or JC69",
-          id: "jLC or JC69",
+          label: "Auto",
+          value: "auto",
+          id: "auto",
           name: "modelFinderList",
-          df: 0,
-          explanation: "Equal substitution rates and equal base frequencies",
+          type: "autoDetect",
+        },
+        {
+          label: "JC2",
+          value: "JC2",
+          id: "JC2",
+          name: "modelFinderList",
+          type: "BINARY",
+        },
+        {
+          label: "GTR2",
+          value: "GTR2",
+          id: "GTR2",
+          name: "modelFinderList",
+          type: "BINARY",
+        },
+        {
+          label: "JC",
+          value: "JC",
+          id: "JC",
+          name: "modelFinderList",
+          type: "DNA",
         },
         {
           label: "F81",
           value: "F81",
           id: "F81",
           name: "modelFinderList",
-          df: 3,
-          explanation: "Equal rates but unequal base freq",
+          type: "DNA",
         },
         {
-          label: "K80 or K2P",
-          value: "K80 or K2P",
-          id: "K80 or K2P",
+          label: "HKI",
+          value: "HKI",
+          id: "HKI",
           name: "modelFinderList",
-          df: 1,
-          explanation:
-            "Unequal transition/transversion rates and equal base freq",
-        },
-        {
-          label: "HKY or HKY85",
-          value: "HKY or HKY85",
-          id: "HKY or HKY85",
-          name: "modelFinderList",
-          df: 4,
-          explanation:
-            "Unequal transition/transversion rates and unequal base freqfreq",
-        },
-        {
-          label: "TN or TN93",
-          value: "TN or TN93",
-          id: "TN or TN93",
-          name: "modelFinderList",
-          df: 5,
-          explanation: "Like HKY but unequal purine/pyrimidine rates",
-        },
-        {
-          label: "TN or TN93",
-          value: "TN or TN93",
-          id: "TN or TN93",
-          name: "modelFinderList",
-          df: 5,
-          explanation: "Like HKY but unequal purine/pyrimidine rates",
+          type: "DNA",
         },
         {
           label: "TNe",
           value: "TNe",
           id: "TNe",
           name: "modelFinderList",
-          df: 2,
-          explanation: "Like TN but equal base freq.",
+          type: "DNA",
         },
         {
-          label: "K81 or K3P",
-          value: "K81 or K3P",
-          id: "K81 or K3P",
+          label: "TN",
+          value: "TN",
+          id: "TN",
           name: "modelFinderList",
-          df: 2,
-          explanation: "Three substitution types model and equal base freq.",
+          type: "DNA",
+        },
+        {
+          label: "K81",
+          value: "K81",
+          id: "K81",
+          name: "modelFinderList",
+          type: "DNA",
         },
         {
           label: "K81u",
           value: "K81u",
           id: "K81u",
           name: "modelFinderList",
-          df: 5,
-          explanation: "Like K81 but unequal base freq.",
+          type: "DNA",
         },
         {
           label: "TPM2",
           value: "TPM2",
           id: "TPM2",
           name: "modelFinderList",
-          df: 2,
-          explanation: "AC=AT, AG=CT, CG=GT and equal base freq.",
+          type: "DNA",
         },
         {
           label: "TPM2u",
           value: "TPM2u",
           id: "TPM2u",
           name: "modelFinderList",
-          df: 5,
-          explanation: "Like TPM2 but unequal base freq.",
+          type: "DNA",
         },
         {
           label: "TPM3",
           value: "TPM3",
           id: "TPM3",
           name: "modelFinderList",
-          df: 2,
-          explanation: "AC=CG, AG=CT, AT=GT and equal base freq.",
+          type: "DNA",
         },
         {
           label: "TPM3u",
           value: "TPM3u",
           id: "TPM3u",
           name: "modelFinderList",
-          df: 5,
-          explanation: "Like TPM3 but unequal base freq.",
+          type: "DNA",
         },
         {
           label: "TIM",
           value: "TIM",
           id: "TIM",
           name: "modelFinderList",
-          df: 6,
-          explanation: "Transition model, AC=GT, AT=CG and unequal base freq.",
+          type: "DNA",
         },
         {
           label: "TIMe",
           value: "TIMe",
           id: "TIMe",
           name: "modelFinderList",
-          df: 3,
-          explanation: "Like TIM but equal base freq.",
+          type: "DNA",
         },
         {
           label: "TIM2",
           value: "TIM2",
           id: "TIM2",
           name: "modelFinderList",
-          df: 6,
-          explanation: "AC=AT, CG=GT and unequal",
+          type: "DNA",
         },
         {
           label: "TIM2e",
           value: "TIM2e",
           id: "TIM2e",
           name: "modelFinderList",
-          df: 3,
-          explanation: "Like TIM2 but equal base freq.",
+          type: "DNA",
         },
         {
           label: "TIM3",
           value: "TIM3",
           id: "TIM3",
           name: "modelFinderList",
-          df: 6,
-          explanation: "AC=CG, AT=GT and unequal base freq.",
+          type: "DNA",
         },
         {
           label: "TIM3e",
           value: "TIM3e",
           id: "TIM3e",
           name: "modelFinderList",
-          df: 3,
-          explanation: "Like TIM3 but equal base freq.",
+          type: "DNA",
         },
         {
           label: "TVM",
           value: "TVM",
           id: "TVM",
           name: "modelFinderList",
-          df: 7,
-          explanation: "Transversion model, AG=CT and unequal base freq.",
+          type: "DNA",
         },
         {
           label: "TVMe",
           value: "TVMe",
           id: "TVMe",
           name: "modelFinderList",
-          df: 4,
-          explanation: "Like TVM but equal base freq.",
+          type: "DNA",
         },
         {
           label: "SYM",
           value: "SYM",
           id: "SYM",
           name: "modelFinderList",
-          df: 5,
-          explanation:
-            "Symmetric model with unequal rates but equal base freq.",
+          type: "DNA",
         },
         {
           label: "GTR",
           value: "GTR",
           id: "GTR",
           name: "modelFinderList",
-          df: 8,
-          explanation:
-            "General time reversible model with unequal rates and unequal base freq.",
+          type: "DNA",
+        },
+        {
+          label: "Blosum62",
+          value: "Blosum62",
+          id: "Blosum62",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "cpREV",
+          value: "cpREV",
+          id: "cpREV",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "Dayhoff",
+          value: "Dayhoff",
+          id: "Dayhoff",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "DCMut",
+          value: "DCMut",
+          id: "DCMut",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "FLU",
+          value: "FLU",
+          id: "FLU",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "HIVb",
+          value: "HIVb",
+          id: "HIVb",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "HIVw",
+          value: "HIVw",
+          id: "HIVw",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "JTT",
+          value: "JTT",
+          id: "JTT",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "JTTDCMut",
+          value: "JTTDCMut",
+          id: "JTTDCMut",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "LG",
+          value: "LG",
+          id: "LG",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "mtART",
+          value: "mtART",
+          id: "mtART",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "mtMAM",
+          value: "mtMAM",
+          id: "mtMAM",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "PMB",
+          value: "PMB",
+          id: "PMB",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "rtREV",
+          value: "rtREV",
+          id: "rtREV",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "VT",
+          value: "VT",
+          id: "VT",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "WAG",
+          value: "WAG",
+          id: "WAG",
+          name: "modelFinderList",
+          type: "PPROTEIN",
+        },
+        {
+          label: "LG4M",
+          value: "LG4M",
+          id: "LG4M",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "LG4X",
+          value: "LG4X",
+          id: "LG4X",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "JTT+CF4",
+          value: "JTT+CF4",
+          id: "JTT+CF4",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "C10",
+          value: "C10",
+          id: "C10",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "C20",
+          value: "C20",
+          id: "C20",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "EX2",
+          value: "EX2",
+          id: "EX2",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "EX3",
+          value: "EX3",
+          id: "EX3",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "EHO",
+          value: "EHO",
+          id: "EHO",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "UL2",
+          value: "UL2",
+          id: "UL2",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "UL3",
+          value: "UL3",
+          id: "UL3",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "EX_EHO",
+          value: "EX_EHO",
+          id: "EX_EHO",
+          name: "modelFinderList",
+          type: "NT2AA",
+        },
+        {
+          label: "GY",
+          value: "GY",
+          id: "GY",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "MG",
+          value: "MG",
+          id: "MG",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "MGK",
+          value: "MGK",
+          id: "MGK",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "GY0K",
+          value: "GY0K",
+          id: "GY0K",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "GY1KTS",
+          value: "GY1KTS",
+          id: "GY1KTS",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "GY1KTV",
+          value: "GY1KTV",
+          id: "GY1KTV",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "GY2K",
+          value: "GY2K",
+          id: "GY2K",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "MG1KTS",
+          value: "MG1KTS",
+          id: "MG1KTS",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "MG1KTV",
+          value: "MG1KTV",
+          id: "MG1KTV",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "MG2K",
+          value: "MG2K",
+          id: "MG2K",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "KOSI07",
+          value: "KOSI07",
+          id: "KOSI07",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "SCHN05",
+          value: "SCHN05",
+          id: "SCHN05",
+          name: "modelFinderList",
+          type: "CODON",
+        },
+        {
+          label: "MK",
+          value: "MK",
+          id: "MK",
+          name: "modelFinderList",
+          type: "MORPH",
+        },
+        {
+          label: "ORDERED",
+          value: "ORDERED",
+          id: "ORDERED",
+          name: "modelFinderList",
+          type: "MORPH",
         },
       ],
       rateCategories: [
@@ -530,14 +798,25 @@ function SettingDetail({
                   >
                     Alignment file(s) and folder
                   </InputLabel>
-                  <Button
-                    variant="outlined"
-                    className={classes.importButton}
-                    onClick={handleSelectFile}
-                  >
-                    <Directory />
-                    <Typography>Browse</Typography>
-                  </Button>
+                  <div>
+                    <Button
+                      variant="outlined"
+                      className={classes.importButton}
+                      onClick={handleSelectFile}
+                    >
+                      <Directory />
+                      <Typography>Choose file(s)</Typography>
+                    </Button>
+                    &nbsp;or&nbsp;
+                    <Button
+                      variant="outlined"
+                      className={classes.importButton}
+                      onClick={handleSelectFile}
+                    >
+                      <Directory />
+                      <Typography>Choose folder</Typography>
+                    </Button>
+                  </div>
                 </div>
                 <div className={classes.textInputContainer}>
                   <InputLabel
@@ -552,7 +831,7 @@ function SettingDetail({
                     onClick={handleSelectFile}
                   >
                     <Directory />
-                    <Typography>Browse</Typography>
+                    <Typography>Choose file</Typography>
                   </Button>
                 </div>
                 <div className={classes.textInputContainer}>
@@ -609,34 +888,32 @@ function SettingDetail({
                     </div>
                   )}
                 </div>
-                {multiPartition && (
-                  <div className={classes.textInputContainer}>
-                    <InputLabel
-                      htmlFor="partitionType"
-                      className={classes.inputLabel}
-                    >
-                      Partition type
-                    </InputLabel>
-                    <Select
-                      id="partitionType"
-                      variant="outlined"
-                      className={classes.textInput}
-                      value={settingField.data.partitionType}
-                      onChange={(e) =>
-                        handleChangeDataSetting(e, "partitionType")
-                      }
-                    >
-                      <MenuItem value="separateGeneTrees">
-                        Separate-gene-tree
-                      </MenuItem>
-                      <MenuItem value="edgeProportional">
-                        Edge-proportional
-                      </MenuItem>
-                      <MenuItem value="edgeEqual">Edge-equal</MenuItem>
-                      <MenuItem value="edgeUnlinked">Edge-unlinked</MenuItem>
-                    </Select>
-                  </div>
-                )}
+                <div className={classes.textInputContainer}>
+                  <InputLabel
+                    htmlFor="partitionType"
+                    className={classes.inputLabel}
+                  >
+                    Partition type
+                  </InputLabel>
+                  <Select
+                    id="partitionType"
+                    variant="outlined"
+                    className={classes.textInput}
+                    value={settingField.data.partitionType}
+                    onChange={(e) =>
+                      handleChangeDataSetting(e, "partitionType")
+                    }
+                  >
+                    <MenuItem value="separateGeneTrees">
+                      Separate-gene-tree
+                    </MenuItem>
+                    <MenuItem value="edgeProportional">
+                      Edge-proportional
+                    </MenuItem>
+                    <MenuItem value="edgeEqual">Edge-equal</MenuItem>
+                    <MenuItem value="edgeUnlinked">Edge-unlinked</MenuItem>
+                  </Select>
+                </div>
               </form>
             )}
             {currentOption === "model" && (
@@ -649,15 +926,16 @@ function SettingDetail({
                     Substitution model
                   </Typography>
                   <div className={classes.dataRadioContainer}>
-                    {model.substitutionModel.map((input, index) => (
+                    {/* {model.substitutionModel.map((input, index) => (
                       <div className={classes.radioInput} key={index}>
                         <input
-                          type="radio"
+                          type="checkbox"
                           name={input.name}
                           id={input.id}
                           value={input.value}
-                          checked
-                          readOnly
+                          checked={
+                            settingField.model.modelFinder === input.value
+                          }
                         />
                         <InputLabel
                           htmlFor={input.id}
@@ -666,66 +944,50 @@ function SettingDetail({
                           {input.label}
                         </InputLabel>
                       </div>
-                    ))}
+                    ))} */}
                   </div>
                   <div className={clsx(classes.codonList, classes.modelTable)}>
-                    <div
+                    {/* <div
                       className={clsx(
                         classes.modelFinderHead,
                         classes.modelTableHead
                       )}
                     >
                       <Typography id="model">Model</Typography>
-                      <Typography id="df">df</Typography>
-                      <Typography id="explanation">Explanation</Typography>
-                    </div>
+                    </div> */}
                     <div className={clsx(classes.listModel)}>
-                      {model.modelFinder.map((input, index) => (
-                        <div className={classes.radioInput} key={index}>
-                          <input
-                            type="radio"
-                            name={input.name}
-                            id={input.id}
-                            value={input.value}
-                            checked={
-                              input.value === settingField.model.modelFinder
-                            }
-                            onChange={(e) =>
-                              handleChangeModelSetting(e, "modelFinder")
-                            }
-                          />
-                          <InputLabel
-                            htmlFor={input.id}
-                            className={clsx(
-                              classes.radioLabel,
-                              classes.modelMargin,
-                              classes.fontSmall
-                            )}
-                          >
-                            {input.label}
-                          </InputLabel>
-                          <InputLabel
-                            htmlFor={input.id}
-                            className={clsx(
-                              classes.radioLabel,
-                              classes.df,
-                              classes.fontSmall
-                            )}
-                          >
-                            {input.df}
-                          </InputLabel>
-                          <InputLabel
-                            htmlFor={input.id}
-                            className={clsx(
-                              classes.radioLabel,
-                              classes.expl,
-                              classes.fontSmall
-                            )}
-                          >
-                            {input.explanation}
-                          </InputLabel>
-                        </div>
-                      ))}
+                      {model.modelFinder
+                        .filter(
+                          (model) =>
+                            model.type === settingField.data.sequence ||
+                            model.type === "autoDetect"
+                        )
+                        .map((input, index) => (
+                          <div className={classes.radioInput} key={index}>
+                            <input
+                              type="radio"
+                              name={input.name}
+                              id={input.id}
+                              value={input.value}
+                              checked={
+                                settingField.model.modelFinder === input.value
+                              }
+                              onChange={(e) =>
+                                handleChangeModelSetting(e, "modelFinder")
+                              }
+                            />
+                            <InputLabel
+                              htmlFor={input.id}
+                              className={clsx(
+                                classes.radioLabel,
+                                classes.modelMargin,
+                                classes.fontSmall
+                              )}
+                            >
+                              {input.label}
+                            </InputLabel>
+                          </div>
+                        ))}
                     </div>
                   </div>
                   <div className={classes.textInputContainer}>
@@ -736,7 +998,7 @@ function SettingDetail({
                       <Typography align="left">
                         Proportion of invariable sites
                       </Typography>
-                      <OutlinedInput
+                      {/* <OutlinedInput
                         className={classes.shortTextInput}
                         value={settingField.model.proportionOfInvariableSites}
                         onChange={(e) => {
@@ -745,7 +1007,67 @@ function SettingDetail({
                             "proportionOfInvariableSites"
                           );
                         }}
-                      />
+                      /> */}
+                      <div className={classes.twoOption}>
+                        <div
+                          className={clsx(
+                            classes.radioInput,
+                            classes.selectMargin
+                          )}
+                        >
+                          <input
+                            type="radio"
+                            name="on"
+                            id="yes"
+                            value="yes"
+                            checked={
+                              settingField.model.proportionOfInvariableSites ===
+                              "yes"
+                            }
+                            onChange={(e) =>
+                              handleChangeModelSetting(
+                                e,
+                                "proportionOfInvariableSites"
+                              )
+                            }
+                          />
+                          <InputLabel
+                            htmlFor="yes"
+                            className={classes.radioLabel}
+                          >
+                            Yes
+                          </InputLabel>
+                        </div>
+                        <div
+                          className={clsx(
+                            classes.radioInput,
+                            classes.selectMargin
+                          )}
+                        >
+                          <input
+                            type="radio"
+                            name="on"
+                            id="no"
+                            value="no"
+                            checked={
+                              settingField.model.proportionOfInvariableSites ===
+                              "no"
+                            }
+                            onChange={(e) =>
+                              handleChangeModelSetting(
+                                e,
+                                "proportionOfInvariableSites"
+                              )
+                            }
+                          />
+                          <InputLabel
+                            htmlFor="no"
+                            className={classes.radioLabel}
+                          >
+                            No
+                          </InputLabel>
+                        </div>
+                      </div>
                     </div>
                     <div
                       className={clsx(classes.shortPath, classes.selectMargin)}
@@ -796,66 +1118,11 @@ function SettingDetail({
                       disabled
                     ></OutlinedInput>
                   </div>
-                  {multiPartition && (
-                    <div className={classes.textInputContainer}>
-                      <Typography className={classes.inputLabel}>
-                        Auto-merge partitions
-                      </Typography>
-                      <div className={classes.twoOption}>
-                        <div
-                          className={clsx(
-                            classes.radioInput,
-                            classes.selectMargin
-                          )}
-                        >
-                          <input
-                            type="radio"
-                            name="autoMerge"
-                            id="yes"
-                            value="yes"
-                            checked={settingField.model.autoMerge === "yes"}
-                            onChange={(e) =>
-                              handleChangeModelSetting(e, "autoMerge")
-                            }
-                          />
-                          <InputLabel
-                            htmlFor="yes"
-                            className={classes.radioLabel}
-                          >
-                            Yes
-                          </InputLabel>
-                        </div>
-                        <div
-                          className={clsx(
-                            classes.radioInput,
-                            classes.selectMargin
-                          )}
-                        >
-                          <input
-                            type="radio"
-                            name="autoMerge"
-                            id="no"
-                            value="no"
-                            checked={settingField.model.autoMerge === "no"}
-                            onChange={(e) =>
-                              handleChangeModelSetting(e, "autoMerge")
-                            }
-                          />
-                          <InputLabel
-                            htmlFor="no"
-                            className={classes.radioLabel}
-                          >
-                            No
-                          </InputLabel>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {multiPartition && (
-                    <div className={classes.textInputContainer}>
-                      <Typography className={classes.inputLabel}>
-                        Merging algorithm
-                      </Typography>
+                  <div className={classes.textInputContainer}>
+                    <Typography className={classes.inputLabel}>
+                      Auto-merge partitions
+                    </Typography>
+                    <div className={classes.twoOption}>
                       <div
                         className={clsx(
                           classes.radioInput,
@@ -864,21 +1131,19 @@ function SettingDetail({
                       >
                         <input
                           type="radio"
-                          name="mergeAlgorithm"
-                          id="greedy"
-                          value="greedy"
-                          checked={
-                            settingField.model.mergingAlgorithm === "greedy"
-                          }
+                          name="autoMerge"
+                          id="yes"
+                          value="yes"
+                          checked={settingField.model.autoMerge === "yes"}
                           onChange={(e) =>
-                            handleChangeModelSetting(e, "mergingAlgorithm")
+                            handleChangeModelSetting(e, "autoMerge")
                           }
                         />
                         <InputLabel
-                          htmlFor="greedy"
+                          htmlFor="yes"
                           className={classes.radioLabel}
                         >
-                          Greedy
+                          Yes
                         </InputLabel>
                       </div>
                       <div
@@ -889,50 +1154,91 @@ function SettingDetail({
                       >
                         <input
                           type="radio"
-                          name="mergeAlgorithm"
-                          id="rcluster"
-                          value="rcluster"
-                          checked={
-                            settingField.model.mergingAlgorithm === "rcluster"
-                          }
+                          name="autoMerge"
+                          id="no"
+                          value="no"
+                          checked={settingField.model.autoMerge === "no"}
                           onChange={(e) =>
-                            handleChangeModelSetting(e, "mergingAlgorithm")
+                            handleChangeModelSetting(e, "autoMerge")
                           }
                         />
-                        <InputLabel
-                          htmlFor="rcluster"
-                          className={classes.radioLabel}
-                        >
-                          RCluster
-                        </InputLabel>
-                      </div>
-                      <div
-                        className={clsx(
-                          classes.radioInput,
-                          classes.selectMargin
-                        )}
-                      >
-                        <input
-                          type="radio"
-                          name="mergeAlgorithm"
-                          id="rclusterf"
-                          value="rclusterf"
-                          checked={
-                            settingField.model.mergingAlgorithm === "rclusterf"
-                          }
-                          onChange={(e) =>
-                            handleChangeModelSetting(e, "mergingAlgorithm")
-                          }
-                        />
-                        <InputLabel
-                          htmlFor="rclusterf"
-                          className={classes.radioLabel}
-                        >
-                          RClusterf
+                        <InputLabel htmlFor="no" className={classes.radioLabel}>
+                          No
                         </InputLabel>
                       </div>
                     </div>
-                  )}
+                  </div>
+                  <div className={classes.textInputContainer}>
+                    <Typography className={classes.inputLabel}>
+                      Merging algorithm
+                    </Typography>
+                    <div
+                      className={clsx(classes.radioInput, classes.selectMargin)}
+                    >
+                      <input
+                        type="radio"
+                        name="mergeAlgorithm"
+                        id="greedy"
+                        value="greedy"
+                        checked={
+                          settingField.model.mergingAlgorithm === "greedy"
+                        }
+                        onChange={(e) =>
+                          handleChangeModelSetting(e, "mergingAlgorithm")
+                        }
+                      />
+                      <InputLabel
+                        htmlFor="greedy"
+                        className={classes.radioLabel}
+                      >
+                        Greedy
+                      </InputLabel>
+                    </div>
+                    <div
+                      className={clsx(classes.radioInput, classes.selectMargin)}
+                    >
+                      <input
+                        type="radio"
+                        name="mergeAlgorithm"
+                        id="rcluster"
+                        value="rcluster"
+                        checked={
+                          settingField.model.mergingAlgorithm === "rcluster"
+                        }
+                        onChange={(e) =>
+                          handleChangeModelSetting(e, "mergingAlgorithm")
+                        }
+                      />
+                      <InputLabel
+                        htmlFor="rcluster"
+                        className={classes.radioLabel}
+                      >
+                        RCluster
+                      </InputLabel>
+                    </div>
+                    <div
+                      className={clsx(classes.radioInput, classes.selectMargin)}
+                    >
+                      <input
+                        type="radio"
+                        name="mergeAlgorithm"
+                        id="rclusterf"
+                        value="rclusterf"
+                        checked={
+                          settingField.model.mergingAlgorithm === "rclusterf"
+                        }
+                        onChange={(e) =>
+                          handleChangeModelSetting(e, "mergingAlgorithm")
+                        }
+                      />
+                      <InputLabel
+                        htmlFor="rclusterf"
+                        className={classes.radioLabel}
+                      >
+                        RClusterf
+                      </InputLabel>
+                    </div>
+                  </div>
                 </div>
               </form>
             )}
