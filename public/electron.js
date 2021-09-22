@@ -3,24 +3,16 @@ const fs = require("fs");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const { kill } = require("process");
-const os = require("os");
 const homepage = require("./server/controller/homepage");
 const project = require("./server/controller/project");
 const { viewFile } = require("./server/controller/file_handler");
 
-const {
-  mappingCommand,
-  baseCommand,
-} = require("./server/command_line/mapping_command");
-
 const { getProgress } = require("./server/controller/progress");
 const { chooseFile, chooseFolder, chooseMultiFile } = require("./server/controller/dialog");
 
-let OBJECT_SETTING;
 let COMMAND = "";
 
 let mainWindow;
-let inputFileName;
 function createWindow() {
   const display = screen.getPrimaryDisplay();
   const dimensions = display.workAreaSize;
@@ -194,20 +186,6 @@ function createWindow() {
       .catch(err => event.sender.send("executeResult", err))
   });
 
-  ipcMain.on("getInputByProject", (event, project_id) => {
-    project
-      .getInputByProject(project_id)
-      .then((fileName) => {
-        mainWindow.webContents.send("inputsOfProject", {
-          message: fileName,
-          status: 1,
-        });
-      })
-      .catch((err) => {
-        mainWindow.webContents.send("inputsOfProject", err);
-      });
-  });
-
   ipcMain.on("deleteInput", async (event, inputData) => {
     const { input_name, project_id } = inputData;
     console.log(inputData);
@@ -263,9 +241,9 @@ function createWindow() {
     homepage
       .getProjectById(id)
       .then((data) => {
-        project.readSettingObject(data[0].path)
-          .then(object_model => {
-            data[0].object_model = object_model
+        project.getProject(data[0].path)
+          .then(data => {
+            console.log({data})
             mainWindow.webContents.send("returnProjectById", {
               message: data,
               status: 1,

@@ -222,6 +222,48 @@ const readSettingObject = (projectPath) => {
   })
 }
 
+const isFolder = (folderPath) => {
+  try{
+      return fs.lstatSync(folderPath).isDirectory()
+  }catch(err){
+      return false
+  }
+}
+
+const recursiveFiles = (folderPath, arrayResult, parent = undefined) => {
+  let files = fs.readdirSync(folderPath)
+    files.forEach(element => {
+        const absolutePath = path.join(folderPath, element)
+        if (isFolder(absolutePath)) {
+            if(!parent) parent = arrayResult
+            parent[element] = []
+            recursiveFiles(absolutePath, parent, parent[element])
+        }
+        else {
+            parent ? parent.push(element) : arrayResult.push(element)
+        }
+    })
+}
+
+const getProject = (projectPath) => {
+  return new Promise(async (resolve, reject) => {
+    const array = []
+    if (isFolder(projectPath)) {
+      recursiveFiles(projectPath, array)
+    }
+    else {
+      reject({ message: "Is not a folder", status: 0 })
+    }
+    readSettingObject(projectPath)
+      .then(object_model => {
+        resolve({tree: array, objectModel: object_model})
+      })
+      .catch(err => {
+        reject({ message: "Does not get object model", status: 0 })
+      })
+  })
+}
+
 const setProject = (data) => {
   return new Promise(async (resolve, reject) => {
     const { name, filePath, projectType } = data;
@@ -364,20 +406,6 @@ const executeProject = async (project_path, object_model, type) => {
   })
 }
 
-// reopenProject('2db22c01-d7a0-4101-9579-23aafb0698ad').then(data => {
-//     console.log(data)
-// }).catch(err => console.log(err))
-
-// openProject().then(data => console.log(data)).catch(err => console.log(err))
-
-// getInputByProject('2db22c01-d7a0-4101-9579-23aafb0698ad').then(data => {
-//     console.log(data)
-// }).catch(err => console.log(err))
-
-// getOutputByProject('2db22c01-d7a0-4101-9579-23aafb0698ad').then(data => {
-//     console.log(data)
-// }).catch(err => console.log(err))
-
 module.exports = {
   getInputByProject,
   getOutputByProject,
@@ -390,5 +418,6 @@ module.exports = {
   readSettingObject,
   filterName,
   copyFile,
-  copyFolder
+  copyFolder,
+  getProject
 };
