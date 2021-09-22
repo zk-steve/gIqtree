@@ -14,7 +14,7 @@ const {
 } = require("./server/command_line/mapping_command");
 
 const { getProgress } = require("./server/controller/progress");
-const { chooseFile, chooseFolder, chooseFileAndFolder } = require("./server/controller/dialog");
+const { chooseFile, chooseFolder, chooseMultiFile } = require("./server/controller/dialog");
 
 let OBJECT_SETTING;
 let COMMAND = "";
@@ -85,6 +85,20 @@ function createWindow() {
       })
       .catch((err) => {
         mainWindow.webContents.send("chooseFileResult", err);
+      });
+  });
+
+  ipcMain.on("chooseMultiFile", (event, project_path) => {
+    chooseMultiFile(project_path)
+      .then((data) => {
+        console.log({files: data})
+        mainWindow.webContents.send("chooseMultiFileResult", {
+          message: data,
+          status: 1,
+        });
+      })
+      .catch((err) => {
+        mainWindow.webContents.send("chooseMultiFileResult", err);
       });
   });
 
@@ -178,74 +192,6 @@ function createWindow() {
         .catch((err) => event.sender.send("executeResult", err));
       })
       .catch(err => event.sender.send("executeResult", err))
-  });
-
-  ipcMain.on("selectDialog", async (event, project_id) => {
-    try {
-      // Step 1: Choose msa file and get path and name of it
-      const filePath = dialog.showOpenDialogSync({
-        properties: ["openFile", "multiSelections"],
-        filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
-      });
-      if (!filePath) {
-        mainWindow.webContents.send("cancelSelect", {
-          message: "File path is not true",
-          status: 0,
-        });
-      } else {
-        console.log({filePath, type: typeof(filePath)})
-        const fileName = filePath.map((element) => {
-          console.log(element);
-          let result;
-          if (os.type() === "Windows_NT") {
-            result = element.split("\\");
-          } else {
-            result = element.split("/");
-          }
-          return result[result.length - 1];
-        });
-        inputFileName = fileName[0];
-        // Step 2: Copy input file into folder input of project
-        let projectPath;
-        await homepage.getProjectById(project_id).then((data) => {
-          projectPath = path.join(data[0].path, "input");
-        });
-
-        for (let i = 0; i < filePath.length; i++) {
-          let elementPath = path.join(projectPath, fileName[i]);
-          fs.copyFile(filePath[i], elementPath, (err) => {
-            if (err) throw err;
-            else console.log("Copy successfully");
-          });
-        }
-
-        setTimeout(() => {
-          try {
-            fs.readdir(projectPath, "utf-8", (err, files) => {
-              if (err) throw err;
-              let fileName = files.map((file) => {
-                return {
-                  name: file,
-                  path: path.join(projectPath, file),
-                };
-              });
-              console.log({ AAA: fileName });
-              mainWindow.webContents.send("selectFile", {
-                message: fileName,
-                status: 1,
-              });
-            });
-          } catch (err) {
-            mainWindow.webContents.send("selectFile", {
-              message: "File is exists",
-              status: 0,
-            });
-          }
-        }, 100);
-      }
-    } catch (err) {
-      console.log({ message: "Some thing was wrong", status: 0 });
-    }
   });
 
   ipcMain.on("getInputByProject", (event, project_id) => {

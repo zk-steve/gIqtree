@@ -1,4 +1,5 @@
 const fs = require("fs");
+const fs_extra = require("fs-extra")
 const path = require("path");
 const { dialog } = require("electron");
 const os = require("os");
@@ -170,6 +171,7 @@ const filterName = (path) => {
     } else {
       result = path.split("/");
     }
+    console.log({result})
     resolve(result[result.length - 1])
   })
 }
@@ -182,11 +184,17 @@ const copyFile = (sourcePath, destPath) => {
   })
 }
 
-// const copyFolder = (sourcePath, destPath) => {
-//   return new Promise(async(resolve, reject) => {
-//     fs.readdir
-//   })
-// }
+const copyFolder = (sourcePath, destPath) => {
+  return new Promise(async(resolve, reject) => {
+    await fs_extra.copy(sourcePath, destPath)
+      .then(() => {
+        resolve("Copied")
+      })
+      .catch((err) => {
+        reject({message: "Does not copy", status: 0})
+      })
+  })
+}
 
 const addSettingFile = (projectPath, object_model) => {
   return new Promise(async (resolve, reject) => {
@@ -228,8 +236,8 @@ const setProject = (data) => {
     }
     const input = path.join(filePath, "input");
     const output = path.join(filePath, "output");
-    const alignments = path.join(filePath, "input", "alignments")
-    await createFolders([input, output, alignments])
+    // const alignments = path.join(filePath, "input", "alignments")
+    await createFolders([input, output])
       .then(data => console.log(data))
       .catch(err => reject(err))
     await initObjectModel(filePath, projectType)
@@ -381,5 +389,6 @@ module.exports = {
   addSettingFile,
   readSettingObject,
   filterName,
-  copyFile
+  copyFile,
+  copyFolder
 };

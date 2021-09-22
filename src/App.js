@@ -4,7 +4,7 @@ import ProjectPage from "pages/ProjectPage/ProjectPage";
 import { Route, Switch, HashRouter } from "react-router-dom";
 import "./App.css";
 const { ipcRenderer } = window.require("electron");
-// ipcRenderer.send("chooseFileAndFolder")
+ipcRenderer.send("chooseMultiFile", "D:/TestIQTREE/weqwe")
 function App() {
   return (
     <HashRouter>
