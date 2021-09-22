@@ -20,7 +20,28 @@ function SettingDetail({
   projectSetting,
   handleTestSetting,
   id,
+  projectPath,
 }) {
+  const reviewBox = (path) => {
+    if (path !== "") {
+      if (typeof path === "string")
+        return (
+          <div className={classes.boxReviewPath}>
+            <Typography align="left">{path}</Typography>
+          </div>
+        );
+      else
+        return (
+          <div className={classes.boxReviewPath}>
+            {path.map((file, index) => (
+              <Typography align="left" key={index}>
+                {file}
+              </Typography>
+            ))}
+          </div>
+        );
+    }
+  };
   const classes = useStyles();
   const [settingField, setSettingField] = useState({ ...projectSetting } || {});
   const [currentOption, setCurrentOption] = useState("data");
@@ -29,7 +50,7 @@ function SettingDetail({
   useEffect(() => {
     // handleTestSetting(settingField);
     console.log(settingField);
-  }, [handleTestSetting, settingField]);
+  }, [settingField]);
   useEffect(() => {
     const handleChangePathOption = (option, subOption, path) => {
       if (subOption !== "concordanceFactor") {
@@ -48,7 +69,6 @@ function SettingDetail({
     };
     const chooseFileResult = (event, data) => {
       const { status, message } = data;
-      console.log(data);
       if (status === 1)
         handleChangePathOption(
           currentPathOption[0],
@@ -57,6 +77,13 @@ function SettingDetail({
         );
     };
     ipcRenderer.once("chooseFileResult", chooseFileResult);
+    ipcRenderer.once("chooseMultiFileResult", chooseFileResult);
+    ipcRenderer.once("chooseFolderResult", chooseFileResult);
+    return () => {
+      ipcRenderer.removeListener("chooseFileResult", chooseFileResult);
+      ipcRenderer.removeListener("chooseMultiFileResult", chooseFileResult);
+      ipcRenderer.removeListener("chooseFolderResult", chooseFileResult);
+    };
   }, [currentPathOption, settingField]);
   const settingDetail = {
     data: {
@@ -675,76 +702,129 @@ function SettingDetail({
         { label: "Gamma", value: "Gamma", id: "gamma" },
         { label: "FreeRate", value: "FreeRate", id: "freeRate" },
       ],
-      stateFrequency: [
-        {
-          label: "Empirical state frequencies from the data: +F",
-        },
-        {
-          label: "ML optimized state frequencies from the data: +FO",
-        },
-        {
-          label: multiPartition
-            ? "Equal state frequencies: +FQ, +F1x4, +F3x4"
-            : "Equal state frequencies: +FQ",
-        },
-      ],
+      stateFrequency:
+        settingField.data.sequence === "CODON"
+          ? [
+              {
+                label: "None",
+                id: "none",
+                value: "none",
+                name: "stateFrequency",
+              },
+              {
+                label: "Empirical state frequencies from the data: +F",
+                id: "+F",
+                value: "+F",
+                name: "stateFrequency",
+              },
+              {
+                label: "ML optimized state frequencies from the data: +FO",
+                id: "+F0",
+                value: "+F0",
+                name: "stateFrequency",
+              },
+              {
+                label: "Equal state frequencies: +FQ",
+                id: "+FQ",
+                value: "+FQ",
+                name: "stateFrequency",
+              },
+              {
+                label: "+F1x4",
+                id: "+F1x4",
+                value: "+F1x4",
+                name: "stateFrequency",
+              },
+              {
+                label: "+F3x4",
+                id: "+F3x4",
+                value: "+F3x4",
+                name: "stateFrequency",
+              },
+            ]
+          : [
+              {
+                label: "None",
+                id: "none",
+                value: "none",
+                name: "stateFrequency",
+              },
+              {
+                label: "Empirical state frequencies from the data: +F",
+                id: "+F",
+                value: "+F",
+                name: "stateFrequency",
+              },
+              {
+                label: "ML optimized state frequencies from the data: +FO",
+                id: "+F0",
+                value: "+F0",
+                name: "stateFrequency",
+              },
+              {
+                label: "Equal state frequencies: +FQ",
+                id: "+FQ",
+                value: "+FQ",
+                name: "stateFrequency",
+              },
+            ],
     },
   };
   const { data, model } = settingDetail;
   const handleSelectNavigatorOption = (option) => {
     if (option !== currentOption) setCurrentOption(option);
   };
-  const handleChangeDataSetting = (e, property) => {
+  const handleChangeDataSetting = (value, property) => {
     setSettingField({
       ...settingField,
       data: {
         ...settingField.data,
-        [property]: e.target.value,
+        [property]: value,
       },
     });
   };
-  const handleChangeModelSetting = (e, property) => {
+  const handleChangeModelSetting = (value, property) => {
     setSettingField({
       ...settingField,
       model: {
         ...settingField.model,
-        [property]: e.target.value,
+        [property]: value,
       },
     });
   };
-  const handleChangeTreeSetting = (e, property) => {
+  const handleChangeTreeSetting = (value, property) => {
     setSettingField({
       ...settingField,
       tree: {
         ...settingField.tree,
-        [property]: e.target.value,
+        [property]: value,
       },
     });
   };
-  const handleChangeAssessmentSetting = (e, property) => {
+  const handleChangeAssessmentSetting = (value, property) => {
     setSettingField({
       ...settingField,
       assessment: {
         ...settingField.assessment,
-        [property]: e.target.value,
+        [property]: value,
       },
     });
   };
-  const handleChangeDatingSetting = (e, property) => {
+  const handleChangeDatingSetting = (value, property) => {
     setSettingField({
       ...settingField,
       dating: {
         ...settingField.dating,
-        [property]: e.target.value,
+        [property]: value,
       },
     });
   };
-  const handleChangeOthersSetting = (e, property) => {
+  const handleChangeOthersSetting = (value, property) => {
     setSettingField({
       ...settingField,
       others: {
         ...settingField.others,
-        [property]: e.target.value,
+        [property]: value,
       },
     });
   };
@@ -766,14 +846,19 @@ function SettingDetail({
     ipcRenderer.invoke("saveSetting", settingField);
   };
   const handleChooseFile = (option, subOption) => {
-    ipcRenderer.send("chooseFile");
+    ipcRenderer.send("chooseFile", projectPath);
     setCurrentPathOption([option, subOption]);
   };
   const handleResetSetting = () => {
     setSettingField({ ...projectSetting });
   };
-  const handleSelectFile = () => {
-    ipcRenderer.send("selectDialog", id);
+  const handleChooseMultiFile = (option, subOption) => {
+    ipcRenderer.send("chooseMultiFile", projectPath);
+    setCurrentPathOption([option, subOption]);
+  };
+  const handleChooseFolder = (option, subOption) => {
+    ipcRenderer.send("chooseFolder", projectPath);
+    setCurrentPathOption([option, subOption]);
   };
   return (
     settingField && (
@@ -802,7 +887,7 @@ function SettingDetail({
                     <Button
                       variant="outlined"
                       className={classes.importButton}
-                      onClick={handleSelectFile}
+                      onClick={() => handleChooseMultiFile("data", "alignment")}
                     >
                       <Directory />
                       <Typography>Choose file(s)</Typography>
@@ -811,12 +896,13 @@ function SettingDetail({
                     <Button
                       variant="outlined"
                       className={classes.importButton}
-                      onClick={handleSelectFile}
+                      onClick={() => handleChooseFolder("data", "alignment")}
                     >
                       <Directory />
                       <Typography>Choose folder</Typography>
                     </Button>
                   </div>
+                  {reviewBox(settingField.data.alignment)}
                 </div>
                 <div className={classes.textInputContainer}>
                   <InputLabel
@@ -828,11 +914,12 @@ function SettingDetail({
                   <Button
                     variant="outlined"
                     className={classes.importButton}
-                    onClick={handleSelectFile}
+                    onClick={() => handleChooseFile("data", "partition")}
                   >
                     <Directory />
                     <Typography>Choose file</Typography>
                   </Button>
+                  {reviewBox(settingField.data.partition)}
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
@@ -848,7 +935,7 @@ function SettingDetail({
                           value={input.value}
                           checked={input.value === settingField.data.sequence}
                           onChange={(e) =>
-                            handleChangeDataSetting(e, "sequence")
+                            handleChangeDataSetting(e.target.value, "sequence")
                           }
                         />
                         <InputLabel
@@ -871,7 +958,7 @@ function SettingDetail({
                             value={input.value}
                             checked={input.value === settingField.data.codon}
                             onChange={(e) =>
-                              handleChangeDataSetting(e, "codon")
+                              handleChangeDataSetting(e.target.value, "codon")
                             }
                           />
                           <InputLabel
@@ -901,7 +988,7 @@ function SettingDetail({
                     className={classes.textInput}
                     value={settingField.data.partitionType}
                     onChange={(e) =>
-                      handleChangeDataSetting(e, "partitionType")
+                      handleChangeDataSetting(e.target.value, "partitionType")
                     }
                   >
                     <MenuItem value="separateGeneTrees">
@@ -973,7 +1060,10 @@ function SettingDetail({
                                 settingField.model.modelFinder === input.value
                               }
                               onChange={(e) =>
-                                handleChangeModelSetting(e, "modelFinder")
+                                handleChangeModelSetting(
+                                  e.target.value,
+                                  "modelFinder"
+                                )
                               }
                             />
                             <InputLabel
@@ -1026,7 +1116,7 @@ function SettingDetail({
                             }
                             onChange={(e) =>
                               handleChangeModelSetting(
-                                e,
+                                e.target.value,
                                 "proportionOfInvariableSites"
                               )
                             }
@@ -1055,7 +1145,7 @@ function SettingDetail({
                             }
                             onChange={(e) =>
                               handleChangeModelSetting(
-                                e,
+                                e.target.value,
                                 "proportionOfInvariableSites"
                               )
                             }
@@ -1078,7 +1168,10 @@ function SettingDetail({
                         className={classes.shortTextInput}
                         value={settingField.model.rateCategories}
                         onChange={(e) =>
-                          handleChangeModelSetting(e, "rateCategories")
+                          handleChangeModelSetting(
+                            e.target.value,
+                            "rateCategories"
+                          )
                         }
                       >
                         {model.rateCategories.map((input, index) => (
@@ -1099,9 +1192,22 @@ function SettingDetail({
                         )}
                         key={index}
                       >
-                        <InputLabel
-                          className={clsx(classes.radioLabel, classes.expl)}
-                        >
+                        <input
+                          type="radio"
+                          name={input.name}
+                          id={input.id}
+                          value={input.value}
+                          checked={
+                            settingField.model.stateFrequency === input.value
+                          }
+                          onChange={(e) =>
+                            handleChangeModelSetting(
+                              e.target.value,
+                              "stateFrequency"
+                            )
+                          }
+                        />
+                        <InputLabel className={clsx(classes.radioLabel)}>
                           {input.label}
                         </InputLabel>
                       </div>
@@ -1317,39 +1423,31 @@ function SettingDetail({
                   <Typography className={classes.inputLabel}>
                     Constrained tree file
                   </Typography>
-                  <OutlinedInput
-                    className={classes.textInput}
-                    value={settingField.tree.constrainedTreeFile}
-                    onChange={(e) =>
-                      handleChangeTreeSetting(e, "constrainedTreeFile")
+                  <Button
+                    variant="outlined"
+                    className={classes.importButton}
+                    onClick={() =>
+                      handleChooseFile("tree", "constrainedTreeFile")
                     }
-                    startAdornment={
-                      <Directory
-                        onClick={() =>
-                          handleChooseFile("tree", "constrainedTreeFile")
-                        }
-                      />
-                    }
-                  />
+                  >
+                    <Directory />
+                    <Typography>Choose file</Typography>
+                  </Button>
+                  {reviewBox(settingField.tree.constrainedTreeFile)}
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
                     Reference tree
                   </Typography>
-                  <OutlinedInput
-                    className={classes.textInput}
-                    value={settingField.tree.referenceTree}
-                    onChange={(e) =>
-                      handleChangeTreeSetting(e, "referenceTree")
-                    }
-                    startAdornment={
-                      <Directory
-                        onClick={() =>
-                          handleChooseFile("tree", "referenceTree")
-                        }
-                      />
-                    }
-                  />
+                  <Button
+                    variant="outlined"
+                    className={classes.importButton}
+                    onClick={() => handleChooseFile("tree", "referenceTree")}
+                  >
+                    <Directory />
+                    <Typography>Choose file</Typography>
+                  </Button>
+                  {reviewBox(settingField.tree.referenceTree)}
                 </div>
               </form>
             )}
@@ -1587,27 +1685,25 @@ function SettingDetail({
                     Concordance factor:
                   </Typography>
                   <div
-                    className={clsx(classes.radioInput, classes.selectMargin)}
+                    className={clsx(
+                      classes.textInputContainer,
+                      classes.selectMargin
+                    )}
                   >
-                    <OutlinedInput
-                      className={classes.textInput}
-                      placeholder="gCF"
-                      value={settingField.assessment.concordanceFactor.gCF}
-                      onChange={(e) =>
-                        handleChangeAssessmentMultiple(
-                          e,
-                          "concordanceFactor",
-                          "gCF"
-                        )
+                    <Typography align="left" style={{ marginBottom: "8px" }}>
+                      gCF
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      className={classes.importButton}
+                      onClick={() =>
+                        handleChooseFile("assessment", "concordanceFactor")
                       }
-                      startAdornment={
-                        <Directory
-                          onClick={() =>
-                            handleChooseFile("assessment", "concordanceFactor")
-                          }
-                        />
-                      }
-                    />
+                    >
+                      <Directory />
+                      <Typography>Choose file</Typography>
+                    </Button>
+                    {reviewBox(settingField.assessment.concordanceFactor.gCF)}
                   </div>
                   <div
                     className={clsx(classes.radioInput, classes.selectMargin)}
@@ -1671,17 +1767,15 @@ function SettingDetail({
                   <Typography className={classes.inputLabel}>
                     Date file
                   </Typography>
-                  <OutlinedInput
-                    className={classes.textInput}
-                    value={settingField.dating.dateFile}
-                    placeholder="Path"
-                    onChange={(e) => handleChangeDatingSetting(e, "dateFile")}
-                    startAdornment={
-                      <Directory
-                        onClick={() => handleChooseFile("dating", "dateFile")}
-                      />
-                    }
-                  />
+                  <Button
+                    variant="outlined"
+                    className={classes.importButton}
+                    onClick={() => handleChooseFile("dating", "dateFile")}
+                  >
+                    <Directory />
+                    <Typography>Choose file</Typography>
+                  </Button>
+                  {reviewBox(settingField.dating.dateFile)}
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>

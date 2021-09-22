@@ -12,6 +12,7 @@ module.exports = {
     rateCategories: "",
     autoMerge: "yes",
     mergingAlgorithm: "rclusterf",
+    stateFrequency: "none",
   },
   tree: {
     on: "yes",

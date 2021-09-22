@@ -10,6 +10,7 @@ const { ipcRenderer } = window.require("electron");
 
 function ProjectPage(props) {
   const classes = useStyles();
+  const [projectPath, setProjectPath] = useState(null);
   const [currentTab, setCurrentTab] = useState("input");
   const [currentFile, setCurrentFile] = useState("");
   const [isSettingOpen, setIsSettingOpen] = useState(true);
@@ -56,8 +57,11 @@ function ProjectPage(props) {
     };
     ipcRenderer.once("returnProjectById", (event, data) => {
       const { message, status } = data;
-      if (status === 1) setProjectName(message[0].name);
-      setProjectSetting(message[0].object_model);
+      if (status === 1) {
+        setProjectName(message[0].name);
+        setProjectSetting(message[0].object_model);
+        setProjectPath(message[0].path);
+      }
     });
     ipcRenderer.on("progressResult", progressResult);
     ipcRenderer.on("reopenProjectResult", reopenProjectResult);
@@ -189,6 +193,7 @@ function ProjectPage(props) {
           {isSettingOpen && projectSetting && (
             <SettingDetail
               id={id}
+              projectPath={projectPath}
               handleCloseSetting={handleCloseSetting}
               multiPartition={listInput.length > 1}
               projectSetting={projectSetting}

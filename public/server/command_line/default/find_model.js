@@ -12,6 +12,7 @@ module.exports = {
     rateCategories: "",
     autoMerge: "no",
     mergingAlgorithm: "",
+    stateFrequency: "none",
   },
   tree: {
     on: "no",

@@ -194,7 +194,7 @@ const useStyles = makeStyles((theme) => ({
   },
   importButton: {
     borderColor: theme.palette.grey[900],
-    width: "170px",
+    width: "175px",
     height: "28px",
     textTransform: "none",
     "&:hover": {
@@ -204,6 +204,13 @@ const useStyles = makeStyles((theme) => ({
     "& svg": {
       marginRight: "4px",
     },
+  },
+  boxReviewPath: {
+    width: "400px",
+    border: "1px dashed black",
+    borderRadius: "5px",
+    padding: "10px",
+    marginTop: "12px",
   },
 }));
 export default useStyles;
