@@ -8,8 +8,9 @@ module.exports = {
   },
   model: {
     modelFinder: "auto",
-    proportionOfInvariableSites: "0",
+    proportionOfInvariableSites: "no",
     rateCategories: "",
+    rateCategoriesNumber: "4",
     autoMerge: "no",
     mergingAlgorithm: "",
     stateFrequency: "none",

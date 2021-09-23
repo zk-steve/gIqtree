@@ -29,16 +29,6 @@ function ProjectPage(props) {
   const [progressInterval, setProgressInterval] = useState(null);
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
-    ipcRenderer.send("reopenProject", id);
-    const reopenProjectResult = (event, data) => {
-      const { status, message } = data;
-      if (status === 1) {
-        if (message.inputFiles.length > 0)
-          handleSetListInput(message.inputFiles);
-        if (message.outputFiles.length > 0)
-          handleSetListOutput(message.outputFiles);
-      }
-    };
     const viewFileData = (event, data) => {
       const { message, status } = data;
       if (status === 1) setOutputContent(message);
@@ -51,25 +41,34 @@ function ProjectPage(props) {
     };
     const saveSettingResult = (event, data) => {
       const { status, message } = data;
+      console.log(data);
       if (status === 1) {
-        setProjectSetting(message);
+        // setProjectSetting(message);
+        ipcRenderer.send("getProjectById", id);
       }
     };
-    ipcRenderer.once("returnProjectById", (event, data) => {
+    const returnProjectById = (event, data) => {
       const { message, status } = data;
+      console.log(data);
       if (status === 1) {
-        setProjectName(message[0].name);
-        setProjectSetting(message[0].object_model);
-        setProjectPath(message[0].path);
+        setProjectName(message.name);
+        setProjectSetting(message.objectModel);
+        setProjectPath(message.path);
+        if (message.tree.input.length > 0)
+          handleSetListInput(message.tree.input);
+        if (message.tree.output.length > 0)
+          handleSetListOutput(message.tree.output);
       }
-    });
+    };
+    ipcRenderer.on("returnProjectById", returnProjectById);
     ipcRenderer.on("progressResult", progressResult);
-    ipcRenderer.on("reopenProjectResult", reopenProjectResult);
     ipcRenderer.on("viewFileData", viewFileData);
     ipcRenderer.on("saveSettingResult", saveSettingResult);
-    ipcRenderer.on("testSettingResult", (event, data) => {
-      console.log(data);
-    });
+    ipcRenderer.on("testSettingResult", (event, data) => {});
+    return () => {
+      ipcRenderer.removeListener("returnProjectById", returnProjectById);
+      ipcRenderer.removeListener("saveSettingResult", saveSettingResult);
+    };
   }, [id]); //get list input and get project name
   useEffect(() => {
     if (listInput.length > 0) setIsExecuteDisabled(false);

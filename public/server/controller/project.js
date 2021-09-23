@@ -1,13 +1,16 @@
 const fs = require("fs");
-const fs_extra = require("fs-extra")
+const fs_extra = require("fs-extra");
 const path = require("path");
 const { dialog } = require("electron");
 const os = require("os");
 const { v4: uuidv4 } = require("uuid");
 const child_process = require("child_process");
 
-const { getOutputWhenExecuted } = require("../controller/execute")
-const { mappingCommand, baseCommand } = require("../command_line/mapping_command");
+const { getOutputWhenExecuted } = require("../controller/execute");
+const {
+  mappingCommand,
+  baseCommand,
+} = require("../command_line/mapping_command");
 const FIND_MODEL = require("../command_line/default/find_model");
 const MERGE_PARTITION = require("../command_line/default/merger_partition");
 const INFER_TREE = require("../command_line/default/infer_tree");
@@ -120,155 +123,160 @@ const reopenProject = (project_id) => {
   });
 };
 
-const createFolders = async(paths) => {
+const createFolders = async (paths) => {
   return new Promise(async (resolve, reject) => {
     if (Array.isArray(paths)) {
-      paths.forEach(async path => {
+      paths.forEach(async (path) => {
         await fs.mkdir(path, { recursive: true }, (err) => {
           if (err) {
             reject({ message: "Does not create input folder", status: 0 });
           }
         });
-      })
-      resolve(`Created`)
+      });
+      resolve(`Created`);
     }
-  })
-}
+  });
+};
 
 const initObjectModel = (projectPath, projectType = "findModel") => {
   return new Promise(async (resolve, reject) => {
-    let object_model
+    let object_model;
     switch (projectType) {
       case "findModel":
-        object_model = FIND_MODEL
-        break;  
+        object_model = FIND_MODEL;
+        break;
       case "mergePartition":
-        object_model = MERGE_PARTITION
+        object_model = MERGE_PARTITION;
         break;
       case "inferTree":
-        object_model = INFER_TREE
+        object_model = INFER_TREE;
         break;
       case "assessSupport":
-        object_model = ASSESS_SUPPORT
+        object_model = ASSESS_SUPPORT;
         break;
       case "dateTree":
-        object_model = DATE_TREE
+        object_model = DATE_TREE;
         break;
       default:
-        object_model = FIND_MODEL
+        object_model = FIND_MODEL;
         break;
     }
-    resolve(object_model)
-  })
-}
+    resolve(object_model);
+  });
+};
 
 const filterName = (path) => {
   return new Promise((resolve, reject) => {
-    if(!path) reject({message: "Can not get path", staus: 0})
-    let result
+    if (!path) reject({ message: "Can not get path", staus: 0 });
+    let result;
     if (os.type() === "Windows_NT") {
       result = path.split("\\");
     } else {
       result = path.split("/");
     }
-    console.log({result})
-    resolve(result[result.length - 1])
-  })
-}
+    console.log({ result });
+    resolve(result[result.length - 1]);
+  });
+};
 
 const copyFile = (sourcePath, destPath) => {
-  return new Promise(async(resolve, reject) => {
-    await fs.copyFileSync(sourcePath, destPath)
-    console.log("Copy File")
-    resolve("Copy file")
-  })
-}
+  return new Promise(async (resolve, reject) => {
+    await fs.copyFileSync(sourcePath, destPath);
+    console.log("Copy File");
+    resolve("Copy file");
+  });
+};
 
 const copyFolder = (sourcePath, destPath) => {
-  return new Promise(async(resolve, reject) => {
-    await fs_extra.copy(sourcePath, destPath)
+  return new Promise(async (resolve, reject) => {
+    await fs_extra
+      .copy(sourcePath, destPath)
       .then(() => {
-        resolve("Copied")
+        resolve("Copied");
       })
       .catch((err) => {
-        reject({message: "Does not copy", status: 0})
-      })
-  })
-}
+        reject({ message: "Does not copy", status: 0 });
+      });
+  });
+};
 
 const addSettingFile = (projectPath, object_model) => {
   return new Promise(async (resolve, reject) => {
-    const settingPath = path.join(projectPath, "setting.json")
+    const settingPath = path.join(projectPath, "setting.json");
     await fs.writeFile(settingPath, JSON.stringify(object_model), (err) => {
-      if (err) reject({ message: "Something was wrong", status: 0 })
-      resolve("Created")
-    })
-  })
-}
+      if (err) reject({ message: "Something was wrong", status: 0 });
+      resolve("Created");
+    });
+  });
+};
 
 const readSettingObject = (projectPath) => {
   return new Promise(async (resolve, reject) => {
-    const settingPath = path.join(projectPath, "setting.json")
+    const settingPath = path.join(projectPath, "setting.json");
     if (fs.existsSync(projectPath)) {
       await fs.readFile(settingPath, (err, data) => {
-        if (err) reject({ message: "Something was wrong", status: 0 })
-        data = JSON.parse(data)
-        resolve(data)
-      })
+        if (err) reject({ message: "Something was wrong", status: 0 });
+        data = JSON.parse(data);
+        resolve(data);
+      });
+    } else {
+      reject({ message: "Can not find setting.json", status: 0 });
     }
-    else {
-      reject({ message: "Can not find setting.json", status: 0 })
-    }
-  })
-}
+  });
+};
 
 const isFolder = (folderPath) => {
-  try{
-      return fs.lstatSync(folderPath).isDirectory()
-  }catch(err){
-      return false
+  try {
+    return fs.lstatSync(folderPath).isDirectory();
+  } catch (err) {
+    return false;
   }
-}
+};
 
 const recursiveFiles = (folderPath, arrayResult, parent = undefined) => {
-  let files = fs.readdirSync(folderPath)
-    files.forEach(element => {
-        const absolutePath = path.join(folderPath, element)
-        if (isFolder(absolutePath)) {
-            if(!parent) parent = arrayResult
-            parent[element] = []
-            recursiveFiles(absolutePath, parent, parent[element])
-        }
-        else {
-            parent ? parent.push(element) : arrayResult.push(element)
-        }
-    })
-}
+  let files = fs.readdirSync(folderPath);
+  files.forEach((element) => {
+    const absolutePath = path.join(folderPath, element);
+    if (isFolder(absolutePath)) {
+      if (!parent) parent = arrayResult;
+      parent[element] = [];
+      recursiveFiles(absolutePath, parent, parent[element]);
+    } else {
+      parent
+        ? parent.push({ name: element, path: absolutePath })
+        : arrayResult.push({ name: element, path: absolutePath });
+    }
+  });
+};
 
 const getProject = (projectPath) => {
   return new Promise(async (resolve, reject) => {
-    const array = []
+    const array = [];
     if (isFolder(projectPath)) {
-      recursiveFiles(projectPath, array)
-    }
-    else {
-      reject({ message: "Is not a folder", status: 0 })
+      recursiveFiles(projectPath, array);
+    } else {
+      reject({ message: "Is not a folder", status: 0 });
     }
     readSettingObject(projectPath)
-      .then(object_model => {
+      .then((object_model) => {
         filterName(projectPath)
-          .then(name => {
-            resolve({tree: array, objectModel: object_model, path: projectPath, name: name})
+          .then((name) => {
+            resolve({
+              tree: array,
+              objectModel: object_model,
+              path: projectPath,
+              name: name,
+            });
           })
-          .catch(err => {
-            reject({ message: "Does not get project name", status: 0 })
-          })
+          .catch((err) => {
+            reject({ message: "Does not get project name", status: 0 });
+          });
       })
-      .catch(err => {
-        reject({ message: "Does not get object model", status: 0 })
-      })
-  })
-}
+      .catch((err) => {
+        reject({ message: "Does not get object model", status: 0 });
+      });
+  });
+};
 
 const setProject = (data) => {
   return new Promise(async (resolve, reject) => {
@@ -286,17 +294,19 @@ const setProject = (data) => {
     const output = path.join(filePath, "output");
     // const alignments = path.join(filePath, "input", "alignments")
     await createFolders([input, output])
-      .then(data => console.log(data))
-      .catch(err => reject(err))
+      .then((data) => console.log(data))
+      .catch((err) => reject(err));
     await initObjectModel(filePath, projectType)
-      .then(object_model => {
+      .then((object_model) => {
         addSettingFile(filePath, object_model)
-          .then(message => console.log(message))
-          .catch(err => reject({ message: "Does not create project", status: 0 }))
+          .then((message) => console.log(message))
+          .catch((err) =>
+            reject({ message: "Does not create project", status: 0 })
+          );
       })
-      .catch(err => {
+      .catch((err) => {
         reject({ message: "Does not create project", status: 0 });
-      })
+      });
     let project_id = uuidv4();
     console.log(project_id);
     homepage
@@ -378,39 +388,49 @@ const openProject = () => {
 };
 
 const executeProject = async (project_path, object_model, type) => {
-  return new Promise(async(resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     console.log({ project_path });
     let input_path = path.join(project_path, "input");
     let output_path = path.join(project_path, "output", "output");
-    await mappingCommand(object_model, input_path, output_path).then((data) => {
-      console.log("exec...");
-      let pre = baseCommand()
-      let COMMAND = pre + data
-      if (type === "restart") {
-        COMMAND += " --redo"
-      }
-      let process_id = child_process.exec(COMMAND, async (err, stdout, stderr) => {
-        if (err) {
-          console.error(`exec error: ${err}`);
-          reject({message: "Does not execute", status: 0});
-          return;
+    await mappingCommand(object_model, input_path, output_path)
+      .then((data) => {
+        console.log("exec...");
+        let pre = baseCommand();
+        let COMMAND = pre + data;
+        if (type === "restart") {
+          COMMAND += " --redo";
         }
-        console.log("done");
-        await getOutputWhenExecuted(project_path)
-          .then((result) => {
-            console.log({result, COMMAND})
-            resolve({message: result, status: 1, command: COMMAND, processId: process_id.pid});
-          })
-          .catch((err) => {
-            console.log({ errorExecuted: "does not get output" });
-            reject({message: "Does not get output", status: 0});
-          });
+        let process_id = child_process.exec(
+          COMMAND,
+          async (err, stdout, stderr) => {
+            if (err) {
+              console.error(`exec error: ${err}`);
+              reject({ message: "Does not execute", status: 0 });
+              return;
+            }
+            console.log("done");
+            await getOutputWhenExecuted(project_path)
+              .then((result) => {
+                console.log({ result, COMMAND });
+                resolve({
+                  message: result,
+                  status: 1,
+                  command: COMMAND,
+                  processId: process_id.pid,
+                });
+              })
+              .catch((err) => {
+                console.log({ errorExecuted: "does not get output" });
+                reject({ message: "Does not get output", status: 0 });
+              });
+          }
+        );
+      })
+      .catch((err) => {
+        reject({ message: "Input is folder and contains files", status: 0 });
       });
-    }).catch(err => {
-      reject({message: "Input is folder and contains files", status: 0});
-    });
-  })
-}
+  });
+};
 
 module.exports = {
   getInputByProject,
@@ -425,5 +445,5 @@ module.exports = {
   filterName,
   copyFile,
   copyFolder,
-  getProject
+  getProject,
 };

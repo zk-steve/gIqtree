@@ -828,22 +828,20 @@ function SettingDetail({
       },
     });
   };
-  const handleChangeAssessmentMultiple = (e, property, subProperty) => {
+  const handleChangeAssessmentMultiple = (value, property, subProperty) => {
     setSettingField({
       ...settingField,
       assessment: {
         ...settingField.assessment,
         [property]: {
           ...settingField.assessment[property],
-          [subProperty]:
-            e.type === "checkbox" ? e.target.checked : e.target.value,
+          [subProperty]: value,
         },
       },
     });
   };
   const handleSaveSetting = () => {
-    console.log(settingField);
-    ipcRenderer.invoke("saveSetting", settingField);
+    ipcRenderer.invoke("saveSetting", projectPath, settingField);
   };
   const handleChooseFile = (option, subOption) => {
     ipcRenderer.send("chooseFile", projectPath);
@@ -1088,16 +1086,6 @@ function SettingDetail({
                       <Typography align="left">
                         Proportion of invariable sites
                       </Typography>
-                      {/* <OutlinedInput
-                        className={classes.shortTextInput}
-                        value={settingField.model.proportionOfInvariableSites}
-                        onChange={(e) => {
-                          handleChangeModelSetting(
-                            e,
-                            "proportionOfInvariableSites"
-                          );
-                        }}
-                      /> */}
                       <div className={classes.twoOption}>
                         <div
                           className={clsx(
@@ -1159,26 +1147,91 @@ function SettingDetail({
                         </div>
                       </div>
                     </div>
-                    <div
-                      className={clsx(classes.shortPath, classes.selectMargin)}
-                    >
-                      <Typography align="left">Rate categories</Typography>
-                      <Select
-                        variant="outlined"
-                        className={classes.shortTextInput}
-                        value={settingField.model.rateCategories}
-                        onChange={(e) =>
-                          handleChangeModelSetting(
-                            e.target.value,
-                            "rateCategories"
-                          )
-                        }
-                      >
-                        {model.rateCategories.map((input, index) => (
-                          <MenuItem value={input.value}>{input.label}</MenuItem>
-                        ))}
-                      </Select>
-                    </div>
+                    {settingField.model.proportionOfInvariableSites ===
+                      "no" && (
+                      <>
+                        <div
+                          className={clsx(
+                            classes.shortPath,
+                            classes.selectMargin
+                          )}
+                        >
+                          <Typography align="left">RHAS Model</Typography>
+                          {/* <Select
+                            variant="outlined"
+                            className={classes.shortTextInput}
+                            value={settingField.model.rateCategories}
+                            onChange={(e) =>
+                              handleChangeModelSetting(
+                                e.target.value,
+                                "rateCategories"
+                              )
+                            }
+                          >
+                            {model.rateCategories.map((input, index) => (
+                              <MenuItem value={input.value}>
+                                {input.label}
+                              </MenuItem>
+                            ))}
+                          </Select> */}
+                          <div className={classes.twoOption}>
+                            {settingDetail.model.rateCategories.map(
+                              (input, index) => (
+                                <div
+                                  key={index}
+                                  className={clsx(
+                                    classes.radioInput,
+                                    classes.selectMargin
+                                  )}
+                                >
+                                  <input
+                                    type="radio"
+                                    name={input.name}
+                                    id={input.id}
+                                    value={input.value}
+                                    checked={
+                                      settingField.model.rateCategories ===
+                                      input.value
+                                    }
+                                    onChange={(e) =>
+                                      handleChangeModelSetting(
+                                        e.target.value,
+                                        "rateCategories"
+                                      )
+                                    }
+                                  />
+                                  <InputLabel
+                                    htmlFor="yes"
+                                    className={classes.radioLabel}
+                                  >
+                                    {input.label}
+                                  </InputLabel>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                        <div
+                          className={clsx(
+                            classes.shortPath,
+                            classes.selectMargin
+                          )}
+                        >
+                          <Typography align="left">#rate_categories</Typography>
+                          <OutlinedInput
+                            className={classes.shortTextInput}
+                            type="number"
+                            value={settingField.model.rateCategoriesNumber}
+                            onChange={(e) =>
+                              handleChangeModelSetting(
+                                e.target.value,
+                                "rateCategoriesNumber"
+                              )
+                            }
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
                   <div className={classes.textInputContainer}>
                     <Typography className={classes.inputLabel}>
@@ -1290,7 +1343,10 @@ function SettingDetail({
                           settingField.model.mergingAlgorithm === "greedy"
                         }
                         onChange={(e) =>
-                          handleChangeModelSetting(e, "mergingAlgorithm")
+                          handleChangeModelSetting(
+                            e.target.value,
+                            "mergingAlgorithm"
+                          )
                         }
                       />
                       <InputLabel
@@ -1312,7 +1368,10 @@ function SettingDetail({
                           settingField.model.mergingAlgorithm === "rcluster"
                         }
                         onChange={(e) =>
-                          handleChangeModelSetting(e, "mergingAlgorithm")
+                          handleChangeModelSetting(
+                            e.target.value,
+                            "mergingAlgorithm"
+                          )
                         }
                       />
                       <InputLabel
@@ -1334,7 +1393,10 @@ function SettingDetail({
                           settingField.model.mergingAlgorithm === "rclusterf"
                         }
                         onChange={(e) =>
-                          handleChangeModelSetting(e, "mergingAlgorithm")
+                          handleChangeModelSetting(
+                            e.target.value,
+                            "mergingAlgorithm"
+                          )
                         }
                       />
                       <InputLabel
@@ -1460,7 +1522,7 @@ function SettingDetail({
                   <Typography className={classes.inputLabel}>
                     Boostrap method:
                   </Typography>
-                  <Select
+                  {/* <Select
                     className={classes.shortTextInput}
                     variant="outlined"
                     value={settingField.assessment.bootstrapMethod}
@@ -1471,7 +1533,76 @@ function SettingDetail({
                     <MenuItem value="ufboot">UFBoot </MenuItem>
                     <MenuItem value="standard">Standard</MenuItem>
                     <MenuItem value="none">None</MenuItem>
-                  </Select>
+                  </Select> */}
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="boostrapMethod"
+                      id="none"
+                      value="none"
+                      checked={
+                        settingField.assessment.bootstrapMethod === "none"
+                      }
+                      onChange={(e) =>
+                        handleChangeAssessmentSetting(
+                          e.target.value,
+                          "bootstrapMethod"
+                        )
+                      }
+                    />
+                    <InputLabel htmlFor="none" className={classes.radioLabel}>
+                      None
+                    </InputLabel>
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="boostrapMethod"
+                      id="ufboot"
+                      value="ufboot"
+                      checked={
+                        settingField.assessment.bootstrapMethod === "ufboot"
+                      }
+                      onChange={(e) =>
+                        handleChangeAssessmentSetting(
+                          e.target.value,
+                          "bootstrapMethod"
+                        )
+                      }
+                    />
+                    <InputLabel htmlFor="none" className={classes.radioLabel}>
+                      UFboot
+                    </InputLabel>
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="boostrapMethod"
+                      id="standard"
+                      value="standard"
+                      checked={
+                        settingField.assessment.bootstrapMethod === "standard"
+                      }
+                      onChange={(e) =>
+                        handleChangeAssessmentSetting(
+                          e.target.value,
+                          "bootstrapMethod"
+                        )
+                      }
+                    />
+                    <InputLabel
+                      htmlFor="standard"
+                      className={classes.radioLabel}
+                    >
+                      Standard
+                    </InputLabel>
+                  </div>
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
@@ -1488,7 +1619,10 @@ function SettingDetail({
                         value="yes"
                         checked={settingField.assessment.ufbootOption === "yes"}
                         onChange={(e) =>
-                          handleChangeAssessmentSetting(e, "ufbootOption")
+                          handleChangeAssessmentSetting(
+                            e.target.value,
+                            "ufbootOption"
+                          )
                         }
                       />
                       <InputLabel htmlFor="yes" className={classes.radioLabel}>
@@ -1505,7 +1639,10 @@ function SettingDetail({
                         value="no"
                         checked={settingField.assessment.ufbootOption === "no"}
                         onChange={(e) =>
-                          handleChangeAssessmentSetting(e, "ufbootOption")
+                          handleChangeAssessmentSetting(
+                            e.target.value,
+                            "ufbootOption"
+                          )
                         }
                       />
                       <InputLabel htmlFor="no" className={classes.radioLabel}>
@@ -1532,7 +1669,7 @@ function SettingDetail({
                       }
                       onChange={(e) =>
                         handleChangeAssessmentSetting(
-                          e,
+                          e.target.value,
                           "multiPartitionSamplingStrategy"
                         )
                       }
@@ -1555,7 +1692,7 @@ function SettingDetail({
                       }
                       onChange={(e) =>
                         handleChangeAssessmentSetting(
-                          e,
+                          e.target.value,
                           "multiPartitionSamplingStrategy"
                         )
                       }
@@ -1607,7 +1744,7 @@ function SettingDetail({
                       }
                       onChange={(e) =>
                         handleChangeAssessmentMultiple(
-                          e,
+                          e.target.checked,
                           "singleBranchTest",
                           "parametric"
                         )
@@ -1627,7 +1764,7 @@ function SettingDetail({
                       checked={settingField.assessment.singleBranchTest.SHlike}
                       onChange={(e) =>
                         handleChangeAssessmentMultiple(
-                          e,
+                          e.target.checked,
                           "singleBranchTest",
                           "SHlike"
                         )
@@ -1647,7 +1784,7 @@ function SettingDetail({
                       checked={settingField.assessment.singleBranchTest.aBayes}
                       onChange={(e) =>
                         handleChangeAssessmentMultiple(
-                          e,
+                          e.target.checked,
                           "singleBranchTest",
                           "aBayes"
                         )
@@ -1669,7 +1806,7 @@ function SettingDetail({
                       }
                       onChange={(e) =>
                         handleChangeAssessmentMultiple(
-                          e,
+                          e.target.checked,
                           "singleBranchTest",
                           "localBootstrap"
                         )
@@ -1715,7 +1852,7 @@ function SettingDetail({
                       value={settingField.assessment.concordanceFactor.sCF}
                       onChange={(e) =>
                         handleChangeAssessmentMultiple(
-                          e,
+                          e.target.value,
                           "concordanceFactor",
                           "sCF"
                         )
@@ -1734,7 +1871,7 @@ function SettingDetail({
                   <Typography className={classes.inputLabel}>
                     Available date info type
                   </Typography>
-                  <Select
+                  {/* <Select
                     className={classes.shortTextInput}
                     variant="outlined"
                     value={settingField.dating.availableDateInfoType}
@@ -1745,23 +1882,124 @@ function SettingDetail({
                     <MenuItem value="tip">Tip dates </MenuItem>
                     <MenuItem value="ancestral">Ancestral date</MenuItem>
                     <MenuItem value="none">None</MenuItem>
-                  </Select>
+                  </Select> */}
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="availableDateInfoType"
+                      id="none"
+                      value="none"
+                      checked={
+                        settingField.dating.availableDateInfoType === "none"
+                      }
+                      onChange={(e) =>
+                        handleChangeDatingSetting(
+                          e.target.value,
+                          "availableDateInfoType"
+                        )
+                      }
+                    />
+                    <InputLabel htmlFor="none" className={classes.radioLabel}>
+                      None
+                    </InputLabel>
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="availableDateInfoType"
+                      id="tip"
+                      value="tip"
+                      checked={
+                        settingField.dating.availableDateInfoType === "tip"
+                      }
+                      onChange={(e) =>
+                        handleChangeDatingSetting(
+                          e.target.value,
+                          "availableDateInfoType"
+                        )
+                      }
+                    />
+                    <InputLabel htmlFor="tip" className={classes.radioLabel}>
+                      Tip
+                    </InputLabel>
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="availableDateInfoType"
+                      id="ancestral"
+                      value="ancestral"
+                      checked={
+                        settingField.dating.availableDateInfoType ===
+                        "ancestral"
+                      }
+                      onChange={(e) =>
+                        handleChangeDatingSetting(
+                          e.target.value,
+                          "availableDateInfoType"
+                        )
+                      }
+                    />
+                    <InputLabel
+                      htmlFor="ancestral"
+                      className={classes.radioLabel}
+                    >
+                      Ancestral
+                    </InputLabel>
+                  </div>
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
                     Date extraction from taxon names in alignment file
                   </Typography>
-                  <Select
-                    className={classes.shortTextInput}
-                    variant="outlined"
-                    value={settingField.dating.dateExtraction}
-                    onChange={(e) =>
-                      handleChangeDatingSetting(e, "dateExtraction")
-                    }
-                  >
-                    <MenuItem value="yes">Yes</MenuItem>
-                    <MenuItem value="no">No</MenuItem>
-                  </Select>
+                  <div className={classes.twoOption}>
+                    <div
+                      className={clsx(classes.radioInput, classes.selectMargin)}
+                    >
+                      <input
+                        type="radio"
+                        name="dateExtraction"
+                        id="yes"
+                        value="yes"
+                        checked={settingField.dating.dateExtraction === "yes"}
+                        onChange={(e) =>
+                          handleChangeDatingSetting(
+                            e.target.value,
+                            "dateExtraction"
+                          )
+                        }
+                      />
+                      <InputLabel htmlFor="yes" className={classes.radioLabel}>
+                        Yes
+                      </InputLabel>
+                    </div>
+                    <div
+                      className={clsx(classes.radioInput, classes.selectMargin)}
+                    >
+                      <input
+                        type="radio"
+                        name="dateExtraction"
+                        id="no"
+                        value="no"
+                        checked={settingField.dating.dateExtraction === "no"}
+                        onChange={(e) =>
+                          handleChangeDatingSetting(
+                            e.target.value,
+                            "dateExtraction"
+                          )
+                        }
+                      />
+                      <InputLabel htmlFor="no" className={classes.radioLabel}>
+                        No
+                      </InputLabel>
+                    </div>
+                  </div>
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
@@ -1781,7 +2019,7 @@ function SettingDetail({
                   <Typography className={classes.inputLabel}>
                     Branch containing outgroup
                   </Typography>
-                  <Select
+                  {/* <Select
                     className={classes.textInput}
                     variant="outlined"
                     value={settingField.dating.branchContainingOutgroup}
@@ -1793,7 +2031,59 @@ function SettingDetail({
                     <MenuItem value="Taxa_name_1, Taxa_name_2">
                       Taxa_name_1, Taxa_name_2
                     </MenuItem>
-                  </Select>
+                  </Select> */}
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="branchContainingOutgroup"
+                      id="autoDetect"
+                      value="autoDetect"
+                      checked={
+                        settingField.dating.branchContainingOutgroup ===
+                        "autoDetect"
+                      }
+                      onChange={(e) =>
+                        handleChangeDatingSetting(
+                          e.target.value,
+                          "branchContainingOutgroup"
+                        )
+                      }
+                    />
+                    <InputLabel
+                      htmlFor="autoDetect"
+                      className={classes.radioLabel}
+                    >
+                      Auto-detect
+                    </InputLabel>
+                  </div>
+                  <div
+                    className={clsx(classes.radioInput, classes.selectMargin)}
+                  >
+                    <input
+                      type="radio"
+                      name="branchContainingOutgroup"
+                      id="Taxa_name_1, Taxa_name_2"
+                      value="Taxa_name_1, Taxa_name_2"
+                      checked={
+                        settingField.dating.branchContainingOutgroup ===
+                        "Taxa_name_1, Taxa_name_2"
+                      }
+                      onChange={(e) =>
+                        handleChangeDatingSetting(
+                          e.target.value,
+                          "branchContainingOutgroup"
+                        )
+                      }
+                    />
+                    <InputLabel
+                      htmlFor="Taxa_name_1, Taxa_name_2"
+                      className={classes.radioLabel}
+                    >
+                      Taxa_name_1, Taxa_name_2
+                    </InputLabel>
+                  </div>
                 </div>
               </form>
             )}
