@@ -256,7 +256,13 @@ const getProject = (projectPath) => {
     }
     readSettingObject(projectPath)
       .then(object_model => {
-        resolve({tree: array, objectModel: object_model})
+        filterName(projectPath)
+          .then(name => {
+            resolve({tree: array, objectModel: object_model, path: projectPath, name: name})
+          })
+          .catch(err => {
+            reject({ message: "Does not get project name", status: 0 })
+          })
       })
       .catch(err => {
         reject({ message: "Does not get object model", status: 0 })
