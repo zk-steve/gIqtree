@@ -210,7 +210,11 @@ const useStyles = makeStyles((theme) => ({
     border: "1px dashed black",
     borderRadius: "5px",
     padding: "10px",
-    marginTop: "12px",
+    marginTop: "4px",
+  },
+  deleteButton: {
+    height: "30px",
+    marginTop: "8px",
   },
 }));
 export default useStyles;

@@ -22,23 +22,43 @@ function SettingDetail({
   id,
   projectPath,
 }) {
-  const reviewBox = (path) => {
+  const reviewBox = (path, deleteAction) => {
     if (path !== "") {
       if (typeof path === "string")
         return (
-          <div className={classes.boxReviewPath}>
-            <Typography align="left">{path}</Typography>
-          </div>
+          <>
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.deleteButton}
+              onClick={deleteAction}
+            >
+              Delete
+            </Button>
+            <div className={classes.boxReviewPath}>
+              <Typography align="left">{path}</Typography>
+            </div>
+          </>
         );
       else
         return (
-          <div className={classes.boxReviewPath}>
-            {path.map((file, index) => (
-              <Typography align="left" key={index}>
-                {file}
-              </Typography>
-            ))}
-          </div>
+          <>
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.deleteButton}
+              onClick={deleteAction}
+            >
+              Delete
+            </Button>
+            <div className={classes.boxReviewPath}>
+              {path.map((file, index) => (
+                <Typography align="left" key={index}>
+                  {file}
+                </Typography>
+              ))}
+            </div>
+          </>
         );
     }
   };
@@ -900,7 +920,9 @@ function SettingDetail({
                       <Typography>Choose folder</Typography>
                     </Button>
                   </div>
-                  {reviewBox(settingField.data.alignment)}
+                  {reviewBox(settingField.data.alignment, () =>
+                    handleChangeDataSetting("", "alignment")
+                  )}
                 </div>
                 <div className={classes.textInputContainer}>
                   <InputLabel
@@ -917,7 +939,9 @@ function SettingDetail({
                     <Directory />
                     <Typography>Choose file</Typography>
                   </Button>
-                  {reviewBox(settingField.data.partition)}
+                  {reviewBox(settingField.data.partition, () =>
+                    handleChangeDataSetting("", "partition")
+                  )}
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
@@ -1495,7 +1519,9 @@ function SettingDetail({
                     <Directory />
                     <Typography>Choose file</Typography>
                   </Button>
-                  {reviewBox(settingField.tree.constrainedTreeFile)}
+                  {reviewBox(settingField.tree.constrainedTreeFile, () =>
+                    handleChangeTreeSetting("", "constrainedTreeFile")
+                  )}
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
@@ -1509,7 +1535,9 @@ function SettingDetail({
                     <Directory />
                     <Typography>Choose file</Typography>
                   </Button>
-                  {reviewBox(settingField.tree.referenceTree)}
+                  {reviewBox(settingField.tree.referenceTree, () =>
+                    handleChangeTreeSetting("", "referenceTree")
+                  )}
                 </div>
               </form>
             )}
@@ -1840,7 +1868,15 @@ function SettingDetail({
                       <Directory />
                       <Typography>Choose file</Typography>
                     </Button>
-                    {reviewBox(settingField.assessment.concordanceFactor.gCF)}
+                    {reviewBox(
+                      settingField.assessment.concordanceFactor.gCF,
+                      () =>
+                        handleChangeAssessmentMultiple(
+                          "",
+                          "concordanceFactor",
+                          "gCF"
+                        )
+                    )}
                   </div>
                   <div
                     className={clsx(classes.radioInput, classes.selectMargin)}
@@ -2013,25 +2049,14 @@ function SettingDetail({
                     <Directory />
                     <Typography>Choose file</Typography>
                   </Button>
-                  {reviewBox(settingField.dating.dateFile)}
+                  {reviewBox(settingField.dating.dateFile, () =>
+                    handleChangeDatingSetting("", "dateFile")
+                  )}
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
                     Branch containing outgroup
                   </Typography>
-                  {/* <Select
-                    className={classes.textInput}
-                    variant="outlined"
-                    value={settingField.dating.branchContainingOutgroup}
-                    onChange={(e) =>
-                      handleChangeDatingSetting(e, "branchContainingOutgroup")
-                    }
-                  >
-                    <MenuItem value="autoDetect">Auto-detect</MenuItem>
-                    <MenuItem value="Taxa_name_1, Taxa_name_2">
-                      Taxa_name_1, Taxa_name_2
-                    </MenuItem>
-                  </Select> */}
                   <div
                     className={clsx(classes.radioInput, classes.selectMargin)}
                   >
