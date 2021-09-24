@@ -233,27 +233,30 @@ const isFolder = (folderPath) => {
   }
 };
 
-const recursiveFiles = (folderPath, arrayResult, parent = undefined) => {
-  let files = fs.readdirSync(folderPath);
-  files.forEach((element) => {
-    const absolutePath = path.join(folderPath, element);
-    if (isFolder(absolutePath)) {
-      if (!parent) parent = arrayResult;
-      parent[element] = [];
-      recursiveFiles(absolutePath, parent, parent[element]);
-    } else {
-      parent
-        ? parent.push({ name: element, path: absolutePath })
-        : arrayResult.push({ name: element, path: absolutePath });
-    }
-  });
-};
+const recursiveFiles = (folderPath, resultObject) => {
+  let files = fs.readdirSync(folderPath)
+  filterName(folderPath)
+    .then(data => resultObject.name = data)
+    .catch(err => console.log(err))
+  resultObject.path = folderPath
+  resultObject.children = []
+  files.forEach(element => {
+      const absolutePath = path.join(folderPath, element)
+      if (isFolder(absolutePath)) {
+          resultObject.children.push({path: absolutePath})
+          recursiveFiles(absolutePath, resultObject.children[resultObject.children.length - 1])
+      }
+      else {
+          resultObject.children.push({path: absolutePath})
+      }
+  })
+}
 
 const getProject = (projectPath) => {
   return new Promise(async (resolve, reject) => {
-    const array = [];
+    const resultObject = {};
     if (isFolder(projectPath)) {
-      recursiveFiles(projectPath, array);
+      recursiveFiles(projectPath, resultObject);
     } else {
       reject({ message: "Is not a folder", status: 0 });
     }
@@ -262,10 +265,8 @@ const getProject = (projectPath) => {
         filterName(projectPath)
           .then((name) => {
             resolve({
-              tree: array,
-              objectModel: object_model,
-              path: projectPath,
-              name: name,
+              projectDetail: resultObject,
+              objectModel: object_model
             });
           })
           .catch((err) => {
