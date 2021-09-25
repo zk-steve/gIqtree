@@ -243,7 +243,7 @@ function createWindow() {
       .then((data) => {
         project.getProject(data[0].path)
           .then(data => {
-            console.log({data})
+            console.log({data: data.projectDetail.children})
             mainWindow.webContents.send("returnProjectById", {
               message: data,
               status: 1,

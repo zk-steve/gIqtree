@@ -236,20 +236,22 @@ const isFolder = (folderPath) => {
 const recursiveFiles = (folderPath, resultObject) => {
   let files = fs.readdirSync(folderPath)
   filterName(folderPath)
-    .then(data => resultObject.name = data)
+    .then(data => {
+      resultObject.name = data
+      resultObject.path = folderPath
+      resultObject.children = []
+      files.forEach(element => {
+          const absolutePath = path.join(folderPath, element)
+          if (isFolder(absolutePath)) {
+              resultObject.children.push({path: absolutePath})
+              recursiveFiles(absolutePath, resultObject.children[resultObject.children.length - 1])
+          }
+          else {
+              resultObject.children.push({path: absolutePath})
+          }
+      })
+    })
     .catch(err => console.log(err))
-  resultObject.path = folderPath
-  resultObject.children = []
-  files.forEach(element => {
-      const absolutePath = path.join(folderPath, element)
-      if (isFolder(absolutePath)) {
-          resultObject.children.push({path: absolutePath})
-          recursiveFiles(absolutePath, resultObject.children[resultObject.children.length - 1])
-      }
-      else {
-          resultObject.children.push({path: absolutePath})
-      }
-  })
 }
 
 const getProject = (projectPath) => {
