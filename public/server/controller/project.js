@@ -243,11 +243,11 @@ const recursiveFiles = (folderPath, resultObject) => {
       files.forEach(element => {
           const absolutePath = path.join(folderPath, element)
           if (isFolder(absolutePath)) {
-              resultObject.children.push({path: absolutePath})
+              resultObject.children.push({path: absolutePath, name: element})
               recursiveFiles(absolutePath, resultObject.children[resultObject.children.length - 1])
           }
           else {
-              resultObject.children.push({path: absolutePath})
+              resultObject.children.push({path: absolutePath, name: element})
           }
       })
     })
