@@ -14,8 +14,7 @@ function ProjectPage(props) {
   const [currentTab, setCurrentTab] = useState("input");
   const [currentFile, setCurrentFile] = useState("");
   const [isSettingOpen, setIsSettingOpen] = useState(true);
-  const [listInput, setListInput] = useState([]);
-  const [listOutput, setListOutput] = useState([]);
+  const [listTrees, setListTrees] = useState([]);
   const [isExecuteDisabled, setIsExecuteDisabled] = useState(true);
   const [isPauseDisabled, setIsPauseDisabled] = useState(true);
   const [isContinueDisabled, setIsContinueDisabled] = useState(true);
@@ -51,13 +50,14 @@ function ProjectPage(props) {
       const { message, status } = data;
       console.log(data);
       if (status === 1) {
-        setProjectName(message.name);
+        setProjectName(message.projectDetail.name);
         setProjectSetting(message.objectModel);
-        setProjectPath(message.path);
-        if (message.tree.input.length > 0)
-          handleSetListInput(message.tree.input);
-        if (message.tree.output.length > 0)
-          handleSetListOutput(message.tree.output);
+        setProjectPath(message.projectDetail.path);
+        setListTrees(message.projectDetail.children);
+        // if (message.tree.input.length > 0)
+        //   handleSetListInput(message.tree.input);
+        // if (message.tree.output.length > 0)
+        //   handleSetListOutput(message.tree.output);
       }
     };
     ipcRenderer.on("returnProjectById", returnProjectById);
@@ -70,15 +70,15 @@ function ProjectPage(props) {
       ipcRenderer.removeListener("saveSettingResult", saveSettingResult);
     };
   }, [id]); //get list input and get project name
-  useEffect(() => {
-    if (listInput.length > 0) setIsExecuteDisabled(false);
-    else setIsExecuteDisabled(true);
-    if (listOutput.length > 0) {
-      setIsPauseDisabled(true);
-      setIsInProcess(false);
-      setIsDoneProcess(true);
-    }
-  }, [listInput, listOutput]); //change button status
+  // useEffect(() => {
+  //   if (listInput.length > 0) setIsExecuteDisabled(false);
+  //   else setIsExecuteDisabled(true);
+  //   if (listOutput.length > 0) {
+  //     setIsPauseDisabled(true);
+  //     setIsInProcess(false);
+  //     setIsDoneProcess(true);
+  //   }
+  // }, [listInput, listOutput]); //change button status
   useEffect(() => {
     if (!isInProcess) {
       clearInterval(progressInterval);
@@ -99,16 +99,16 @@ function ProjectPage(props) {
     setIsInProcess(true);
     // handleGetProjectProgress();
   };
-  const handleSetListInput = (data) => {
-    setListInput([...data]);
-  };
-  const handleDeleteInput = (name) => {
-    const newListInput = listInput.filter((input) => input.name !== name);
-    setListInput(newListInput);
-  };
-  const handleSetListOutput = (data) => {
-    setListOutput([...data]);
-  };
+  // const handleSetListInput = (data) => {
+  //   setListInput([...data]);
+  // };
+  // const handleDeleteInput = (name) => {
+  //   const newListInput = listInput.filter((input) => input.name !== name);
+  //   setListInput(newListInput);
+  // };
+  // const handleSetListOutput = (data) => {
+  //   setListOutput([...data]);
+  // };
   const handlePauseProject = () => {
     setIsPauseDisabled(true);
     setIsContinueDisabled(false);
@@ -120,9 +120,9 @@ function ProjectPage(props) {
   };
   const handleChangeTab = (tab) => {
     if (currentTab !== tab) setCurrentTab(tab);
-    if (tab === "output" && currentFile === "") {
-      handleGetOutputContent(listOutput[0]);
-    }
+    // if (tab === "output" && currentFile === "") {
+    //   handleGetOutputContent(listOutput[0]);
+    // }
   };
   const handleSelectInputTab = () => {
     handleChangeTab("input");
@@ -162,11 +162,12 @@ function ProjectPage(props) {
       <div className={classes.container}>
         <div className={classes.main}>
           <FolderTree
-            listOutput={listOutput}
-            handleSetListOutput={handleSetListOutput}
-            listInput={listInput}
-            handleSetListInput={handleSetListInput}
-            handleDeleteInput={handleDeleteInput}
+            // listOutput={listOutput}
+            // handleSetListOutput={handleSetListOutput}
+            // listInput={listInput}
+            // handleSetListInput={handleSetListInput}
+            // handleDeleteInput={handleDeleteInput}
+            listTrees={listTrees}
             setIsInProcess={setIsInProcess}
             isDoneProcess={isDoneProcess}
             handleGetOutputContent={handleGetOutputContent}
@@ -178,9 +179,9 @@ function ProjectPage(props) {
           <Divider orientation="vertical" className={classes.divider} />
           {!isSettingOpen && (
             <ProjectInput
-              listInput={listInput}
-              handleSetListInput={handleSetListInput}
-              handleDeleteInput={handleDeleteInput}
+              // listInput={listInput}
+              // handleSetListInput={handleSetListInput}
+              // handleDeleteInput={handleDeleteInput}
               isInProcess={isInProcess}
               projectName={projectName}
               outputContent={outputContent}
@@ -194,7 +195,6 @@ function ProjectPage(props) {
               id={id}
               projectPath={projectPath}
               handleCloseSetting={handleCloseSetting}
-              multiPartition={listInput.length > 1}
               projectSetting={projectSetting}
               handleTestSetting={handleTestSetting}
             />

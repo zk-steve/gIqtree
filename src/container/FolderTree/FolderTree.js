@@ -3,12 +3,14 @@ import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import useStyles from "./styles";
 import { Rnd } from "react-rnd";
+import TreeView from "@mui/lab/TreeView";
+import TreeItem from "@mui/lab/TreeItem";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 const { ipcRenderer } = window.require("electron");
 
 function FolderTree({
-  listOutput,
   handleSetListOutput,
-  listInput,
   handleSetListInput,
   handleDeleteInput,
   setIsInProcess,
@@ -18,6 +20,7 @@ function FolderTree({
   handleChangeTab,
   currentFile,
   handleSelectInputTab,
+  listTrees,
 }) {
   const maxWidth = window.innerWidth / 5;
   const [size, setSize] = useState(210);
@@ -54,7 +57,14 @@ function FolderTree({
     handleSetListOutput,
     setIsInProcess,
   ]);
-
+  const renderTree = (nodes) => (
+    <TreeItem label={nodes.name} nodeId={nodes.path}>
+      {nodes.children && nodes.children.length > 0
+        ? nodes.children.map((node) => renderTree(node))
+        : null}
+    </TreeItem>
+  );
+  console.log(listTrees);
   return (
     <div className={classes.root} style={{ width: `${size}px` }}>
       <Rnd
@@ -78,7 +88,7 @@ function FolderTree({
       >
         <div className={classes.container}>
           <div className={classes.inputAndOutputContainer}>
-            <Typography
+            {/* <Typography
               className={clsx({
                 [classes.title]: true,
                 [classes.isCurrentTab]: currentTab === "input",
@@ -86,8 +96,8 @@ function FolderTree({
               onClick={handleSelectInputTab}
             >
               Input
-            </Typography>
-            {listInput.length > 0 &&
+            </Typography> */}
+            {/* {listInput.length > 0 &&
               listInput.map((name, index) => (
                 <Typography
                   className={clsx({
@@ -102,9 +112,21 @@ function FolderTree({
                 >
                   {name.name}
                 </Typography>
-              ))}
+              ))} */}
+            <TreeView
+              defaultCollapseIcon={<ExpandMoreIcon />}
+              defaultExpandIcon={<ChevronRightIcon />}
+              sx={{
+                height: 240,
+                flexGrow: 1,
+                maxWidth: 400,
+              }}
+            >
+              {listTrees.length > 0 &&
+                listTrees.map((tree, index) => renderTree(tree))}
+            </TreeView>
           </div>
-          {isDoneProcess && (
+          {/* {isDoneProcess && (
             <div className={classes.inputAndOutputContainer}>
               <Typography
                 className={clsx({
@@ -132,7 +154,7 @@ function FolderTree({
                   </Typography>
                 ))}
             </div>
-          )}
+          )} */}
         </div>
       </Rnd>
     </div>

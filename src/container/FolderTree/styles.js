@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     overflow: "hidden",
+    textAlign: "left",
   },
   title: {
     fontWeight: 600,

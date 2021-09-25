@@ -36,8 +36,12 @@
     "start": "concurrently \"cross-env HOST=localhost SKIP_PREFLIGHT_CHECK=true BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "dependencies": {
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
     "@material-ui/core": "^4.12.2",
     "@mui/icons-material": "^5.0.1",
+    "@mui/lab": "^5.0.0-alpha.48",
+    "@mui/material": "^5.0.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
