@@ -113,9 +113,9 @@ function ProjectPage(props) {
     setIsPauseDisabled(true);
     setIsContinueDisabled(false);
   };
-  const handleGetOutputContent = (file) => {
-    ipcRenderer.send("viewFile", file.path);
-    setCurrentFile(file.name);
+  const handleGetOutputContent = (path, name) => {
+    ipcRenderer.send("viewFile", path);
+    setCurrentFile(name);
     if (isSettingOpen) setIsSettingOpen(false);
   };
   const handleChangeTab = (tab) => {

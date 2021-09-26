@@ -64,7 +64,6 @@ function FolderTree({
         : null}
     </TreeItem>
   );
-  console.log(listTrees);
   return (
     <div className={classes.root} style={{ width: `${size}px` }}>
       <Rnd
@@ -119,7 +118,11 @@ function FolderTree({
               sx={{
                 height: 240,
                 flexGrow: 1,
-                maxWidth: 400,
+                maxWidth: "80%",
+                overflowY: "auto",
+              }}
+              onNodeSelect={(node, path) => {
+                handleGetOutputContent(path, node.target.innerText);
               }}
             >
               {listTrees.length > 0 &&

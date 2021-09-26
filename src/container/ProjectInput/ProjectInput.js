@@ -14,7 +14,6 @@ import TreeView from "component/TreeView/TreeView";
 const { ipcRenderer } = window.require("electron");
 
 function ProjectInput({
-  listInput,
   handleSetListInput,
   handleDeleteInput,
   isInProcess,
@@ -50,7 +49,7 @@ function ProjectInput({
       ipcRenderer.removeListener("selectFile", selectFile);
       ipcRenderer.removeListener("deleteResult", deleteResult);
     };
-  }, [listInput, handleDeleteInput, handleSetListInput]);
+  }, [handleDeleteInput, handleSetListInput]);
   const handleCloseAlert = () => {
     setIsOpenAlert(false);
   };
@@ -75,23 +74,21 @@ function ProjectInput({
             "Select input file(s)"}
           {!isInProcess && currentFile !== "" && currentFile}
         </Typography>
-        {!isInProcess &&
-          outputContent !== "" &&
-          !["bionj", "treefile"].includes(currentFile.split(".")[1]) && (
-            <textarea
-              readOnly
-              className={classes.outputContent}
-              value={outputContent}
-            />
-          )}
-        {!isInProcess &&
+        {!isInProcess && outputContent !== "" && (
+          <textarea
+            readOnly
+            className={classes.outputContent}
+            value={outputContent}
+          />
+        )}
+        {/* {!isInProcess &&
           outputContent !== "" &&
           ["bionj", "treefile"].includes(currentFile.split(".")[1]) && (
             <div className={classes.outputContent}>
               <TreeView content={outputContent} />
             </div>
-          )}
-        {((currentTab === "input" && currentFile === "") || isInProcess) && (
+          )} */}
+        {(currentFile === "" || isInProcess) && (
           <div className={classes.inputContainer}>
             {/* {listInput.length === 0 && (
               <div className={classes.input} onClick={handleSelectInput}>
@@ -107,12 +104,6 @@ function ProjectInput({
                 </div>
               </div>
             )} */}
-            {listInput.length > 0 && !isInProcess && currentTab === "input" && (
-              <ListInputFiles
-                listInput={listInput}
-                onDeleteFile={handleDeleteFile}
-              />
-            )}
             {isInProcess && (
               <div className={classes.progressContainer}>
                 <div className={classes.progress}>
@@ -130,19 +121,6 @@ function ProjectInput({
             )}
           </div>
         )}
-
-        {listInput.length > 0 &&
-          !isInProcess &&
-          currentTab === "input" &&
-          currentFile === "" && (
-            <Button
-              variant="contained"
-              className={classes.uploadMoreButton}
-              onClick={handleSelectInput}
-            >
-              Upload more
-            </Button>
-          )}
       </div>
       <AlertDialog isOpen={isOpenAlert} handleClose={handleCloseAlert} />
     </div>
