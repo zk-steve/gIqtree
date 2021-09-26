@@ -65,30 +65,32 @@ const mappingCommand = (object_model, input_path, output_path) => {
 };
 
 const example = {
-  type: "Find Model",
+  projectType: "assessment",
   data: {
-    alignment: "",
-    partition: "",
+    alignment: "path/alignment",
+    partition: "path/partition",
     sequence: "autoDetect",
     codon: "codon1",
     partitionType: "edgeProportional",
   },
   model: {
-    modelFinder: "LC or JC69",
-    proportionOfInvariableSites: "0",
-    rateCategories: "Gamma",
-    autoMerge: "no",
+    modelFinder: "auto",
+    proportionOfInvariableSites: "no",
+    rateCategories: "",
+    rateCategoriesNumber: "4",
+    autoMerge: "yes",
     mergingAlgorithm: "rclusterf",
+    stateFrequency: "none",
   },
   tree: {
     on: "no",
-    numberOfUnsuccessfulIterationsToStop: "101",
-    perturbationStrength: "0.6",
-    constrainedTreeFile: "dfsd",
-    referenceTree: "dsf",
+    numberOfUnsuccessfulIterationsToStop: "100",
+    perturbationStrength: "0.5",
+    constrainedTreeFile: "path/constrainedTreeFile",
+    referenceTree: "path/referenceTree",
   },
   assessment: {
-    bootstrapMethod: "none",
+    bootstrapMethod: "standard",
     ufbootOption: "no",
     multiPartitionSamplingStrategy: "SITE",
     singleBranchTest: {
@@ -98,14 +100,14 @@ const example = {
       localBootstrap: false,
     },
     concordanceFactor: {
-      gCF: "",
+      gCF: "path/gCF",
       sCF: "",
     },
   },
   dating: {
     availableDateInfoType: "none",
     dateExtraction: "no",
-    dateFile: "",
+    dateFile: "path/dateFile",
     branchContainingOutgroup: "autoDetect",
   },
   others: {
@@ -115,10 +117,10 @@ const example = {
   },
 };
 
-// // store(base_command)
-// mappingCommand(example, "D:/TestIQTREE/IQTREE/input", "D:/TestIQTREE/IQTREE/output").then((data) => {
-//   console.log({data});
-// }).catch(err => console.log(err))
+// store(base_command)
+mappingCommand(example, "D:/TestIQTREE/IQTREE/input", "D:/TestIQTREE/IQTREE/output").then((data) => {
+  console.log(baseCommand() + data);
+}).catch(err => console.log(err))
 
 
 module.exports = {
