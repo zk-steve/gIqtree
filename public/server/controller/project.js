@@ -192,6 +192,7 @@ const copyFolder = (sourcePath, destPath) => {
     await fs_extra
       .copy(sourcePath, destPath)
       .then(() => {
+        console.log("Copied folder")
         resolve("Copied");
       })
       .catch((err) => {
@@ -209,6 +210,103 @@ const addSettingFile = (projectPath, object_model) => {
     });
   });
 };
+
+const clearProjectInput = (projectPath) => {
+  return new Promise(async (resolve, reject) => {
+    fs.readdir(projectPath, (err, files) => {
+        if (err) throw err;
+        
+        for (const file of files) {
+            if (isFolder(path.join(projectPath, file))) {
+                fs.rmdirSync(path.join(projectPath, file),  {
+                    recursive: true,
+                })
+            }
+            else {
+                fs.unlink(path.join(projectPath, file), err => {
+                  if (err) reject({ message: "Something was wrong", status: 0 })
+                });
+            }
+      }
+      resolve("Done")
+    });
+  });
+}
+
+const settingHelper = ( projectPath, objectModel) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let { alignment, partition } = objectModel.data;
+      let { constrainedTreeFile, referenceTree } = objectModel.tree;
+      let { gCF } = objectModel.assessment.concordanceFactor;
+      let { dateFile } = objectModel.dating;
+
+      clearProjectInput(path.join(projectPath, "input"))
+        .then(async data => {
+          console.log("Done")
+          if (Array.isArray(alignment)) {
+            alignment.forEach(sourcePath => {
+              filterName(sourcePath)
+                .then(async name => {
+                  const destPath = path.join(projectPath, "input", name)
+                  await copyFile(sourcePath, destPath)
+                })
+            })
+          }
+          else if (isFolder(alignment)) {
+            console.log("======================\n isFolder")
+            const destPath = path.join(projectPath, "input")
+            console.log({sourcePath: alignment, destPath})
+            await copyFolder(alignment, destPath)
+          }
+          const files = []
+          if (partition.length >= 1) {
+            files.push(partition)
+          }
+          if (constrainedTreeFile.length >= 1) {
+            files.push(constrainedTreeFile)
+          }
+          if (referenceTree.length >= 1) {
+            files.push(referenceTree)
+          }
+          if (gCF.length >= 1) {
+            files.push(gCF)
+          }
+          if (dateFile.length >= 1) {
+            files.push(dateFile)
+          }
+    
+          files.forEach(sourcePath => {
+            filterName(sourcePath)
+            .then(async name => {
+              const destPath = path.join(projectPath, "input", name)
+              await copyFile(sourcePath, destPath)
+            })
+          })
+          resolve("Done")
+        })
+        .catch(err => {
+          throw err
+        })
+    } catch (err) {
+      reject({ message: "Something was wrong", status: 0 })
+    }
+  })
+}
+
+const saveSetting = (projectPath, objectModel) => {
+  return new Promise((resolve, reject) => {
+    addSettingFile(projectPath, objectModel)
+      .then(data => {
+        settingHelper(projectPath, objectModel)
+          .then(data => {
+            resolve(data)
+          })
+          .catch(err => reject({ message: "Something was wrong", status: 0 }))
+      })
+      .catch(err => reject({ message: "Something was wrong", status: 0 }))
+  })
+}
 
 const readSettingObject = (projectPath) => {
   return new Promise(async (resolve, reject) => {
@@ -449,4 +547,5 @@ module.exports = {
   copyFile,
   copyFolder,
   getProject,
+  saveSetting
 };

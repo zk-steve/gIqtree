@@ -137,7 +137,7 @@ function createWindow() {
   });
 
   ipcMain.handle("saveSetting", (event, project_path, object_model) => {
-    project.addSettingFile(project_path, object_model)
+    project.saveSetting(project_path, object_model)
       .then(data => {
         mainWindow.webContents.send("saveSettingResult", {
           message: object_model,
