@@ -547,5 +547,6 @@ module.exports = {
   copyFile,
   copyFolder,
   getProject,
-  saveSetting
+  saveSetting,
+  isFolder
 };

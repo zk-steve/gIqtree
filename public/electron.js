@@ -40,7 +40,14 @@ function createWindow() {
   }
 
   ipcMain.on("viewFile", (event, filePath) => {
-    viewFile(filePath)
+    if (project.isFolder(filePath)) {
+      mainWindow.webContents.send("viewFileData", {
+        message: "Is folder",
+        status: 0
+      });
+    }
+    else {
+      viewFile(filePath)
       .then((data) => {
         console.log({ readFile: data });
         mainWindow.webContents.send("viewFileData", {
@@ -54,6 +61,7 @@ function createWindow() {
           status: 0,
         })
       );
+    }
   });
 
   ipcMain.handle("progressProject", async (event, project_id) => {
