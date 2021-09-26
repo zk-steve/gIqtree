@@ -20,7 +20,7 @@ function ProjectPage(props) {
   const [isContinueDisabled, setIsContinueDisabled] = useState(true);
   const [isInProcess, setIsInProcess] = useState(false);
   const [isDoneProcess, setIsDoneProcess] = useState(false);
-  const [outputContent, setOutputContent] = useState("");
+  const [outputContent, setOutputContent] = useState(null);
   const { id } = useParams();
   const [projectName, setProjectName] = useState();
   const [projectSetting, setProjectSetting] = useState(null);
@@ -30,7 +30,11 @@ function ProjectPage(props) {
     ipcRenderer.send("getProjectById", id);
     const viewFileData = (event, data) => {
       const { message, status } = data;
-      if (status === 1) setOutputContent(message);
+      if (status === 1) {
+        setOutputContent(message.data);
+        setCurrentFile(message.name);
+        if (isSettingOpen) setIsSettingOpen(false);
+      }
     };
     const progressResult = (event, data) => {
       const { status, message } = data;
@@ -54,6 +58,9 @@ function ProjectPage(props) {
         setProjectSetting(message.objectModel);
         setProjectPath(message.projectDetail.path);
         setListTrees(message.projectDetail.children);
+        if (message.objectModel.data.alignment !== "")
+          setIsExecuteDisabled(false);
+        else setIsExecuteDisabled(true);
         // if (message.tree.input.length > 0)
         //   handleSetListInput(message.tree.input);
         // if (message.tree.output.length > 0)
@@ -93,10 +100,11 @@ function ProjectPage(props) {
     setIsSettingOpen(false);
   };
   const handleExecute = () => {
-    ipcRenderer.invoke("executeProject", id);
+    ipcRenderer.invoke("executeProject", projectPath);
     setIsExecuteDisabled(true);
     setIsPauseDisabled(false);
     setIsInProcess(true);
+    setIsSettingOpen(false);
     // handleGetProjectProgress();
   };
   // const handleSetListInput = (data) => {
@@ -113,10 +121,8 @@ function ProjectPage(props) {
     setIsPauseDisabled(true);
     setIsContinueDisabled(false);
   };
-  const handleGetOutputContent = (path, name) => {
+  const handleGetOutputContent = (path) => {
     ipcRenderer.send("viewFile", path);
-    setCurrentFile(name);
-    if (isSettingOpen) setIsSettingOpen(false);
   };
   const handleChangeTab = (tab) => {
     if (currentTab !== tab) setCurrentTab(tab);

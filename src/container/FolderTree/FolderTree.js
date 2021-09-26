@@ -118,11 +118,10 @@ function FolderTree({
               sx={{
                 height: 240,
                 flexGrow: 1,
-                maxWidth: "80%",
-                overflowY: "auto",
+                width: "100%",
               }}
               onNodeSelect={(node, path) => {
-                handleGetOutputContent(path, node.target.innerText);
+                handleGetOutputContent(path);
               }}
             >
               {listTrees.length > 0 &&

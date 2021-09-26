@@ -2180,4 +2180,4 @@ function SettingDetail({
   );
 }
 
-export default SettingDetail;
+export default React.memo(SettingDetail);

@@ -68,10 +68,6 @@ function ProjectInput({
         </Typography> */}
         <Typography className={classes.smallTitle}>
           {isInProcess && "Progression"}
-          {!isInProcess &&
-            currentTab === "input" &&
-            currentFile === "" &&
-            "Select input file(s)"}
           {!isInProcess && currentFile !== "" && currentFile}
         </Typography>
         {!isInProcess && outputContent !== "" && (
