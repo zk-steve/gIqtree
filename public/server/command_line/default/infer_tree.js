@@ -1,4 +1,5 @@
 module.exports = {
+  projectType: "infertree",
   data: {
     alignment: "",
     partition: "",

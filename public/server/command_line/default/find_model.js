@@ -1,4 +1,5 @@
 module.exports = {
+  projectType: "findmodel",
   data: {
     alignment: "",
     partition: "",

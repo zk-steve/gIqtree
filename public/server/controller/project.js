@@ -255,9 +255,11 @@ const settingHelper = ( projectPath, objectModel) => {
           }
           else if (isFolder(alignment)) {
             console.log("======================\n isFolder")
-            const destPath = path.join(projectPath, "input")
-            console.log({sourcePath: alignment, destPath})
-            await copyFolder(alignment, destPath)
+            filterName(alignment)
+                .then(async name => {
+                  const destPath = path.join(projectPath, "input", name)
+                  await copyFolder(alignment, destPath)
+                })
           }
           const files = []
           if (partition.length >= 1) {
@@ -283,7 +285,9 @@ const settingHelper = ( projectPath, objectModel) => {
               await copyFile(sourcePath, destPath)
             })
           })
-          resolve("Done")
+          setTimeout(() => {
+            resolve("Done")
+          }, 200)
         })
         .catch(err => {
           throw err

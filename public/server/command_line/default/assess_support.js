@@ -1,4 +1,5 @@
 module.exports = {
+  projectType: "assessment",
   data: {
     alignment: "",
     partition: "",

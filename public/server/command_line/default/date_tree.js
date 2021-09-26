@@ -1,4 +1,5 @@
 module.exports = {
+  projectType: "datetree",
   data: {
     alignment: "",
     partition: "",
