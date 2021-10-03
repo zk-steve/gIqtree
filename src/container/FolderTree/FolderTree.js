@@ -7,6 +7,7 @@ import TreeView from "@mui/lab/TreeView";
 import TreeItem from "@mui/lab/TreeItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CloseFile from "shared/icons/closeFile";
 const { ipcRenderer } = window.require("electron");
 
 function FolderTree({
@@ -57,12 +58,36 @@ function FolderTree({
     handleSetListOutput,
     setIsInProcess,
   ]);
+  const CustomTree = ({ name, isFile, ...props }) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const handleDeleteFile = (path) => {};
+    return (
+      <TreeItem
+        {...props}
+        label={
+          <div
+            className={classes.treeFile}
+            onMouseEnter={() => setIsVisible(true)}
+            onMouseLeave={() => setIsVisible(false)}
+          >
+            <Typography variant="body1">{name}</Typography>
+            {isFile && isVisible && <CloseFile />}
+          </div>
+        }
+        className={classes.treeContent}
+      />
+    );
+  };
   const renderTree = (nodes) => (
-    <TreeItem label={nodes.name} nodeId={nodes.path}>
+    <CustomTree
+      name={nodes.name}
+      isFile={!Boolean(nodes.children)}
+      nodeId={nodes.path}
+    >
       {nodes.children && nodes.children.length > 0
         ? nodes.children.map((node) => renderTree(node))
         : null}
-    </TreeItem>
+    </CustomTree>
   );
   return (
     <div className={classes.root} style={{ width: `${size}px` }}>
@@ -116,7 +141,7 @@ function FolderTree({
               defaultCollapseIcon={<ExpandMoreIcon />}
               defaultExpandIcon={<ChevronRightIcon />}
               sx={{
-                height: 240,
+                height: "100%",
                 flexGrow: 1,
                 width: "100%",
               }}

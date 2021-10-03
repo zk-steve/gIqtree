@@ -52,5 +52,18 @@ const useStyles = makeStyles((theme) => ({
   isCurrentFile: {
     backgroundColor: "#EBECED",
   },
+  treeFile: {
+    position: "relative",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    boxSizing: "border-box",
+    paddingRight: "10px",
+  },
+  treeContent: {
+    "& .MuiTreeItem-content": {
+      padding: 0,
+    },
+  },
 }));
 export default useStyles;
