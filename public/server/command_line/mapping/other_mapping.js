@@ -1,4 +1,4 @@
-module.exports.other_mapping = (object_model, inputs, output_path) => {
+module.exports.other_mapping = (object_model, output_path) => {
   let result = "";
   //Step 1: Number of CPU cores
   if (object_model["others"]["numberOfCPUCores"] === "") {

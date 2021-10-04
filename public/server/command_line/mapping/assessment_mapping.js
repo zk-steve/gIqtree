@@ -8,16 +8,17 @@ module.exports.assessment_mapping = (object_model, inputs) => {
       result += " -b " + object_model["assessment"]["replicates"];
     }
   }
+  console.log("END STEP 1")
   //Step 2: UFBoot option for reducing impact of severe model violation
   if (
     object_model["assessment"]["bootstrapMethod"] === "ufboot" &&
     object_model["assessment"]["ufbootOption"] === "yes"
   ) {
     result += " --bnni";
-  }
+  }console.log("END STEP 2")
   //Step 3: Multi-partition sampling strategy
   if (
-    inputs.length >= 1 &&
+    object_model["data"]["partition"].length !== 0 &&
     object_model["assessment"]["bootstrapMethod"] !== "none"
   ) {
     result +=
@@ -39,6 +40,7 @@ module.exports.assessment_mapping = (object_model, inputs) => {
   if (object_model["assessment"]["singleBranchTest"]["localBootstrap"] && typeof(object_model["assessment"]["singleBranchTest"]["localBootstrap"]) === "number") {
     result += " --lbp " + object_model["assessment"]["singleBranchTest"]["localBootstrap"]
   }
+  console.log("END STEP 4")
   //Step 5: Concordance factor
   if (object_model["assessment"]["concordanceFactor"]["gCF"] !== "") {
     result +=
@@ -48,6 +50,7 @@ module.exports.assessment_mapping = (object_model, inputs) => {
     result +=
       " --scf " + object_model["assessment"]["concordanceFactor"]["sCF"];
   }
+  console.log("END STEP 5")
   console.log({ assessment_mapping: result });
   return result;
 };

@@ -10,24 +10,6 @@ const { model_mapping } = require("./mapping/model_mapping");
 const { other_mapping } = require("./mapping/other_mapping");
 const { tree_search_mapping } = require("./mapping/tree_search_mapping");
 
-const listInput = (input_path) => {
-  return new Promise((resolve, reject) => {
-    fs.readdir(input_path, "utf-8", (err, files) => {
-      if (err) reject({message: "Does not get input files"});
-      if (Array.isArray(files)) {
-        let fileName = files.map((file) => {
-          return path.join(input_path, file);
-        });
-        console.log({ COMMAND_INPUT: fileName });
-        resolve(fileName);
-      }
-    });
-  })
-};
-
-// '"C:\\Users\\nguye\\AppData\\iqtree\\iqtree-2.0.6-Windows\\bin\\iqtree2.exe" '
-// '"C:\\Users\\nguye\\AppData\\iqtree\\iqtree-2.0.6-Windows\\bin\\iqtree2.exe" '
-
 const baseCommand = () => {
   let execName = os.type() === "Windows_NT" ? "iqtree2.exe" : "iqtree2";
     let iqtreeExecute = path.join(iqtreePath, execName);
@@ -40,92 +22,49 @@ const baseCommand = () => {
 
 const mappingCommand = (object_model, input_path, output_path) => {
   return new Promise((resolve, reject) => {
-    listInput(input_path).then((inputFiles) => {
-      console.log({inputFiles})
-      let data = "";
+    let data = "";
       //Step 1: Mapping data
-      data += data_mapping(object_model, inputFiles);
+      data += data_mapping(object_model);
       //Step 2: Mapping model
-      data += model_mapping(object_model, inputFiles);
+      data += model_mapping(object_model);
       //Step 3: Tree Search
-      data += tree_search_mapping(object_model, inputFiles);
+      data += tree_search_mapping(object_model);
       //Step 4: Assessment
-      data += assessment_mapping(object_model, inputFiles);
+      data += assessment_mapping(object_model);
       //Step 5: Dating
-      data += dating_mapping(object_model, inputFiles);
+      data += dating_mapping(object_model);
       //Step 6: Other
-      data += other_mapping(object_model, inputFiles, output_path);
+      data += other_mapping(object_model, output_path);
       // Step 7 - other/ enter command-line
       console.log({ data })
       let result = data.replace("-m MFP -n 0", "-m MF");
       result = result.replace("-m TEST -n 0", "-m TESTONLY");
       resolve(result);
-    }).catch(err => {
-      reject(err);
-    })
   })
 };
-
-const example = {
-  projectType: "",
-  data: {
-    alignment: "path/alignment",
-    partition: "path/partition",
-    sequence: "autoDetect",
-    codon: "codon1",
-    partitionType: "edgeProportional",
-  },
-  model: {
-    modelFinder: "auto",
-    proportionOfInvariableSites: "no",
-    rateCategories: "",
-    rateCategoriesNumber: "4",
-    autoMerge: "yes",
-    mergingAlgorithm: "rclusterf",
-    stateFrequency: "none",
-  },
-  tree: {
-    on: "no",
-    numberOfUnsuccessfulIterationsToStop: "100",
-    perturbationStrength: "0.5",
-    constrainedTreeFile: "path/constrainedTreeFile",
-    referenceTree: "path/referenceTree",
-  },
-  assessment: {
-    bootstrapMethod: "standard",
-    ufbootOption: "no",
-    multiPartitionSamplingStrategy: "SITE",
-    singleBranchTest: {
-      parametric: false,
-      SHlike: false,
-      aBayes: false,
-      localBootstrap: false,
-    },
-    concordanceFactor: {
-      gCF: "path/gCF",
-      sCF: "",
-    },
-  },
-  dating: {
-    availableDateInfoType: "none",
-    dateExtraction: "no",
-    dateFile: "path/dateFile",
-    branchContainingOutgroup: "autoDetect",
-  },
-  others: {
-    numberOfCPUCores: "",
-    prefix: "",
-    enterCommandLine: "",
-  },
-};
-
-// store(base_command)
-mappingCommand(example, "D:/TestIQTREE/IQTREE/input", "D:/TestIQTREE/IQTREE/output").then((data) => {
-  console.log(baseCommand() + data);
-}).catch(err => console.log(err))
 
 
 module.exports = {
   mappingCommand,
   baseCommand
 }
+
+
+
+// const listInput = (input_path) => {
+//   return new Promise((resolve, reject) => {
+//     fs.readdir(input_path, "utf-8", (err, files) => {
+//       if (err) reject({message: "Does not get input files"});
+//       if (Array.isArray(files)) {
+//         let fileName = files.map((file) => {
+//           return path.join(input_path, file);
+//         });
+//         console.log({ COMMAND_INPUT: fileName });
+//         resolve(fileName);
+//       }
+//     });
+//   })
+// };
+
+// '"C:\\Users\\nguye\\AppData\\iqtree\\iqtree-2.0.6-Windows\\bin\\iqtree2.exe" '
+// '"C:\\Users\\nguye\\AppData\\iqtree\\iqtree-2.0.6-Windows\\bin\\iqtree2.exe" '

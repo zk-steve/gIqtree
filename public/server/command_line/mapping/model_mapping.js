@@ -1,4 +1,5 @@
-module.exports.model_mapping = (object_model, inputs) => {
+const fs = require("fs")
+module.exports.model_mapping = (object_model) => {
   let result = "";
   //Step 1: Substitution model
   let default_flag = false;
@@ -123,7 +124,7 @@ module.exports.model_mapping = (object_model, inputs) => {
   }
   //Step 5: Auto-merge partitions
   //Step 6: Merging algorithm
-  if (inputs.length >= 1) {
+  if ((object_model["data"]["alignment"].length >= 2 || fs.lstatSync(object_model["data"]["alignment"]).isDirectory()) && object_model["data"]["partition"].length !== 0) {
     object_model["model"]["autoMerge"] === "yes"
       ? (result +=
           " --merge " + object_model["model"]["mergingAlgorithm"].toLowerCase())

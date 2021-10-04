@@ -1,4 +1,4 @@
-module.exports.tree_search_mapping = (object_model, inputs) => {
+module.exports.tree_search_mapping = (object_model) => {
   let result = "";
   //Step 1: On
   // if (object_model["tree"]["on"] === "no") {

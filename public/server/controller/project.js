@@ -247,12 +247,13 @@ const settingHelper = ( projectPath, objectModel) => {
         .then(async data => {
           console.log("Done")
           if (Array.isArray(alignment)) {
+            objectModel.data.alignment = []
             alignment.forEach(sourcePath => {
               filterName(sourcePath)
                 .then(async name => {
                   const destPath = path.join(projectPath, "input", name)
                   await copyFile(sourcePath, destPath)
-                  objectModel.data.alignment = destPath
+                  objectModel.data.alignment.push(destPath)
                 })
             })
           }
@@ -521,12 +522,13 @@ const openProject = () => {
   });
 };
 
-const executeProject = async (project_path, object_model, type) => {
+const executeProject = (project_path, object_model, type) => {
   return new Promise(async (resolve, reject) => {
     console.log({ project_path });
     let input_path = path.join(project_path, "input");
     let output_path = path.join(project_path, "output", "output");
-    await mappingCommand(object_model, input_path, output_path)
+    console.log("BEGINNNNNNNNNNNNNNNNNNNNNNNN")
+    mappingCommand(object_model, input_path, output_path)
       .then((data) => {
         console.log("exec...");
         let pre = baseCommand();
@@ -544,26 +546,13 @@ const executeProject = async (project_path, object_model, type) => {
               return;
             }
             console.log("done");
-            await getOutputWhenExecuted(project_path)
-              .then((result) => {
-                console.log({ result, COMMAND });
-                resolve({
-                  message: result,
-                  status: 1,
-                  command: COMMAND,
-                  processId: process_id.pid,
-                });
-              })
-              .catch((err) => {
-                console.log({ errorExecuted: "does not get output" });
-                reject({ message: "Does not get output", status: 0 });
-              });
           }
         );
       })
       .catch((err) => {
         reject({ message: "Input is folder and contains files", status: 0 });
       });
+    console.log("ENDDDDDDDDDDDDDDDD")
   });
 };
 
