@@ -1,6 +1,6 @@
 module.exports.assessment_mapping = (object_model, inputs) => {
   let result = "";
-  //Step 1: Bootstrap method
+  //Step 1: Bootstrap method - pending
   if (object_model["assessment"]["bootstrapMethod"] !== "none") {
     if (object_model["assessment"]["bootstrapMethod"] === "ufboot" && object_model["assessment"]["replicates"]) {
       result += " -B " + object_model["assessment"]["replicates"];
@@ -26,7 +26,7 @@ module.exports.assessment_mapping = (object_model, inputs) => {
         "multiPartitionSamplingStrategy"
       ].toUpperCase();
   }
-  //Step 4: Single branch tests
+  //Step 4: Single branch tests - pending
   if (object_model["assessment"]["singleBranchTest"]["parametric"]) {
     result += " --alrt 0"
   }
@@ -34,7 +34,7 @@ module.exports.assessment_mapping = (object_model, inputs) => {
     result += " --alrt " + object_model["assessment"]["singleBranchTest"]["SHlike"]
   }
   if (object_model["assessment"]["singleBranchTest"]["aBayes"]) {
-    result += " --alrt abayes"
+    result += " --abayes"
   }
   if (object_model["assessment"]["singleBranchTest"]["localBootstrap"] && typeof(object_model["assessment"]["singleBranchTest"]["localBootstrap"]) === "number") {
     result += " --lbp " + object_model["assessment"]["singleBranchTest"]["localBootstrap"]
@@ -42,7 +42,7 @@ module.exports.assessment_mapping = (object_model, inputs) => {
   //Step 5: Concordance factor
   if (object_model["assessment"]["concordanceFactor"]["gCF"] !== "") {
     result +=
-      " --gcf " + object_model["assessment"]["concordanceFactor"]["gCF"];
+      " --gcf " + `"${object_model["assessment"]["concordanceFactor"]["gCF"]}`;
   }
   if (object_model["assessment"]["concordanceFactor"]["sCF"] !== "" && typeof(object_model["assessment"]["concordanceFactor"]["sCF"]) === "number") {
     result +=

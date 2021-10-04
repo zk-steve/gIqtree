@@ -5,7 +5,10 @@ module.exports.chooseFile = (project_path) => {
     try {
       let sourcePath = dialog.showOpenDialogSync({
         properties: ["openFile"],
-        filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
+        filters: [{
+          name: "msa file",
+          // extensions: ["msa", "phy"]
+        }],
       });
       if (Array.isArray(sourcePath) && sourcePath.length === 1) {
         sourcePath = sourcePath[0]
@@ -26,7 +29,10 @@ module.exports.chooseMultiFile = (project_path) => {
     try {
       let sourcePath = dialog.showOpenDialogSync({
         properties: ["openFile", "multiSelections"],
-        filters: [{ name: "msa file", extensions: ["msa", "phy"] }],
+        filters: [{
+          name: "msa file",
+          // extensions: ["msa", "phy"]
+        }],
       });
       if (!Array.isArray(sourcePath)) {
         reject({message: "You need choose files", status: 0})

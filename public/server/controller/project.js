@@ -206,7 +206,9 @@ const addSettingFile = (projectPath, object_model) => {
     const settingPath = path.join(projectPath, "setting.json");
     await fs.writeFile(settingPath, JSON.stringify(object_model), (err) => {
       if (err) reject({ message: "Something was wrong", status: 0 });
-      resolve("Created");
+      setTimeout(() => {
+        resolve("done")
+      }, 30)
     });
   });
 };
@@ -250,6 +252,7 @@ const settingHelper = ( projectPath, objectModel) => {
                 .then(async name => {
                   const destPath = path.join(projectPath, "input", name)
                   await copyFile(sourcePath, destPath)
+                  objectModel.data.alignment = destPath
                 })
             })
           }
@@ -259,35 +262,58 @@ const settingHelper = ( projectPath, objectModel) => {
                 .then(async name => {
                   const destPath = path.join(projectPath, "input", name)
                   await copyFolder(alignment, destPath)
+                  objectModel.data.alignment = destPath
                 })
           }
           const files = []
           if (partition.length >= 1) {
             files.push(partition)
+            filterName(partition)
+            .then(async name => {
+              const destPath = path.join(projectPath, "input", name)
+              await copyFile(partition, destPath)
+              objectModel.data.partition = destPath
+            })
           }
           if (constrainedTreeFile.length >= 1) {
             files.push(constrainedTreeFile)
+            filterName(constrainedTreeFile)
+            .then(async name => {
+              const destPath = path.join(projectPath, "input", name)
+              await copyFile(constrainedTreeFile, destPath)
+              objectModel.tree.constrainedTreeFile = destPath
+            })
           }
           if (referenceTree.length >= 1) {
             files.push(referenceTree)
+            filterName(referenceTree)
+            .then(async name => {
+              const destPath = path.join(projectPath, "input", name)
+              await copyFile(referenceTree, destPath)
+              objectModel.tree.referenceTree = destPath
+            })
           }
           if (gCF.length >= 1) {
             files.push(gCF)
+            filterName(gCF)
+            .then(async name => {
+              const destPath = path.join(projectPath, "input", name)
+              await copyFile(gCF, destPath)
+              objectModel.assessment.concordanceFactor.gCF = destPath
+            })
           }
           if (dateFile.length >= 1) {
             files.push(dateFile)
-          }
-    
-          files.forEach(sourcePath => {
-            filterName(sourcePath)
+            filterName(dateFile)
             .then(async name => {
               const destPath = path.join(projectPath, "input", name)
-              await copyFile(sourcePath, destPath)
+              await copyFile(dateFile, destPath)
+              objectModel.dating.dateFile = destPath
             })
-          })
+          }
           setTimeout(() => {
-            resolve("Done")
-          }, 200)
+            resolve(objectModel)
+          }, 10)
         })
         .catch(err => {
           throw err
@@ -300,11 +326,14 @@ const settingHelper = ( projectPath, objectModel) => {
 
 const saveSetting = (projectPath, objectModel) => {
   return new Promise((resolve, reject) => {
-    addSettingFile(projectPath, objectModel)
-      .then(data => {
-        settingHelper(projectPath, objectModel)
+    settingHelper(projectPath, objectModel)
+      .then(newObjectModel => {
+        addSettingFile(projectPath, newObjectModel)
           .then(data => {
-            resolve(data)
+            setTimeout(() => {
+              console.log({newObjectModel})
+              resolve(newObjectModel)
+            }, 100)
           })
           .catch(err => reject({ message: "Something was wrong", status: 0 }))
       })
@@ -502,9 +531,10 @@ const executeProject = async (project_path, object_model, type) => {
         console.log("exec...");
         let pre = baseCommand();
         let COMMAND = pre + data;
-        if (type === "restart") {
+        // if (type === "restart") {
           COMMAND += " --redo";
-        }
+        // }
+        console.log({ BBB: COMMAND });
         let process_id = child_process.exec(
           COMMAND,
           async (err, stdout, stderr) => {

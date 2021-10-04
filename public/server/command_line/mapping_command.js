@@ -35,12 +35,13 @@ const baseCommand = () => {
       ? ""
     : `chmod 755 "${iqtreeExecute}" && `;
   console.log({baseCommand: prefix + `"${iqtreeExecute}" `})
-  return prefix + `"${iqtreeExecute}" `
+  return prefix + `"${iqtreeExecute}"`
 }
 
 const mappingCommand = (object_model, input_path, output_path) => {
   return new Promise((resolve, reject) => {
     listInput(input_path).then((inputFiles) => {
+      console.log({inputFiles})
       let data = "";
       //Step 1: Mapping data
       data += data_mapping(object_model, inputFiles);
@@ -55,9 +56,10 @@ const mappingCommand = (object_model, input_path, output_path) => {
       //Step 6: Other
       data += other_mapping(object_model, inputFiles, output_path);
       // Step 7 - other/ enter command-line
-      data.replace("-m MFP -n 0", "-m MF");
-      data.replace("-m TEST -n 0", "-m TESTONLY");
-      resolve(data);
+      console.log({ data })
+      let result = data.replace("-m MFP -n 0", "-m MF");
+      result = result.replace("-m TEST -n 0", "-m TESTONLY");
+      resolve(result);
     }).catch(err => {
       reject(err);
     })
@@ -65,7 +67,7 @@ const mappingCommand = (object_model, input_path, output_path) => {
 };
 
 const example = {
-  projectType: "assessment",
+  projectType: "",
   data: {
     alignment: "path/alignment",
     partition: "path/partition",

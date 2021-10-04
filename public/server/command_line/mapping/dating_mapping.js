@@ -10,7 +10,7 @@ module.exports.dating_mapping = (object_model, inputs) => {
   }
   //Step 3: Date file
   if (object_model["dating"]["dateFile"] !== "") {
-    result += " --date " + object_model["dating"]["dateFile"];
+    result += " --date " + `"${object_model["dating"]["dateFile"]}"`;
   }
   //Step 4: Branch containing outgroup
   if (

@@ -1,9 +1,9 @@
 module.exports.tree_search_mapping = (object_model, inputs) => {
   let result = "";
   //Step 1: On
-  if (!object_model["tree"]["on"]) {
-    result += " -n 0";
-  }
+  // if (object_model["tree"]["on"] === "no") {
+  //   result += " -n 0";
+  // }
   //Step 2: Number of unsuccessful iterations to stop
   if (
     object_model["tree"]["numberOfUnsuccessfulIterationsToStop"] !== "100" &&
@@ -22,11 +22,11 @@ module.exports.tree_search_mapping = (object_model, inputs) => {
   }
   //Step 4: Constrained tree file
   if (object_model["tree"]["constrainedTreeFile"] !== "" && object_model["tree"]["constrainedTreeFile"] !== "none") {
-    result += " -g " + object_model["tree"]["constrainedTreeFile"];
+    result += " -g " + `"${object_model["tree"]["constrainedTreeFile"]}"`;
   }
   //Step 5: Reference tree
   if (object_model["tree"]["referenceTree"] !== "") {
-    result += " -te " + object_model["tree"]["referenceTree"];
+    result += " -te " + `"${object_model["tree"]["referenceTree"]}"`;
   }
   console.log({ tree_search_mapping: result });
   return result;

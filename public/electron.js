@@ -165,7 +165,6 @@ function createWindow() {
         .executeProject(project_path, object_model, type)
         .then((data) => {
           COMMAND = data.command;
-          console.log({ BBB: COMMAND });
           event.sender.send("executeResult", data);
         })
         .catch((err) => event.sender.send("executeResult", err));
