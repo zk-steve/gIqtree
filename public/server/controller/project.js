@@ -179,6 +179,18 @@ const filterName = (path) => {
   });
 };
 
+const filterNameSync = (path) => {
+  if (!path) return({ message: "Can not get path", staus: 0 });
+    let result;
+    if (os.type() === "Windows_NT") {
+      result = path.split("\\");
+    } else {
+      result = path.split("/");
+    }
+    console.log({ result });
+    return(result[result.length - 1]);
+}
+
 const copyFile = (sourcePath, destPath) => {
   return new Promise(async (resolve, reject) => {
     await fs.copyFileSync(sourcePath, destPath);
@@ -187,18 +199,17 @@ const copyFile = (sourcePath, destPath) => {
   });
 };
 
+
 const copyFolder = (sourcePath, destPath) => {
-  return new Promise(async (resolve, reject) => {
-    await fs_extra
-      .copy(sourcePath, destPath)
-      .then(() => {
-        console.log("Copied folder")
-        resolve("Copied");
-      })
-      .catch((err) => {
-        reject({ message: "Does not copy", status: 0 });
-      });
-  });
+  fs_extra
+    .copy(sourcePath, destPath)
+    .then(() => {
+      console.log("Copied folder")
+      return true
+    })
+    .catch((err) => {
+      return false
+    });
 };
 
 const addSettingFile = (projectPath, object_model) => {
@@ -208,31 +219,31 @@ const addSettingFile = (projectPath, object_model) => {
       if (err) reject({ message: "Something was wrong", status: 0 });
       setTimeout(() => {
         resolve("done")
-      }, 30)
+      }, 1)
     });
   });
 };
 
-const clearProjectInput = (projectPath) => {
-  return new Promise(async (resolve, reject) => {
-    fs.readdir(projectPath, (err, files) => {
-        if (err) throw err;
-        
-        for (const file of files) {
-            if (isFolder(path.join(projectPath, file))) {
-                fs.rmdirSync(path.join(projectPath, file),  {
-                    recursive: true,
-                })
-            }
-            else {
-                fs.unlink(path.join(projectPath, file), err => {
-                  if (err) reject({ message: "Something was wrong", status: 0 })
-                });
-            }
+const clearProjectInput = (projectPath, contains) => {
+  try {
+    console.log({contains})
+    const files = fs.readdirSync(projectPath)
+    for (const file of files) {
+      if (isFolder(path.join(projectPath, file)) && contains.indexOf(path.join(projectPath, file)) === -1) {
+          fs.rmdirSync(path.join(projectPath, file),  {
+              recursive: true,
+          })
       }
-      resolve("Done")
-    });
-  });
+      else {
+        if (contains.indexOf(path.join(projectPath, file)) === -1) {
+          fs.unlinkSync(path.join(projectPath, file));
+        }
+      }
+    }
+    return true
+  } catch (err) {
+    return false
+  }
 }
 
 const settingHelper = ( projectPath, objectModel) => {
@@ -242,83 +253,80 @@ const settingHelper = ( projectPath, objectModel) => {
       let { constrainedTreeFile, referenceTree } = objectModel.tree;
       let { gCF } = objectModel.assessment.concordanceFactor;
       let { dateFile } = objectModel.dating;
+      const contains = []
+      if (Array.isArray(alignment)) {
+        alignment.forEach(file => {
+          contains.push(file)
+        })
+      }
+      else {
+        contains.push(alignment)
+      }
+      contains.push(partition)
+      contains.push(constrainedTreeFile)
+      contains.push(referenceTree)
+      contains.push(gCF)
+      contains.push(dateFile)
 
-      clearProjectInput(path.join(projectPath, "input"))
-        .then(async data => {
+      if (clearProjectInput(path.join(projectPath, "input")), contains) {
+        if (Array.isArray(alignment)) {
+          objectModel.data.alignment = []
+          alignment.forEach(sourcePath => {
+            const name = filterNameSync(sourcePath)
+            const destPath = path.join(projectPath, "input", name)
+            fs.copyFileSync(sourcePath, destPath)
+            objectModel.data.alignment.push(destPath)
+          })
+          objectModel.data.alignment = objectModel.data.alignment.join(",")
+        }
+        else if (isFolder(alignment)) {
+          console.log("======================\n isFolder")
+          const name = filterNameSync(alignment)
+          const destPath = path.join(projectPath, "input", name)
+          if (copyFolder(alignment, destPath)) {
+            objectModel.data.alignment = destPath
+          }
+        }
+        if (typeof (partition) === "string" && partition.length >= 2) {
+          console.log({partition})
+          const namePartition = filterNameSync(partition)
+          const destPath = path.join(projectPath, "input", namePartition)
+          console.log("Copy partition")
+          fs.copyFileSync(partition, destPath, fs.constants.COPYFILE_EXCL)
           console.log("Done")
-          if (Array.isArray(alignment)) {
-            objectModel.data.alignment = []
-            alignment.forEach(sourcePath => {
-              filterName(sourcePath)
-                .then(async name => {
-                  const destPath = path.join(projectPath, "input", name)
-                  await copyFile(sourcePath, destPath)
-                  objectModel.data.alignment.push(destPath)
-                })
-            })
-          }
-          else if (isFolder(alignment)) {
-            console.log("======================\n isFolder")
-            filterName(alignment)
-                .then(async name => {
-                  const destPath = path.join(projectPath, "input", name)
-                  await copyFolder(alignment, destPath)
-                  objectModel.data.alignment = destPath
-                })
-          }
-          const files = []
-          if (partition.length >= 1) {
-            files.push(partition)
-            filterName(partition)
-            .then(async name => {
-              const destPath = path.join(projectPath, "input", name)
-              await copyFile(partition, destPath)
-              objectModel.data.partition = destPath
-            })
-          }
-          if (constrainedTreeFile.length >= 1) {
-            files.push(constrainedTreeFile)
-            filterName(constrainedTreeFile)
-            .then(async name => {
-              const destPath = path.join(projectPath, "input", name)
-              await copyFile(constrainedTreeFile, destPath)
-              objectModel.tree.constrainedTreeFile = destPath
-            })
-          }
-          if (referenceTree.length >= 1) {
-            files.push(referenceTree)
-            filterName(referenceTree)
-            .then(async name => {
-              const destPath = path.join(projectPath, "input", name)
-              await copyFile(referenceTree, destPath)
-              objectModel.tree.referenceTree = destPath
-            })
-          }
-          if (gCF.length >= 1) {
-            files.push(gCF)
-            filterName(gCF)
-            .then(async name => {
-              const destPath = path.join(projectPath, "input", name)
-              await copyFile(gCF, destPath)
-              objectModel.assessment.concordanceFactor.gCF = destPath
-            })
-          }
-          if (dateFile.length >= 1) {
-            files.push(dateFile)
-            filterName(dateFile)
-            .then(async name => {
-              const destPath = path.join(projectPath, "input", name)
-              await copyFile(dateFile, destPath)
-              objectModel.dating.dateFile = destPath
-            })
-          }
-          setTimeout(() => {
-            resolve(objectModel)
-          }, 10)
-        })
-        .catch(err => {
-          throw err
-        })
+          objectModel.data.partition = destPath
+        }
+        if (typeof (constrainedTreeFile) === "string" && constrainedTreeFile.length >= 2 && constrainedTreeFile !== "none") {
+          const nameConstrainedTreeFile = filterNameSync(constrainedTreeFile)
+          const destPath = path.join(projectPath, "input", nameConstrainedTreeFile)
+          console.log("Copy tree")
+          fs.copyFileSync(constrainedTreeFile, destPath)
+          console.log("done")
+          objectModel.tree.constrainedTreeFile = destPath
+        }
+        if (typeof (referenceTree) === "string" && referenceTree.length >= 2) {
+          const nameReferenceTree = filterNameSync(referenceTree)
+          const destPath = path.join(projectPath, "input", nameReferenceTree)
+          fs.copyFileSync(referenceTree, destPath)
+          objectModel.tree.referenceTree = destPath
+        }
+        if (typeof (gCF) === "string" && gCF.length >= 2) {
+          const namegCF = filterNameSync(gCF)
+          const destPath = path.join(projectPath, "input", namegCF)
+          fs.copyFileSync(gCF, destPath)
+          objectModel.assessment.concordanceFactor.gCF = destPath
+        }
+        if (typeof (dateFile) === "string" && dateFile.length >= 2) {
+          const namedateFile = filterNameSync(dateFile)
+          const destPath = path.join(projectPath, "input", namedateFile)
+          fs.copyFileSync(dateFile, destPath)
+          objectModel.dating.dateFile = destPath
+        }
+      }
+      
+      setTimeout(() => {
+        resolve(objectModel)
+      }, 2)
     } catch (err) {
       reject({ message: "Something was wrong", status: 0 })
     }
@@ -334,7 +342,7 @@ const saveSetting = (projectPath, objectModel) => {
             setTimeout(() => {
               console.log({newObjectModel})
               resolve(newObjectModel)
-            }, 100)
+            }, 3)
           })
           .catch(err => reject({ message: "Something was wrong", status: 0 }))
       })
@@ -548,6 +556,8 @@ const executeProject = (project_path, object_model, type) => {
             console.log("done");
           }
         );
+        console.log({ command: COMMAND })
+        resolve({ command: COMMAND, processId: process_id })
       })
       .catch((err) => {
         reject({ message: "Input is folder and contains files", status: 0 });

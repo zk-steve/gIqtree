@@ -4,7 +4,8 @@ module.exports.data_mapping = (object_model) => {
   let result = "";
   // Alignment
   console.log("step 1")
-  if (object_model["projectType"] !== "assessment" && ((object_model["data"]["alignment"].length >= 1 && typeof(object_model["data"]["alignment"]) === "string") || Array.isArray(object_model["data"]["alignment"]))) {
+  if (((object_model["data"]["alignment"].length >= 1 && typeof(object_model["data"]["alignment"]) === "string") || Array.isArray(object_model["data"]["alignment"]))) {
+    console.log("IN FILEE")
     if (Array.isArray(object_model["data"]["alignment"])) {
       console.log("ARRAYYYYYYYYYYYY ALIGNMENT")
       object_model["data"]["alignment"] = object_model["data"]["alignment"].join(",")
@@ -26,6 +27,7 @@ module.exports.data_mapping = (object_model) => {
       }
     }
     else {
+      console.log("FILEEEEEEEEEE")
       result += " -s " + `"${object_model["data"]["alignment"]}"`
     }
   }
