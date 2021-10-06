@@ -78,17 +78,18 @@ function FolderTree({
       />
     );
   };
-  const renderTree = (nodes) => (
-    <CustomTree
-      name={nodes.name}
-      isFile={!Boolean(nodes.children)}
-      nodeId={nodes.path}
-    >
-      {nodes.children && nodes.children.length > 0
-        ? nodes.children.map((node) => renderTree(node))
-        : null}
-    </CustomTree>
-  );
+  const renderTree = (nodes) =>
+    nodes.name !== "setting.json" && (
+      <CustomTree
+        name={nodes.name}
+        isFile={!Boolean(nodes.children)}
+        nodeId={nodes.path}
+      >
+        {nodes.children && nodes.children.length > 0
+          ? nodes.children.map((node) => renderTree(node))
+          : null}
+      </CustomTree>
+    );
   return (
     <div className={classes.root} style={{ width: `${size}px` }}>
       <Rnd

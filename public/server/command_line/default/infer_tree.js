@@ -25,6 +25,7 @@ module.exports = {
   },
   assessment: {
     bootstrapMethod: "ufboot",
+    bootstrapMethodReplicate: "0",
     ufbootOption: "no",
     multiPartitionSamplingStrategy: "SITE",
     singleBranchTest: {
@@ -32,6 +33,8 @@ module.exports = {
       SHlike: false,
       aBayes: false,
       localBootstrap: false,
+      SHlikeReplicate: "0",
+      localBootstrapReplicate: "0",
     },
     concordanceFactor: {
       gCF: "",

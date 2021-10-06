@@ -11,6 +11,7 @@ import Directory from "./directory";
 import Logo from "./logo";
 import SettingClose from "./settingClose";
 import DownArrow from "./downArrow";
+import CloseFile from "./closeFile";
 export {
   Minimize,
   Maximize,
@@ -25,4 +26,5 @@ export {
   Logo,
   SettingClose,
   DownArrow,
+  CloseFile,
 };

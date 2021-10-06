@@ -10,7 +10,7 @@ import {
 import clsx from "clsx";
 import SettingMenu from "component/SettingMenu/SettingMenu";
 import React, { useState, useEffect } from "react";
-import { Directory } from "shared/icons";
+import { Directory, CloseFile } from "shared/icons";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
@@ -23,42 +23,26 @@ function SettingDetail({
   projectPath,
 }) {
   const reviewBox = (path, deleteAction) => {
-    if (path !== "") {
+    if (path !== "" || path.length > 0) {
       if (typeof path === "string")
         return (
-          <>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.deleteButton}
-              onClick={deleteAction}
-            >
-              Delete
-            </Button>
-            <div className={classes.boxReviewPath}>
+          <div className={classes.boxReviewPath}>
+            <div>
               <Typography align="left">{path}</Typography>
+              <CloseFile onClick={deleteAction} />
             </div>
-          </>
+          </div>
         );
       else
         return (
-          <>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.deleteButton}
-              onClick={deleteAction}
-            >
-              Delete
-            </Button>
-            <div className={classes.boxReviewPath}>
-              {path.map((file, index) => (
-                <Typography align="left" key={index}>
-                  {file}
-                </Typography>
-              ))}
-            </div>
-          </>
+          <div className={classes.boxReviewPath}>
+            {path.map((file, index) => (
+              <div>
+                <Typography align="left">{file}</Typography>
+                <CloseFile onClick={deleteAction} />
+              </div>
+            ))}
+          </div>
         );
     }
   };
@@ -1550,18 +1534,6 @@ function SettingDetail({
                   <Typography className={classes.inputLabel}>
                     Boostrap method:
                   </Typography>
-                  {/* <Select
-                    className={classes.shortTextInput}
-                    variant="outlined"
-                    value={settingField.assessment.bootstrapMethod}
-                    onChange={(e) =>
-                      handleChangeAssessmentSetting(e, "bootstrapMethod")
-                    }
-                  >
-                    <MenuItem value="ufboot">UFBoot </MenuItem>
-                    <MenuItem value="standard">Standard</MenuItem>
-                    <MenuItem value="none">None</MenuItem>
-                  </Select> */}
                   <div
                     className={clsx(classes.radioInput, classes.selectMargin)}
                   >
@@ -1631,6 +1603,23 @@ function SettingDetail({
                       Standard
                     </InputLabel>
                   </div>
+                  {settingField.assessment.bootstrapMethod !== "none" && (
+                    <OutlinedInput
+                      type="number"
+                      placeholder="#replicate"
+                      className={clsx(
+                        classes.shortTextInput,
+                        classes.selectMargin
+                      )}
+                      value={settingField.assessment.bootstrapMethodReplicate}
+                      onChange={(e) =>
+                        handleChangeAssessmentSetting(
+                          e.target.value,
+                          "bootstrapMethodReplicate"
+                        )
+                      }
+                    />
+                  )}
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
@@ -1802,6 +1791,24 @@ function SettingDetail({
                       SH-like approximate likelihood ratio test
                     </InputLabel>
                   </div>
+                  {settingField.assessment.singleBranchTest.SHlike && (
+                    <OutlinedInput
+                      type="number"
+                      placeholder="#replicate"
+                      className={clsx(
+                        classes.shortTextInput,
+                        classes.selectMargin
+                      )}
+                      value={settingField.assessment.SHlikeReplicate}
+                      onChange={(e) =>
+                        handleChangeAssessmentMultiple(
+                          e.target.value,
+                          "singleBranchTest",
+                          "SHlikeReplicate"
+                        )
+                      }
+                    />
+                  )}
                   <div
                     className={clsx(classes.radioInput, classes.selectMargin)}
                   >
@@ -1844,6 +1851,24 @@ function SettingDetail({
                       Local bootstrap test
                     </InputLabel>
                   </div>
+                  {settingField.assessment.singleBranchTest.localBootstrap && (
+                    <OutlinedInput
+                      type="number"
+                      placeholder="#replicate"
+                      className={clsx(
+                        classes.shortTextInput,
+                        classes.selectMargin
+                      )}
+                      value={settingField.assessment.localBootstrapReplicate}
+                      onChange={(e) =>
+                        handleChangeAssessmentMultiple(
+                          e.target.value,
+                          "singleBranchTest",
+                          "localBootstrapReplicate"
+                        )
+                      }
+                    />
+                  )}
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>

@@ -46,7 +46,6 @@ function ProjectPage(props) {
       const { status, message } = data;
       console.log(data);
       if (status === 1) {
-        // setProjectSetting(message);
         ipcRenderer.send("getProjectById", id);
       }
     };

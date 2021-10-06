@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: "28px",
     marginBottom: "8px",
     color: "black",
+    textAlign: "left",
   },
   textInputContainer: {
     display: "flex",
@@ -206,15 +207,31 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   boxReviewPath: {
+    position: "relative",
     width: "400px",
     border: "1px dashed black",
     borderRadius: "5px",
     padding: "10px",
     marginTop: "4px",
-  },
-  deleteButton: {
-    height: "30px",
-    marginTop: "8px",
+    "& > div": {
+      borderRadius: "5px",
+      paddingTop: "3px",
+      paddingBottom: "3px",
+      paddingLeft: "4px",
+      "&:hover": {
+        backgroundColor: theme.palette.grey[500],
+        "& svg": {
+          display: "block",
+        },
+      },
+      "& svg": {
+        position: "absolute",
+        top: "2px",
+        right: "2px",
+        display: "none",
+        cursor: "pointer",
+      },
+    },
   },
 }));
 export default useStyles;
