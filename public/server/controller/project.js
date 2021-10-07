@@ -6,7 +6,6 @@ const os = require("os");
 const { v4: uuidv4 } = require("uuid");
 const child_process = require("child_process");
 
-const { getOutputWhenExecuted } = require("../controller/execute");
 const {
   mappingCommand,
   baseCommand,
@@ -224,23 +223,40 @@ const addSettingFile = (projectPath, object_model) => {
   });
 };
 
-const clearProjectInput = (projectPath, contains) => {
+const clearProjectInput = (inputPath, args) => {
   try {
-    console.log({contains})
-    const files = fs.readdirSync(projectPath)
-    for (const file of files) {
-      if (isFolder(path.join(projectPath, file)) && contains.indexOf(path.join(projectPath, file)) === -1) {
-          fs.rmdirSync(path.join(projectPath, file),  {
-              recursive: true,
-          })
-      }
-      else {
-        if (contains.indexOf(path.join(projectPath, file)) === -1) {
-          fs.unlinkSync(path.join(projectPath, file));
+    console.log({ args })
+    const contains = args.map(element => path.join(inputPath, element))
+    if (contains) {
+      const files = fs.readdirSync(inputPath)
+      for (const file of files) {
+        if (isFolder(path.join(inputPath, file)) && contains.indexOf(path.join(inputPath, file)) === -1) {
+            fs.rmdirSync(path.join(inputPath, file),  {
+                recursive: true,
+            })
+        }
+        else {
+          if (contains.indexOf(path.join(inputPath, file)) === -1) {
+            fs.unlinkSync(path.join(inputPath, file));
+          }
         }
       }
+      return true
     }
-    return true
+    else {
+      const files = fs.readdirSync(inputPath)
+      for (const file of files) {
+        if (isFolder(path.join(inputPath, file))) {
+            fs.rmdirSync(path.join(inputPath, file),  {
+                recursive: true,
+            })
+        }
+        else {
+          fs.unlinkSync(path.join(inputPath, file));
+        }
+      }
+      return true
+    }
   } catch (err) {
     return false
   }
@@ -260,15 +276,29 @@ const settingHelper = ( projectPath, objectModel) => {
         })
       }
       else {
-        contains.push(alignment)
+        if (alignment !== '') {
+          contains.push(alignment)
+        }
       }
-      contains.push(partition)
-      contains.push(constrainedTreeFile)
-      contains.push(referenceTree)
-      contains.push(gCF)
-      contains.push(dateFile)
-
-      if (clearProjectInput(path.join(projectPath, "input")), contains) {
+      if (partition !== '') {
+        contains.push(partition)
+      }
+      if (constrainedTreeFile !== '' && constrainedTreeFile !== 'none') {
+        contains.push(constrainedTreeFile)
+      }
+      if (referenceTree !== '' && referenceTree !== 'none') {
+        contains.push(referenceTree)
+      }
+      if (gCF !== '' && gCF !== 'none') {
+        contains.push(gCF)
+      }
+      if (dateFile !== '' && dateFile !== 'none') {
+        contains.push(dateFile)
+      }
+      const args = contains.map(element => filterNameSync(element))
+      console.log({contains, args})
+      if (clearProjectInput(path.join(projectPath, "input") , args)) {
+        console.log("true")
         if (Array.isArray(alignment)) {
           objectModel.data.alignment = []
           alignment.forEach(sourcePath => {
@@ -556,8 +586,7 @@ const executeProject = (project_path, object_model, type) => {
             console.log("done");
           }
         );
-        console.log({ command: COMMAND })
-        resolve({ command: COMMAND, processId: process_id })
+        resolve({ command: COMMAND, processId: process_id.pid })
       })
       .catch((err) => {
         reject({ message: "Input is folder and contains files", status: 0 });

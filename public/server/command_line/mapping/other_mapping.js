@@ -4,7 +4,7 @@ module.exports.other_mapping = (object_model, output_path) => {
   if (object_model["others"]["numberOfCPUCores"] === "") {
     result += " -T AUTO";
   } else {
-    if (typeof object_model["others"]["numberOfCPUCores"] === "number") {
+    if (typeof(parseInt(object_model["others"]["numberOfCPUCores"])) === "number") {
       result += " -T " + object_model["others"]["numberOfCPUCores"];
     }
   }

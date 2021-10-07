@@ -2,10 +2,10 @@ module.exports.assessment_mapping = (object_model, inputs) => {
   let result = "";
   //Step 1: Bootstrap method - pending
   if (object_model["assessment"]["bootstrapMethod"] !== "none") {
-    if (object_model["assessment"]["bootstrapMethod"] === "ufboot" && object_model["assessment"]["replicates"]) {
-      result += " -B " + object_model["assessment"]["replicates"];
-    } else if (object_model["assessment"]["bootstrapMethod"] === "standard" && object_model["assessment"]["replicates"]) {
-      result += " -b " + object_model["assessment"]["replicates"];
+    if (object_model["assessment"]["bootstrapMethod"] === "ufboot" && typeof(parseInt(object_model["assessment"]["bootstrapMethodReplicate"])) === "number") {
+      result += " -B " + object_model["assessment"]["bootstrapMethodReplicate"];
+    } else if (object_model["assessment"]["bootstrapMethod"] === "standard" && typeof(parseInt(object_model["assessment"]["bootstrapMethodReplicate"])) === "number") {
+      result += " -b " + object_model["assessment"]["bootstrapMethodReplicate"];
     }
   }
   console.log("END STEP 1")
@@ -31,14 +31,15 @@ module.exports.assessment_mapping = (object_model, inputs) => {
   if (object_model["assessment"]["singleBranchTest"]["parametric"]) {
     result += " --alrt 0"
   }
-  if (object_model["assessment"]["singleBranchTest"]["SHlike"] && typeof(object_model["assessment"]["singleBranchTest"]["SHlike"]) === "number") {
-    result += " --alrt " + object_model["assessment"]["singleBranchTest"]["SHlike"]
+  console.log({CCCCCCC: typeof(object_model["assessment"]["singleBranchTest"]["SHlikeReplicate"])})
+  if (object_model["assessment"]["singleBranchTest"]["SHlike"] && typeof(parseInt(object_model["assessment"]["singleBranchTest"]["SHlikeReplicate"])) === "number") {
+    result += " --alrt " + object_model["assessment"]["singleBranchTest"]["SHlikeReplicate"]
   }
   if (object_model["assessment"]["singleBranchTest"]["aBayes"]) {
     result += " --abayes"
   }
-  if (object_model["assessment"]["singleBranchTest"]["localBootstrap"] && typeof(object_model["assessment"]["singleBranchTest"]["localBootstrap"]) === "number") {
-    result += " --lbp " + object_model["assessment"]["singleBranchTest"]["localBootstrap"]
+  if (object_model["assessment"]["singleBranchTest"]["localBootstrap"] && typeof(parseInt(object_model["assessment"]["singleBranchTest"]["localBootstrapReplicate"])) === "number") {
+    result += " --lbp " + object_model["assessment"]["singleBranchTest"]["localBootstrapReplicate"]
   }
   console.log("END STEP 4")
   //Step 5: Concordance factor
@@ -46,7 +47,7 @@ module.exports.assessment_mapping = (object_model, inputs) => {
     result +=
       " --gcf " + `"${object_model["assessment"]["concordanceFactor"]["gCF"]}`;
   }
-  if (object_model["assessment"]["concordanceFactor"]["sCF"] !== "" && typeof(object_model["assessment"]["concordanceFactor"]["sCF"]) === "number") {
+  if (object_model["assessment"]["concordanceFactor"]["sCF"] !== "" && typeof(parseInt(object_model["assessment"]["concordanceFactor"]["sCF"])) === "number") {
     result +=
       " --scf " + object_model["assessment"]["concordanceFactor"]["sCF"];
   }

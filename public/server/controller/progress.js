@@ -1,7 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
+const { viewFile } = require("./file_handler");
 const homepage = require("./homepage");
+const { readSettingObject } = require("./project");
 let progress;
 const processLineByLine = async (path) => {
   if (!progress) progress = 0;
@@ -34,26 +36,33 @@ const processLineByLine = async (path) => {
   return progress;
 };
 
-module.exports.getProgress = (project_id) => {
+module.exports.getProgress = (project_path) => {
   return new Promise(async (resolve, reject) => {
-    await homepage
-      .getProjectById(project_id)
-      .then((data) => {
-        processLineByLine(path.join(data[0].path, "output", "output.log"))
-          .then((data) => {
-            console.log({ data })
-            if (typeof(data) === "string") {
-              reject({ message: data, status: 0 })
+    readSettingObject(project_path)
+      .then(object_model => {
+        let outputLogPath = ""
+        if (object_model["others"]["prefix"] !== "") {
+          // outputLogPath = object_model["others"]["prefix"] pending
+        }
+        else {
+          outputLogPath = path.join(project_path, "output", "output.log")
+        }
+        viewFile(outputLogPath)
+          .then(file => {
+            let data = file.data
+            if (data[data.length - 1].includes("Date and Time:")) {
+              resolve({doneStatus: 1, status: 1, data: data})
             }
-            let result = { message: data, status: 1 };
-            resolve(result);
+            else {
+              resolve({doneStatus: 0, status: 1, data: data})
+            }
           })
-          .catch((err) => {
-            reject({ message: "does not get project path", status: 0 });
-          });
+          .catch(err => {
+            reject({ message: "Something was wrong", status: 0 });
+          })
       })
-      .catch((err) => {
-        reject({ message: "does not get project path", status: 0 });
-      });
+      .catch(err => {
+        reject({ message: "Something was wrong", status: 0 });
+      })
   });
 };

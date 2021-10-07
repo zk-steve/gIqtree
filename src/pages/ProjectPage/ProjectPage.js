@@ -136,7 +136,7 @@ function ProjectPage(props) {
   };
   const handleGetProjectProgress = () => {
     let getProgress = setInterval(() => {
-      ipcRenderer.invoke("progressProject", id);
+      ipcRenderer.invoke("getProgress", id);
     }, 1000);
     setProgressInterval(getProgress);
   };

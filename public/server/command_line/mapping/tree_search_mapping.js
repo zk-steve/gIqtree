@@ -7,7 +7,7 @@ module.exports.tree_search_mapping = (object_model) => {
   //Step 2: Number of unsuccessful iterations to stop
   if (
     object_model["tree"]["numberOfUnsuccessfulIterationsToStop"] !== "100" &&
-    object_model["tree"]["numberOfUnsuccessfulIterationsToStop"] !== "" && typeof(object_model["tree"]["numberOfUnsuccessfulIterationsToStop"]) === "number"
+    object_model["tree"]["numberOfUnsuccessfulIterationsToStop"] !== "" && typeof(parseInt(object_model["tree"]["numberOfUnsuccessfulIterationsToStop"])) === "number"
   ) {
     result +=
       " --nstop " +
@@ -16,7 +16,7 @@ module.exports.tree_search_mapping = (object_model) => {
   //Step 3: Perturbation strength (between 0 and 1) for randomized NNI
   if (
     object_model["tree"]["perturbationStrength"] !== "0.5" &&
-    object_model["tree"]["perturbationStrength"] !== "" && typeof(object_model["tree"]["perturbationStrength"]) === "number"
+    object_model["tree"]["perturbationStrength"] !== "" && typeof(parseInt(object_model["tree"]["perturbationStrength"])) === "number"
   ) {
     result += " --perturb " + object_model["tree"]["perturbationStrength"];
   }

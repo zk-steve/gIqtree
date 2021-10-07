@@ -7,8 +7,8 @@ const homepage = require("./server/controller/homepage");
 const project = require("./server/controller/project");
 const { viewFile } = require("./server/controller/file_handler");
 
-const { getProgress } = require("./server/controller/progress");
 const { chooseFile, chooseFolder, chooseMultiFile } = require("./server/controller/dialog");
+const { getProgress } = require("./server/controller/progress");
 
 let COMMAND = "";
 
@@ -47,6 +47,7 @@ function createWindow() {
       });
     }
     else {
+      console.log("This is a file")
       viewFile(filePath)
       .then((data) => {
         console.log({ readFile: data });
@@ -62,16 +63,6 @@ function createWindow() {
         })
       );
     }
-  });
-
-  ipcMain.handle("progressProject", async (event, project_id) => {
-    await getProgress(project_id)
-      .then((data) => {
-        event.sender.send("progressResult", data);
-      })
-      .catch((err) => {
-        event.sender.send("progressResult", err);
-      });
   });
 
   ipcMain.on("chooseFile", (event, project_path) => {
@@ -184,14 +175,23 @@ function createWindow() {
         project
         .executeProject(project_path, object_model, type)
         .then((data) => {
-          COMMAND = data.command;
-          console.log({ BBB: COMMAND });
+          console.log({ data });
           event.sender.send("executeResult", data);
         })
         .catch((err) => event.sender.send("executeResult", err));
       })
       .catch(err => event.sender.send("executeResult", err))
   });
+
+  ipcMain.handle("getProgress", async (event, project_path) => {
+    getProgress(project_path)
+    .then(data => {
+      event.sender.send("getProgressResult", data);
+    })
+    .catch(err => {
+      event.sender.send("getProgressResult", err)
+    })
+  })
 
   ipcMain.on("deleteInput", async (event, inputData) => {
     const { input_name, project_id } = inputData;
