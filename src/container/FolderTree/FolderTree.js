@@ -37,20 +37,11 @@ function FolderTree({
         handleDeleteInput(name);
       }
     };
-    const executeResult = (event, data) => {
-      const { message, status } = data;
-      if (status === 1) {
-        handleSetListOutput(message);
-        setIsInProcess(false);
-      }
-    };
     ipcRenderer.once("selectFile", selectFile);
     ipcRenderer.once("deleteResult", deleteResult);
-    ipcRenderer.once("executeResult", executeResult);
     return () => {
       ipcRenderer.removeListener("selectFile", selectFile);
       ipcRenderer.removeListener("deleteResult", deleteResult);
-      ipcRenderer.removeListener("executeResult", executeResult);
     };
   }, [
     handleDeleteInput,

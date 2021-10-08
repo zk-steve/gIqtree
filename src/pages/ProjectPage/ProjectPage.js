@@ -22,10 +22,11 @@ function ProjectPage(props) {
   const [isDoneProcess, setIsDoneProcess] = useState(false);
   const [outputContent, setOutputContent] = useState(null);
   const { id } = useParams();
-  const [projectName, setProjectName] = useState();
+  const [projectName, setProjectName] = useState(null);
   const [projectSetting, setProjectSetting] = useState(null);
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [progressInterval, setProgressInterval] = useState(null);
+  const [processId, setProcessId] = useState(null);
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
     const viewFileData = (event, data) => {
@@ -53,9 +54,9 @@ function ProjectPage(props) {
       const { message, status } = data;
       console.log(data);
       if (status === 1) {
-        setProjectName(message.projectDetail.name);
+        if (!projectName) setProjectName(message.projectDetail.name);
         setProjectSetting(message.objectModel);
-        setProjectPath(message.projectDetail.path);
+        if (!projectPath) setProjectPath(message.projectDetail.path);
         setListTrees(message.projectDetail.children);
         if (message.objectModel.data.alignment !== "")
           setIsExecuteDisabled(false);
@@ -66,11 +67,16 @@ function ProjectPage(props) {
         //   handleSetListOutput(message.tree.output);
       }
     };
+    const executeResult = (event, data) => {
+      setProcessId(data.processId);
+    };
     ipcRenderer.on("returnProjectById", returnProjectById);
     ipcRenderer.on("progressResult", progressResult);
     ipcRenderer.on("viewFileData", viewFileData);
     ipcRenderer.on("saveSettingResult", saveSettingResult);
     ipcRenderer.on("testSettingResult", (event, data) => {});
+    ipcRenderer.on("executeResult", executeResult);
+
     return () => {
       ipcRenderer.removeListener("returnProjectById", returnProjectById);
       ipcRenderer.removeListener("saveSettingResult", saveSettingResult);

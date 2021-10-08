@@ -207,17 +207,22 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   boxReviewPath: {
-    position: "relative",
     width: "400px",
     border: "1px dashed black",
     borderRadius: "5px",
     padding: "10px",
     marginTop: "4px",
     "& > div": {
+      position: "relative",
       borderRadius: "5px",
       paddingTop: "3px",
       paddingBottom: "3px",
       paddingLeft: "4px",
+      "& p": {
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
+      },
       "&:hover": {
         backgroundColor: theme.palette.grey[500],
         "& svg": {
@@ -226,8 +231,8 @@ const useStyles = makeStyles((theme) => ({
       },
       "& svg": {
         position: "absolute",
-        top: "2px",
-        right: "2px",
+        top: "-4px",
+        right: "-4px",
         display: "none",
         cursor: "pointer",
       },

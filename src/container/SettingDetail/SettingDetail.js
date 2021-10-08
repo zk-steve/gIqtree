@@ -22,29 +22,27 @@ function SettingDetail({
   id,
   projectPath,
 }) {
-  const reviewBox = (path, deleteAction) => {
-    if (path !== "" || path.length > 0) {
-      if (typeof path === "string")
-        return (
-          <div className={classes.boxReviewPath}>
-            <div>
-              <Typography align="left">{path}</Typography>
-              <CloseFile onClick={deleteAction} />
+  const reviewBox = (path, deleteAction, deleteActionArray = null) => {
+    if (typeof path === "string" && path !== "")
+      return (
+        <div className={classes.boxReviewPath}>
+          <div>
+            <Typography align="left">{path}</Typography>
+            <CloseFile onClick={deleteAction} />
+          </div>
+        </div>
+      );
+    else if (path.length > 0)
+      return (
+        <div className={classes.boxReviewPath}>
+          {path.map((file, index) => (
+            <div key={index}>
+              <Typography align="left">{file}</Typography>
+              <CloseFile onClick={() => deleteActionArray(file)} />
             </div>
-          </div>
-        );
-      else
-        return (
-          <div className={classes.boxReviewPath}>
-            {path.map((file, index) => (
-              <div>
-                <Typography align="left">{file}</Typography>
-                <CloseFile onClick={deleteAction} />
-              </div>
-            ))}
-          </div>
-        );
-    }
+          ))}
+        </div>
+      );
   };
   const classes = useStyles();
   const [settingField, setSettingField] = useState({ ...projectSetting } || {});
@@ -862,6 +860,12 @@ function SettingDetail({
     ipcRenderer.send("chooseFolder", projectPath);
     setCurrentPathOption([option, subOption]);
   };
+  const handleDeleteInArray = (value) => {
+    const newAlignmentFiles = settingField.data.alignment.filter(
+      (file) => file !== value
+    );
+    handleChangeDataSetting(newAlignmentFiles, "alignment");
+  };
   return (
     settingField && (
       <div className={classes.root}>
@@ -904,8 +908,10 @@ function SettingDetail({
                       <Typography>Choose folder</Typography>
                     </Button>
                   </div>
-                  {reviewBox(settingField.data.alignment, () =>
-                    handleChangeDataSetting("", "alignment")
+                  {reviewBox(
+                    settingField.data.alignment,
+                    () => handleChangeDataSetting("", "alignment"),
+                    handleDeleteInArray
                   )}
                 </div>
                 <div className={classes.textInputContainer}>

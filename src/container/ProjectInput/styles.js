@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    width: "852px",
+    width: "100%",
     height: "262px",
     transition: `0.15s ${theme.transitions.easing.easeInOut}`,
     "& svg": {
