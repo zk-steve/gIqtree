@@ -571,9 +571,12 @@ const executeProject = (project_path, object_model, type) => {
         console.log("exec...");
         let pre = baseCommand();
         let COMMAND = pre + data;
-        // if (type === "restart") {
+        if (type === "restart") {
           COMMAND += " --redo";
-        // }
+        }
+        else if (type === "continue") {
+          COMMAND += " --undo";
+        }
         console.log({ BBB: COMMAND });
         let process_id = child_process.exec(
           COMMAND,

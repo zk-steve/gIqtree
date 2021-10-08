@@ -148,24 +148,44 @@ function createWindow() {
       })
   });
 
-  ipcMain.handle("restart", (event, project_path) => {
+  ipcMain.handle("restartProject", async (event, project_path) => {
     let type = "restart";
     project.readSettingObject(project_path)
       .then(object_model => {
         project
         .executeProject(project_path, object_model, type)
         .then((data) => {
-          COMMAND = data.command;
-          event.sender.send("executeResult", data);
+          console.log({ data });
+          event.sender.send("restartProjectResult", data);
         })
-        .catch((err) => event.sender.send("executeResult", err));
+        .catch((err) => event.sender.send("restartProjectResult", err));
       })
-      .catch(err => event.sender.send("executeResult", err))
+      .catch(err => event.sender.send("restartProjectResult", err))
   });
 
   ipcMain.on("pauseProject", (event, process_id) => {
-    kill(process_id, "SIGINT");
-    mainWindow.webContents.send({ message: "Pause", status: 1 });
+    try {
+      kill(process_id, "SIGINT");
+      mainWindow.webContents.send("pauseResult", { message: "Pause", status: 1 });
+    }
+    catch (err) {
+      mainWindow.webContents.send("pauseResult", { message: "Error", status: 0 });
+    }
+  });
+
+  ipcMain.handle("continueProject", async (event, project_path) => {
+    let type = "continue";
+    project.readSettingObject(project_path)
+      .then(object_model => {
+        project
+        .executeProject(project_path, object_model, type)
+        .then((data) => {
+          console.log({ data });
+          event.sender.send("continueProjectResult", data);
+        })
+        .catch((err) => event.sender.send("continueProjectResult", err));
+      })
+      .catch(err => event.sender.send("continueProjectResult", err))
   });
 
   ipcMain.handle("executeProject", async (event, project_path) => {

@@ -4,7 +4,11 @@ module.exports.assessment_mapping = (object_model, inputs) => {
   if (object_model["assessment"]["bootstrapMethod"] !== "none") {
     if (object_model["assessment"]["bootstrapMethod"] === "ufboot" && typeof(parseInt(object_model["assessment"]["bootstrapMethodReplicate"])) === "number") {
       result += " -B " + object_model["assessment"]["bootstrapMethodReplicate"];
+<<<<<<< HEAD
+    } else if (object_model["assessment"]["bootstrapMethod"] === "standard" && object_model["assessment"]["bootstrapMethodReplicate"] && typeof(parseInt(object_model["assessment"]["bootstrapMethodReplicate"])) === "number") {
+=======
     } else if (object_model["assessment"]["bootstrapMethod"] === "standard" && typeof(parseInt(object_model["assessment"]["bootstrapMethodReplicate"])) === "number") {
+>>>>>>> b6ae9a49570d42b41f5d9a0b4d08e14fdeec3432
       result += " -b " + object_model["assessment"]["bootstrapMethodReplicate"];
     }
   }
@@ -32,13 +36,13 @@ module.exports.assessment_mapping = (object_model, inputs) => {
     result += " --alrt 0"
   }
   console.log({CCCCCCC: typeof(object_model["assessment"]["singleBranchTest"]["SHlikeReplicate"])})
-  if (object_model["assessment"]["singleBranchTest"]["SHlike"] && typeof(parseInt(object_model["assessment"]["singleBranchTest"]["SHlikeReplicate"])) === "number") {
+  if (object_model["assessment"]["singleBranchTest"]["SHlike"] && object_model["assessment"]["singleBranchTest"]["SHlikeReplicate"] && typeof(parseInt(object_model["assessment"]["singleBranchTest"]["SHlikeReplicate"])) === "number") {
     result += " --alrt " + object_model["assessment"]["singleBranchTest"]["SHlikeReplicate"]
   }
   if (object_model["assessment"]["singleBranchTest"]["aBayes"]) {
     result += " --abayes"
   }
-  if (object_model["assessment"]["singleBranchTest"]["localBootstrap"] && typeof(parseInt(object_model["assessment"]["singleBranchTest"]["localBootstrapReplicate"])) === "number") {
+  if (object_model["assessment"]["singleBranchTest"]["localBootstrap"] && object_model["assessment"]["singleBranchTest"]["localBootstrapReplicate"] && typeof(parseInt(object_model["assessment"]["singleBranchTest"]["localBootstrapReplicate"])) === "number") {
     result += " --lbp " + object_model["assessment"]["singleBranchTest"]["localBootstrapReplicate"]
   }
   console.log("END STEP 4")
@@ -47,7 +51,7 @@ module.exports.assessment_mapping = (object_model, inputs) => {
     result +=
       " --gcf " + `"${object_model["assessment"]["concordanceFactor"]["gCF"]}`;
   }
-  if (object_model["assessment"]["concordanceFactor"]["sCF"] !== "" && typeof(parseInt(object_model["assessment"]["concordanceFactor"]["sCF"])) === "number") {
+  if (object_model["assessment"]["concordanceFactor"]["sCF"] !== "" && object_model["assessment"]["concordanceFactor"]["sCF"] && typeof(parseInt(object_model["assessment"]["concordanceFactor"]["sCF"])) === "number") {
     result +=
       " --scf " + object_model["assessment"]["concordanceFactor"]["sCF"];
   }
