@@ -613,5 +613,6 @@ module.exports = {
   copyFolder,
   getProject,
   saveSetting,
-  isFolder
+  isFolder,
+  filterNameSync
 };

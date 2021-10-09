@@ -3,7 +3,7 @@ const path = require("path");
 const readline = require("readline");
 const { viewFile } = require("./file_handler");
 const homepage = require("./homepage");
-const { readSettingObject } = require("./project");
+const { readSettingObject, filterNameSync } = require("./project");
 let progress;
 const processLineByLine = async (path) => {
   if (!progress) progress = 0;
@@ -42,7 +42,8 @@ module.exports.getProgress = (project_path) => {
       .then(object_model => {
         let outputLogPath = ""
         if (object_model["others"]["prefix"] !== "") {
-          // outputLogPath = object_model["others"]["prefix"] pending
+          let output = filterNameSync(object_model["others"]["prefix"])
+          outputLogPath = path.join(object_model["others"]["prefix"], `${output}.log`)
         }
         else {
           outputLogPath = path.join(project_path, "output", "output.log")
