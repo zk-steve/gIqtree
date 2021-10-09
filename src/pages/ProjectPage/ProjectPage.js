@@ -1,16 +1,19 @@
 import { Divider } from "@material-ui/core";
+import { DialogContext } from "component/AlertDialog/AlertDialog";
 import FolderTree from "container/FolderTree/FolderTree";
 import ProjectInput from "container/ProjectInput/ProjectInput";
 import ProjectSetting from "container/ProjectSetting/ProjectSetting";
 import SettingDetail from "container/SettingDetail/SettingDetail";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
 function ProjectPage(props) {
   const classes = useStyles();
-  const [projectPath, setProjectPath] = useState(null);
+  const {handleShowAlert} = useContext(DialogContext);
+
+  const projectPath = useRef(null)
   const [currentTab, setCurrentTab] = useState("input");
   const [currentFile, setCurrentFile] = useState("");
   const [isSettingOpen, setIsSettingOpen] = useState(true);
@@ -25,8 +28,8 @@ function ProjectPage(props) {
   const [projectName, setProjectName] = useState(null);
   const [projectSetting, setProjectSetting] = useState(null);
   const [progressPercentage, setProgressPercentage] = useState(0);
-  const [progressInterval, setProgressInterval] = useState(null);
-  const [processId, setProcessId] = useState(null);
+  const processId = useRef(null);
+  const progress = useRef(null);
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
     const viewFileData = (event, data) => {
@@ -52,11 +55,10 @@ function ProjectPage(props) {
     };
     const returnProjectById = (event, data) => {
       const { message, status } = data;
-      console.log(data);
       if (status === 1) {
         if (!projectName) setProjectName(message.projectDetail.name);
         setProjectSetting(message.objectModel);
-        if (!projectPath) setProjectPath(message.projectDetail.path);
+        projectPath.current = message.projectDetail.path;
         setListTrees(message.projectDetail.children);
         if (message.objectModel.data.alignment !== "")
           setIsExecuteDisabled(false);
@@ -68,18 +70,29 @@ function ProjectPage(props) {
       }
     };
     const executeResult = (event, data) => {
-      setProcessId(data.processId);
+      processId.current = data.processId;
+      handleGetProjectProgress();
     };
+    const getProgressResult = (event, data) => {
+      console.log(data);
+    };
+    const pauseResult = (event, data) => {
+      console.log(data)
+    }
     ipcRenderer.on("returnProjectById", returnProjectById);
     ipcRenderer.on("progressResult", progressResult);
     ipcRenderer.on("viewFileData", viewFileData);
     ipcRenderer.on("saveSettingResult", saveSettingResult);
     ipcRenderer.on("testSettingResult", (event, data) => {});
     ipcRenderer.on("executeResult", executeResult);
+    ipcRenderer.on("getProgressResult", getProgressResult);
+    ipcRenderer.on("pauseResult",pauseResult );
+
 
     return () => {
       ipcRenderer.removeListener("returnProjectById", returnProjectById);
       ipcRenderer.removeListener("saveSettingResult", saveSettingResult);
+      clearInterval(progress.current);
     };
   }, [id]); //get list input and get project name
   // useEffect(() => {
@@ -91,12 +104,6 @@ function ProjectPage(props) {
   //     setIsDoneProcess(true);
   //   }
   // }, [listInput, listOutput]); //change button status
-  useEffect(() => {
-    if (!isInProcess) {
-      clearInterval(progressInterval);
-      setProgressPercentage(0);
-    }
-  }, [isInProcess, progressInterval]);
   const handleOpenSetting = () => {
     if (!isSettingOpen) setIsSettingOpen(true);
     if (currentFile !== "") setCurrentFile("");
@@ -105,7 +112,7 @@ function ProjectPage(props) {
     setIsSettingOpen(false);
   };
   const handleExecute = () => {
-    ipcRenderer.invoke("executeProject", projectPath);
+    ipcRenderer.invoke("executeProject", projectPath.current);
     setIsExecuteDisabled(true);
     setIsPauseDisabled(false);
     setIsInProcess(true);
@@ -123,6 +130,8 @@ function ProjectPage(props) {
   //   setListOutput([...data]);
   // };
   const handlePauseProject = () => {
+    ipcRenderer.send('pauseProject', processId.current)
+    console.log(processId.current)
     setIsPauseDisabled(true);
     setIsContinueDisabled(false);
   };
@@ -141,10 +150,9 @@ function ProjectPage(props) {
     setOutputContent("");
   };
   const handleGetProjectProgress = () => {
-    let getProgress = setInterval(() => {
-      ipcRenderer.invoke("getProgress", id);
-    }, 1000);
-    setProgressInterval(getProgress);
+    progress.current = setInterval(() => {
+      ipcRenderer.invoke("getProgress", projectPath.current);
+    }, 3000);
   };
   const handleRestartProject = () => {
     ipcRenderer.invoke("restart", id);

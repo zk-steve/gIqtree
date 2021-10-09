@@ -1,16 +1,13 @@
-import { Button, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import AlertDialog from "component/AlertDialog/AlertDialog";
-import ListInputFiles from "container/ListInputFiles/ListInputFiles";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { InputFileIcon } from "shared/icons";
-import useStyles from "./styles";
 import {
   buildStyles,
-  CircularProgressbarWithChildren,
+  CircularProgressbarWithChildren
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import TreeView from "component/TreeView/TreeView";
+import { useParams } from "react-router-dom";
+import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
 function ProjectInput({
@@ -118,7 +115,6 @@ function ProjectInput({
           </div>
         )}
       </div>
-      <AlertDialog isOpen={isOpenAlert} handleClose={handleCloseAlert} />
     </div>
   );
 }
