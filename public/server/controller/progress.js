@@ -51,7 +51,8 @@ module.exports.getProgress = (project_path) => {
         viewFile(outputLogPath)
           .then(file => {
             let data = file.data
-            if (data[data.length - 1].includes("Date and Time:")) {
+            if (data[data.length - 1].includes("Date and Time:")
+              || data[data.length - 2].includes("Date and Time:")) {
               resolve({doneStatus: 1, status: 1, data: data})
             }
             else {
