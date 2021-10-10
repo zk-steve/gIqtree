@@ -11,9 +11,9 @@ const { ipcRenderer } = window.require("electron");
 
 function ProjectPage(props) {
   const classes = useStyles();
-  const {handleShowAlert} = useContext(DialogContext);
+  const { handleShowAlert } = useContext(DialogContext);
 
-  const projectPath = useRef(null)
+  const projectPath = useRef(null);
   const [currentTab, setCurrentTab] = useState("input");
   const [currentFile, setCurrentFile] = useState("");
   const [isSettingOpen, setIsSettingOpen] = useState(true);
@@ -77,8 +77,8 @@ function ProjectPage(props) {
       console.log(data);
     };
     const pauseResult = (event, data) => {
-      console.log(data)
-    }
+      console.log(data);
+    };
     ipcRenderer.on("returnProjectById", returnProjectById);
     ipcRenderer.on("progressResult", progressResult);
     ipcRenderer.on("viewFileData", viewFileData);
@@ -86,8 +86,7 @@ function ProjectPage(props) {
     ipcRenderer.on("testSettingResult", (event, data) => {});
     ipcRenderer.on("executeResult", executeResult);
     ipcRenderer.on("getProgressResult", getProgressResult);
-    ipcRenderer.on("pauseResult",pauseResult );
-
+    ipcRenderer.on("pauseResult", pauseResult);
 
     return () => {
       ipcRenderer.removeListener("returnProjectById", returnProjectById);
@@ -130,8 +129,8 @@ function ProjectPage(props) {
   //   setListOutput([...data]);
   // };
   const handlePauseProject = () => {
-    ipcRenderer.send('pauseProject', processId.current)
-    console.log(processId.current)
+    ipcRenderer.send("pauseProject", processId.current);
+    console.log(processId.current);
     setIsPauseDisabled(true);
     setIsContinueDisabled(false);
   };
@@ -212,7 +211,7 @@ function ProjectPage(props) {
           {isSettingOpen && projectSetting && (
             <SettingDetail
               id={id}
-              projectPath={projectPath}
+              projectPath={projectPath.current}
               handleCloseSetting={handleCloseSetting}
               projectSetting={projectSetting}
               handleTestSetting={handleTestSetting}
