@@ -71,7 +71,7 @@ function ProjectPage(props) {
     };
     const executeResult = (event, data) => {
       processId.current = data.processId;
-      handleGetProjectProgress();
+      // handleGetProjectProgress();
     };
     const getProgressResult = (event, data) => {
       console.log(data);
@@ -80,7 +80,6 @@ function ProjectPage(props) {
       console.log(data);
     };
     ipcRenderer.on("returnProjectById", returnProjectById);
-    ipcRenderer.on("progressResult", progressResult);
     ipcRenderer.on("viewFileData", viewFileData);
     ipcRenderer.on("saveSettingResult", saveSettingResult);
     ipcRenderer.on("testSettingResult", (event, data) => {});
@@ -134,6 +133,9 @@ function ProjectPage(props) {
     setIsPauseDisabled(true);
     setIsContinueDisabled(false);
   };
+  const handleContinueProject = () => {
+    ipcRenderer.invoke("continueProject", projectPath.current);
+  };
   const handleGetOutputContent = (path) => {
     ipcRenderer.send("viewFile", path);
   };
@@ -175,6 +177,7 @@ function ProjectPage(props) {
         projectName={projectName}
         handlePauseProject={handlePauseProject}
         handleRestartProject={handleRestartProject}
+        handleContinueProject={handleContinueProject}
       />
       <Divider variant="fullWidth" />
       <div className={classes.container}>

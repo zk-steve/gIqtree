@@ -14,6 +14,7 @@ function ProjectSetting({
   projectName,
   handlePauseProject,
   handleRestartProject,
+  handleContinueProject,
 }) {
   const classes = useStyles();
   return (
@@ -51,6 +52,7 @@ function ProjectSetting({
             variant="contained"
             className={classes.button}
             disabled={isContinueDisabled}
+            onClick={handleContinueProject}
           >
             Continue
           </Button>
