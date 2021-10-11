@@ -3,11 +3,12 @@ import AlertDialog from "component/AlertDialog/AlertDialog";
 import React, { useEffect, useState } from "react";
 import {
   buildStyles,
-  CircularProgressbarWithChildren
+  CircularProgressbarWithChildren,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useParams } from "react-router-dom";
 import useStyles from "./styles";
+// import PhylotreeApplication from "@giap/phylotree";
 const { ipcRenderer } = window.require("electron");
 
 function ProjectInput({
@@ -18,7 +19,7 @@ function ProjectInput({
   outputContent,
   currentTab,
   currentFile,
-  progressPercentage,
+  progressLog,
 }) {
   const classes = useStyles();
   const { id } = useParams();
@@ -67,13 +68,23 @@ function ProjectInput({
           {isInProcess && "Progression"}
           {!isInProcess && currentFile !== "" && currentFile}
         </Typography>
-        {!isInProcess && outputContent !== "" && (
-          <textarea
-            readOnly
-            className={classes.outputContent}
-            value={outputContent}
-          />
-        )}
+        {
+          !isInProcess &&
+          outputContent !== "" &&
+          currentFile.split(".")[1] !== "treefile" ? (
+            <textarea
+              readOnly
+              className={classes.outputContent}
+              value={outputContent}
+            />
+          ) : null
+          // <PhylotreeApplication
+          //   newick={outputContent}
+          //   support={"aa/bb/cc/dd"}
+          //   width={500}
+          //   height={500}
+          // />
+        }
         {/* {!isInProcess &&
           outputContent !== "" &&
           ["bionj", "treefile"].includes(currentFile.split(".")[1]) && (
@@ -98,9 +109,7 @@ function ProjectInput({
               </div>
             )} */}
             {isInProcess && (
-              <div className={classes.progressContainer}>
-                <div className={classes.progress}>
-                  <CircularProgressbarWithChildren
+              /* <CircularProgressbarWithChildren
                     value={progressPercentage}
                     styles={buildStyles({
                       pathTransition: "0.25s ease",
@@ -108,9 +117,12 @@ function ProjectInput({
                     })}
                   >
                     <Typography>{progressPercentage}%</Typography>
-                  </CircularProgressbarWithChildren>
-                </div>
-              </div>
+                  </CircularProgressbarWithChildren> */
+              <textarea
+                readOnly
+                value={progressLog ? progressLog : ""}
+                className={classes.outputContent}
+              />
             )}
           </div>
         )}

@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   inputContainer: {
-    border: `dashed 1px ${theme.palette.action.disabled}`,
     borderRadius: "8px",
     display: "flex",
     justifyContent: "flex-start",
@@ -110,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     whiteSpace: "pre",
-    height: "90%",
+    height: "90% !important",
     width: "100%",
     border: `dashed 1px ${theme.palette.action.disabled}`,
     borderRadius: "8px",

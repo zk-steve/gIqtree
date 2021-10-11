@@ -27,7 +27,7 @@ function ProjectPage(props) {
   const { id } = useParams();
   const [projectName, setProjectName] = useState(null);
   const [projectSetting, setProjectSetting] = useState(null);
-  const [progressPercentage, setProgressPercentage] = useState(0);
+  const [progressLog, setProgressLog] = useState(0);
   const processId = useRef(null);
   const progress = useRef(null);
   useEffect(() => {
@@ -38,12 +38,6 @@ function ProjectPage(props) {
         setOutputContent(message.data);
         setCurrentFile(message.name);
         if (isSettingOpen) setIsSettingOpen(false);
-      }
-    };
-    const progressResult = (event, data) => {
-      const { status, message } = data;
-      if (status === 1) {
-        setProgressPercentage(message);
       }
     };
     const saveSettingResult = (event, data) => {
@@ -71,10 +65,18 @@ function ProjectPage(props) {
     };
     const executeResult = (event, data) => {
       processId.current = data.processId;
-      // handleGetProjectProgress();
+      handleGetProjectProgress();
     };
     const getProgressResult = (event, data) => {
-      console.log(data);
+      if (data.status === 1) {
+        if (data.doneStatus === 1) {
+          clearInterval(progress.current);
+          setIsDoneProcess(true);
+        } else {
+          setProgressLog(data.data);
+          console.log(data);
+        }
+      }
     };
     const pauseResult = (event, data) => {
       console.log(data);
@@ -153,10 +155,10 @@ function ProjectPage(props) {
   const handleGetProjectProgress = () => {
     progress.current = setInterval(() => {
       ipcRenderer.invoke("getProgress", projectPath.current);
-    }, 3000);
+    }, 2000);
   };
   const handleRestartProject = () => {
-    ipcRenderer.invoke("restart", id);
+    ipcRenderer.invoke("restartProject", projectPath.current);
     setIsExecuteDisabled(true);
     setIsPauseDisabled(false);
     setIsInProcess(true);
@@ -208,7 +210,7 @@ function ProjectPage(props) {
               outputContent={outputContent}
               currentTab={currentTab}
               currentFile={currentFile}
-              progressPercentage={progressPercentage}
+              progressLog={progressLog}
             />
           )}
           {isSettingOpen && projectSetting && (
