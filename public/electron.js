@@ -165,7 +165,21 @@ function createWindow() {
 
   ipcMain.on("pauseProject", (event, process_id) => {
     try {
-      kill(process_id, "SIGINT");
+      // kill(process_id, "SIGABRT");
+      const os = require("os")
+      const child_process = require("child_process")
+      if (os.platform() === 'win32') {
+        child_process.exec(`taskkill /pid ${process_id.pid} /T /F`, (error, stdout, stderr) => {
+          if (error) {
+            console.log(`exec error: ${error}`);
+            return;
+          }
+          console.log(`stdout: ${stdout}`);
+          console.log(`stderr: ${stderr}`);
+        })
+      } else {
+        process_id.kill();  
+      }
       mainWindow.webContents.send("pauseResult", { message: "Pause", status: 1 });
     }
     catch (err) {

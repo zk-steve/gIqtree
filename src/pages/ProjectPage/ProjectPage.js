@@ -64,6 +64,7 @@ function ProjectPage(props) {
       }
     };
     const executeResult = (event, data) => {
+      data = JSON.parse(data)
       processId.current = data.processId;
       handleGetProjectProgress();
     };

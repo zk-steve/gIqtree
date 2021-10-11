@@ -577,6 +577,9 @@ const executeProject = (project_path, object_model, type) => {
         else if (type === "continue") {
           COMMAND += " --undo";
         }
+        else {
+          COMMAND += " --redo"
+        }
         console.log({ BBB: COMMAND });
         let process_id = child_process.exec(
           COMMAND,
@@ -589,7 +592,7 @@ const executeProject = (project_path, object_model, type) => {
             console.log("done");
           }
         );
-        resolve({ command: COMMAND, processId: process_id.pid })
+        resolve(JSON.stringify({ command: COMMAND, processId: process_id }))
       })
       .catch((err) => {
         reject({ message: "Input is folder and contains files", status: 0 });
