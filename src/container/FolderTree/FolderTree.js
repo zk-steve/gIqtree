@@ -1,13 +1,12 @@
 import { Typography } from "@material-ui/core";
-import clsx from "clsx";
-import React, { useEffect, useState } from "react";
-import useStyles from "./styles";
-import { Rnd } from "react-rnd";
-import TreeView from "@mui/lab/TreeView";
-import TreeItem from "@mui/lab/TreeItem";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import TreeItem from "@mui/lab/TreeItem";
+import TreeView from "@mui/lab/TreeView";
+import React, { useEffect, useState } from "react";
+import { Rnd } from "react-rnd";
 import CloseFile from "shared/icons/closeFile";
+import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
 function FolderTree({
@@ -15,12 +14,7 @@ function FolderTree({
   handleSetListInput,
   handleDeleteInput,
   setIsInProcess,
-  isDoneProcess,
   handleGetOutputContent,
-  currentTab,
-  handleChangeTab,
-  currentFile,
-  handleSelectInputTab,
   listTrees,
 }) {
   const maxWidth = window.innerWidth / 5;

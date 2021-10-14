@@ -1,4 +1,5 @@
 import { Typography } from "@material-ui/core";
+import clsx from "clsx";
 import AlertDialog from "component/AlertDialog/AlertDialog";
 import React, { useEffect, useState } from "react";
 import {
@@ -8,13 +9,14 @@ import {
 import "react-circular-progressbar/dist/styles.css";
 import { useParams } from "react-router-dom";
 import useStyles from "./styles";
+import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
 // import PhylotreeApplication from "@giap/phylotree";
 const { ipcRenderer } = window.require("electron");
 
 function ProjectInput({
   handleSetListInput,
   handleDeleteInput,
-  isInProcess,
+  projectStatus,
   projectName,
   outputContent,
   currentTab,
@@ -65,13 +67,20 @@ function ProjectInput({
           {!isInProcess && currentTab === "output" && "Output"}
         </Typography> */}
         <Typography className={classes.smallTitle}>
-          {isInProcess && "Progression"}
-          {!isInProcess && currentFile !== "" && currentFile}
+          {(projectStatus === PROJECT_STATUS.IN_PROCESS ||
+            projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE ||
+            projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_RESTART) &&
+            "Progression"}
+          {projectStatus === PROJECT_STATUS.EXECUTED ||
+            (projectStatus === PROJECT_STATUS.NOT_EXECUTED &&
+              currentFile !== "" &&
+              currentFile)}
         </Typography>
         {
-          !isInProcess &&
-          outputContent !== "" &&
-          currentFile.split(".")[1] !== "treefile" ? (
+          projectStatus === PROJECT_STATUS.EXECUTED ||
+          (projectStatus === PROJECT_STATUS.NOT_EXECUTED &&
+            outputContent !== "" &&
+            currentFile.split(".")[1] !== "treefile") ? (
             <textarea
               readOnly
               className={classes.outputContent}
@@ -92,7 +101,9 @@ function ProjectInput({
               <TreeView content={outputContent} />
             </div>
           )} */}
-        {(currentFile === "" || isInProcess) && (
+        {(currentFile === "" ||
+          projectStatus === PROJECT_STATUS.EXECUTED ||
+          projectStatus === PROJECT_STATUS.NOT_EXECUTED) && (
           <div className={classes.inputContainer}>
             {/* {listInput.length === 0 && (
               <div className={classes.input} onClick={handleSelectInput}>
@@ -108,8 +119,9 @@ function ProjectInput({
                 </div>
               </div>
             )} */}
-            {isInProcess && (
-              /* <CircularProgressbarWithChildren
+            {projectStatus !== PROJECT_STATUS.EXECUTED &&
+              projectStatus !== PROJECT_STATUS.NOT_EXECUTED && (
+                /* <CircularProgressbarWithChildren
                     value={progressPercentage}
                     styles={buildStyles({
                       pathTransition: "0.25s ease",
@@ -118,12 +130,12 @@ function ProjectInput({
                   >
                     <Typography>{progressPercentage}%</Typography>
                   </CircularProgressbarWithChildren> */
-              <textarea
-                readOnly
-                value={progressLog ? progressLog : ""}
-                className={classes.outputContent}
-              />
-            )}
+                <textarea
+                  readOnly
+                  value={progressLog ? progressLog : ""}
+                  className={classes.progressContent}
+                />
+              )}
           </div>
         )}
       </div>

@@ -2,19 +2,15 @@ import { Button, Typography } from "@material-ui/core";
 import React from "react";
 import { Setting } from "shared/icons";
 import useStyles from "./styles";
-
+import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
 function ProjectSetting({
   handleOpenSetting,
-  handleExecute,
   isExecuteDisabled,
   isContinueDisabled,
   isPauseDisabled,
-  isInProcess,
-  isDoneProcess,
   projectName,
-  handlePauseProject,
-  handleRestartProject,
-  handleContinueProject,
+  projectStatus,
+  handleSetProjectStatus,
 }) {
   const classes = useStyles();
   return (
@@ -33,17 +29,24 @@ function ProjectSetting({
             color="secondary"
             variant="contained"
             className={classes.button}
-            onClick={isDoneProcess ? handleRestartProject : handleExecute}
+            onClick={
+              projectStatus === PROJECT_STATUS.EXECUTED
+                ? () =>
+                    handleSetProjectStatus(
+                      PROJECT_STATUS.IN_PROCESS_AFTER_RESTART
+                    )
+                : () => handleSetProjectStatus(PROJECT_STATUS.IN_PROCESS)
+            }
             disabled={isExecuteDisabled}
           >
-            {isDoneProcess ? "Restart" : "Execute"}
+            {projectStatus === PROJECT_STATUS.EXECUTED ? "Restart" : "Execute"}
           </Button>
           <Button
             color="secondary"
             variant="contained"
             className={classes.button}
             disabled={isPauseDisabled}
-            onClick={handlePauseProject}
+            onClick={() => handleSetProjectStatus(PROJECT_STATUS.IS_PAUSED)}
           >
             Pause
           </Button>
@@ -52,7 +55,9 @@ function ProjectSetting({
             variant="contained"
             className={classes.button}
             disabled={isContinueDisabled}
-            onClick={handleContinueProject}
+            onClick={() =>
+              handleSetProjectStatus(PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE)
+            }
           >
             Continue
           </Button>

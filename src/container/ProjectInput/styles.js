@@ -115,5 +115,15 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "8px",
     resize: "none",
   },
+  progressContent: {
+    flexDirection: "column-reverse !important",
+    display: "flex",
+    border: `dashed 1px ${theme.palette.action.disabled}`,
+    whiteSpace: "pre",
+    height: "90% !important",
+    resize: "none",
+    borderRadius: "8px",
+    width: "100%",
+  },
 }));
 export default useStyles;
