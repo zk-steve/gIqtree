@@ -20,7 +20,7 @@ module.exports = {
     on: "yes",
     numberOfUnsuccessfulIterationsToStop: "100",
     perturbationStrength: "0.5",
-    constrainedTreeFile: "none",
+    constrainedTreeFile: "",
     referenceTree: "",
   },
   assessment: {

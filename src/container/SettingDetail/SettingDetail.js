@@ -27,7 +27,9 @@ function SettingDetail({
       return (
         <div className={classes.boxReviewPath}>
           <div>
-            <Typography align="left">{path}</Typography>
+            <Typography align="left" title={path}>
+              {path}
+            </Typography>
             <CloseFile onClick={deleteAction} />
           </div>
         </div>
@@ -37,7 +39,9 @@ function SettingDetail({
         <div className={classes.boxReviewPath}>
           {path.map((file, index) => (
             <div key={index}>
-              <Typography align="left">{file}</Typography>
+              <Typography align="left" title={file}>
+                {file}
+              </Typography>
               <CloseFile onClick={() => deleteActionArray(file)} />
             </div>
           ))}
@@ -256,14 +260,14 @@ function SettingDetail({
           value: "JC2",
           id: "JC2",
           name: "modelFinderList",
-          type: "BINARY",
+          type: "BIN",
         },
         {
           label: "GTR2",
           value: "GTR2",
           id: "GTR2",
           name: "modelFinderList",
-          type: "BINARY",
+          type: "BIN",
         },
         {
           label: "JC",
@@ -417,112 +421,112 @@ function SettingDetail({
           value: "Blosum62",
           id: "Blosum62",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "cpREV",
           value: "cpREV",
           id: "cpREV",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "Dayhoff",
           value: "Dayhoff",
           id: "Dayhoff",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "DCMut",
           value: "DCMut",
           id: "DCMut",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "FLU",
           value: "FLU",
           id: "FLU",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "HIVb",
           value: "HIVb",
           id: "HIVb",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "HIVw",
           value: "HIVw",
           id: "HIVw",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "JTT",
           value: "JTT",
           id: "JTT",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "JTTDCMut",
           value: "JTTDCMut",
           id: "JTTDCMut",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "LG",
           value: "LG",
           id: "LG",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "mtART",
           value: "mtART",
           id: "mtART",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "mtMAM",
           value: "mtMAM",
           id: "mtMAM",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "PMB",
           value: "PMB",
           id: "PMB",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "rtREV",
           value: "rtREV",
           id: "rtREV",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "VT",
           value: "VT",
           id: "VT",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "WAG",
           value: "WAG",
           id: "WAG",
           name: "modelFinderList",
-          type: "PPROTEIN",
+          type: "AA",
         },
         {
           label: "LG4M",
@@ -1045,8 +1049,7 @@ function SettingDetail({
                       </div>
                     ))} */}
                   </div>
-                  <div className={clsx(classes.codonList, classes.modelTable)}>
-                    {/* <div
+                  {/* <div
                       className={clsx(
                         classes.modelFinderHead,
                         classes.modelTableHead
@@ -1054,44 +1057,51 @@ function SettingDetail({
                     >
                       <Typography id="model">Model</Typography>
                     </div> */}
-                    <div className={clsx(classes.listModel)}>
-                      {model.modelFinder
-                        .filter(
-                          (model) =>
-                            model.type === settingField.data.sequence ||
-                            model.type === "autoDetect"
-                        )
-                        .map((input, index) => (
-                          <div className={classes.radioInput} key={index}>
-                            <input
-                              type="radio"
-                              name={input.name}
-                              id={input.id}
-                              value={input.value}
-                              checked={
-                                settingField.model.modelFinder === input.value
-                              }
-                              onChange={(e) =>
-                                handleChangeModelSetting(
-                                  e.target.value,
-                                  "modelFinder"
-                                )
-                              }
-                            />
-                            <InputLabel
-                              htmlFor={input.id}
-                              className={clsx(
-                                classes.radioLabel,
-                                classes.modelMargin,
-                                classes.fontSmall
-                              )}
-                            >
-                              {input.label}
-                            </InputLabel>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
+                  <Select
+                    name="modelFinder"
+                    value={settingField.model.modelFinder}
+                    className={classes.shortTextInput}
+                    onChange={(e) =>
+                      handleChangeModelSetting(e.target.value, "modelFinder")
+                    }
+                  >
+                    {model.modelFinder
+                      .filter(
+                        (model) =>
+                          model.type === settingField.data.sequence ||
+                          model.type === "autoDetect"
+                      )
+                      .map((input, index) => (
+                        // <div className={classes.radioInput} key={index}>
+                        //   <input
+                        //     type="radio"
+                        //     name={input.name}
+                        //     id={input.id}
+                        //     value={input.value}
+                        //     checked={
+                        //       settingField.model.modelFinder === input.value
+                        //     }
+                        //     onChange={(e) =>
+                        //       handleChangeModelSetting(
+                        //         e.target.value,
+                        //         "modelFinder"
+                        //       )
+                        //     }
+                        //   />
+                        //   <InputLabel
+                        //     htmlFor={input.id}
+                        //     className={clsx(
+                        //       classes.radioLabel,
+                        //       classes.modelMargin,
+                        //       classes.fontSmall
+                        //     )}
+                        //   >
+                        //     {input.label}
+                        //   </InputLabel>
+                        // </div>
+                        <MenuItem value={input.value}>{input.label}</MenuItem>
+                      ))}
+                  </Select>
                   <div className={classes.textInputContainer}>
                     <Typography className={classes.inputLabel}>
                       Rate heterogeneity across sites:
@@ -2158,7 +2168,10 @@ function SettingDetail({
                     value={settingField.others.numberOfCPUCores}
                     placeholder="Number of cores"
                     onChange={(e) =>
-                      handleChangeOthersSetting(e, "numberOfCPUCores")
+                      handleChangeOthersSetting(
+                        e.target.value,
+                        "numberOfCPUCores"
+                      )
                     }
                   />
                 </div>
@@ -2170,7 +2183,9 @@ function SettingDetail({
                     className={classes.textInput}
                     value={settingField.others.prefix}
                     placeholder="Prefix"
-                    onChange={(e) => handleChangeOthersSetting(e, "prefix")}
+                    onChange={(e) =>
+                      handleChangeOthersSetting(e.target.value, "prefix")
+                    }
                   />
                 </div>
                 <div className={classes.textInputContainer}>
@@ -2182,7 +2197,10 @@ function SettingDetail({
                     value={settingField.others.enterCommandLine}
                     placeholder="Command line"
                     onChange={(e) =>
-                      handleChangeOthersSetting(e, "enterCommandLine")
+                      handleChangeOthersSetting(
+                        e.target.value,
+                        "enterCommandLine"
+                      )
                     }
                   />
                 </div>
