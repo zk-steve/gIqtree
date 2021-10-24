@@ -114,6 +114,7 @@ const useStyles = makeStyles((theme) => ({
     border: `dashed 1px ${theme.palette.action.disabled}`,
     borderRadius: "8px",
     resize: "none",
+    minHeight: "400px",
   },
   progressContent: {
     flexDirection: "column-reverse !important",
@@ -124,6 +125,7 @@ const useStyles = makeStyles((theme) => ({
     resize: "none",
     borderRadius: "8px",
     width: "100%",
+    minHeight: "400px",
   },
 }));
 export default useStyles;

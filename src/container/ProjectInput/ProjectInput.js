@@ -10,7 +10,7 @@ import "react-circular-progressbar/dist/styles.css";
 import { useParams } from "react-router-dom";
 import useStyles from "./styles";
 import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
-// import PhylotreeApplication from "@giap/phylotree";
+import PhylotreeApplication from "@giap/phylotree";
 const { ipcRenderer } = window.require("electron");
 
 function ProjectInput({
@@ -76,24 +76,27 @@ function ProjectInput({
               currentFile !== "" &&
               currentFile)}
         </Typography>
-        {
-          projectStatus === PROJECT_STATUS.EXECUTED ||
+        {projectStatus === PROJECT_STATUS.EXECUTED ||
           (projectStatus === PROJECT_STATUS.NOT_EXECUTED &&
             outputContent !== "" &&
-            currentFile.split(".")[1] !== "treefile") ? (
-            <textarea
-              readOnly
-              className={classes.outputContent}
-              value={outputContent}
-            />
-          ) : null
-          // <PhylotreeApplication
-          //   newick={outputContent}
-          //   support={"aa/bb/cc/dd"}
-          //   width={500}
-          //   height={500}
-          // />
-        }
+            currentFile.split(".")[1] !== "treefile" && (
+              <textarea
+                readOnly
+                className={classes.outputContent}
+                value={outputContent}
+              />
+            ))}
+        {projectStatus === PROJECT_STATUS.EXECUTED ||
+          (projectStatus === PROJECT_STATUS.NOT_EXECUTED &&
+            outputContent !== "" &&
+            currentFile.split(".")[1] === "treefile" && (
+              <PhylotreeApplication
+                newick={outputContent}
+                support={"aa/bb/cc/dd"}
+                width={500}
+                height={500}
+              />
+            ))}
         {/* {!isInProcess &&
           outputContent !== "" &&
           ["bionj", "treefile"].includes(currentFile.split(".")[1]) && (
@@ -103,25 +106,10 @@ function ProjectInput({
           )} */}
         {(currentFile === "" ||
           projectStatus === PROJECT_STATUS.EXECUTED ||
-          projectStatus === PROJECT_STATUS.NOT_EXECUTED) && (
-          <div className={classes.inputContainer}>
-            {/* {listInput.length === 0 && (
-              <div className={classes.input} onClick={handleSelectInput}>
-                <InputFileIcon />
-                <div className={classes.textContainer}>
-                  <Typography className={classes.smallText} component="p">
-                    Browse
-                  </Typography>
-                  &nbsp;
-                  <Typography className={classes.browse} component="p">
-                    to choose a file
-                  </Typography>
-                </div>
-              </div>
-            )} */}
-            {projectStatus !== PROJECT_STATUS.EXECUTED &&
-              projectStatus !== PROJECT_STATUS.NOT_EXECUTED && (
-                /* <CircularProgressbarWithChildren
+          projectStatus === PROJECT_STATUS.NOT_EXECUTED) &&
+          projectStatus !== PROJECT_STATUS.EXECUTED &&
+          projectStatus !== PROJECT_STATUS.NOT_EXECUTED && (
+            /* <CircularProgressbarWithChildren
                     value={progressPercentage}
                     styles={buildStyles({
                       pathTransition: "0.25s ease",
@@ -130,14 +118,12 @@ function ProjectInput({
                   >
                     <Typography>{progressPercentage}%</Typography>
                   </CircularProgressbarWithChildren> */
-                <textarea
-                  readOnly
-                  value={progressLog ? progressLog : ""}
-                  className={classes.progressContent}
-                />
-              )}
-          </div>
-        )}
+            <textarea
+              readOnly
+              value={progressLog ? progressLog : ""}
+              className={classes.progressContent}
+            />
+          )}
       </div>
     </div>
   );
