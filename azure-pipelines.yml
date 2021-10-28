@@ -45,7 +45,7 @@ jobs:
         find ./dist -name '*.AppImage' -exec cp -prv '{}' "./uw/" ";"
       workingDirectory: $(System.DefaultWorkingDirectory)
   - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: Ubuntu And Windown'
+    displayName: 'Publish Artifact: Ubuntu And Window'
     inputs:
       PathtoPublish: uw
       ArtifactName: ubuntu-and-windown
