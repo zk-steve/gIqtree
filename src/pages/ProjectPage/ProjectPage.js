@@ -193,6 +193,7 @@ function ProjectPage(props) {
               currentFile={currentFile}
               progressLog={progressLog}
               projectStatus={projectStatus}
+              projectSetting={projectSetting}
             />
           )}
           {isSettingOpen && projectSetting && (

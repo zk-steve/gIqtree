@@ -22,6 +22,7 @@ function ProjectInput({
   currentTab,
   currentFile,
   progressLog,
+  projectSetting,
 }) {
   const classes = useStyles();
   const { id } = useParams();
@@ -29,6 +30,12 @@ function ProjectInput({
   const handleSelectInput = () => {
     ipcRenderer.send("selectDialog", id);
   };
+  const { assessment } = projectSetting;
+  const treeSupport = `${
+    assessment.bootstrapMethod !== "none" ? assessment.bootstrapMethod : ""
+  }${assessment.singleBranchTest.SHlike ? "/alrt" : ""}${
+    assessment.singleBranchTest.aBayes ? "/abayes" : ""
+  }${assessment.singleBranchTest.localBootstrap ? "/lcp" : ""}`;
   useEffect(() => {
     const selectFile = (event, data) => {
       const { message, status } = data;
@@ -92,8 +99,8 @@ function ProjectInput({
             currentFile.split(".")[1] === "treefile" && (
               <PhylotreeApplication
                 newick={outputContent}
-                support={"aa/bb/cc/dd"}
-                width={500}
+                support={treeSupport}
+                width={600}
                 height={500}
               />
             ))}
