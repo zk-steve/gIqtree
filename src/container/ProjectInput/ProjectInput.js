@@ -78,32 +78,32 @@ function ProjectInput({
             projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE ||
             projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_RESTART) &&
             "Progression"}
-          {projectStatus === PROJECT_STATUS.EXECUTED ||
-            (projectStatus === PROJECT_STATUS.NOT_EXECUTED &&
-              currentFile !== "" &&
-              currentFile)}
+          {(projectStatus === PROJECT_STATUS.EXECUTED ||
+            projectStatus === PROJECT_STATUS.NOT_EXECUTED) &&
+            currentFile !== "" &&
+            currentFile}
         </Typography>
-        {projectStatus === PROJECT_STATUS.EXECUTED ||
-          (projectStatus === PROJECT_STATUS.NOT_EXECUTED &&
-            outputContent !== "" &&
-            currentFile.split(".")[1] !== "treefile" && (
-              <textarea
-                readOnly
-                className={classes.outputContent}
-                value={outputContent}
-              />
-            ))}
-        {projectStatus === PROJECT_STATUS.EXECUTED ||
-          (projectStatus === PROJECT_STATUS.NOT_EXECUTED &&
-            outputContent !== "" &&
-            currentFile.split(".")[1] === "treefile" && (
-              <PhylotreeApplication
-                newick={outputContent}
-                support={treeSupport}
-                width={600}
-                height={500}
-              />
-            ))}
+        {(projectStatus === PROJECT_STATUS.EXECUTED ||
+          projectStatus === PROJECT_STATUS.NOT_EXECUTED) &&
+          outputContent !== "" &&
+          currentFile.split(".")[1] !== "treefile" && (
+            <textarea
+              readOnly
+              className={classes.outputContent}
+              value={outputContent}
+            />
+          )}
+        {(projectStatus === PROJECT_STATUS.EXECUTED ||
+          projectStatus === PROJECT_STATUS.NOT_EXECUTED) &&
+          outputContent !== "" &&
+          currentFile.split(".")[1] === "treefile" && (
+            <PhylotreeApplication
+              newick={outputContent}
+              support={treeSupport}
+              width={600}
+              height={500}
+            />
+          )}
         {/* {!isInProcess &&
           outputContent !== "" &&
           ["bionj", "treefile"].includes(currentFile.split(".")[1]) && (
