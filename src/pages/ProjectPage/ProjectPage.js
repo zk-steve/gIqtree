@@ -74,7 +74,9 @@ function ProjectPage(props) {
       data = JSON.parse(data);
       processId.current = data.processId;
       setIsSettingOpen(false);
-      handleGetProjectProgress();
+      setTimeout(() => {
+        handleGetProjectProgress();
+      }, 2000);
     };
     const getProgressResult = (event, data) => {
       if (data.status === 1) {

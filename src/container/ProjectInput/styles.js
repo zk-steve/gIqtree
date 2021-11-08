@@ -115,6 +115,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "8px",
     resize: "none",
     minHeight: "400px",
+    fontFamily: "Courier",
   },
   progressContent: {
     flexDirection: "column-reverse !important",
@@ -126,6 +127,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "8px",
     width: "100%",
     minHeight: "400px",
+    fontFamily: "Courier",
   },
 }));
 export default useStyles;
