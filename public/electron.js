@@ -152,18 +152,23 @@ function createWindow() {
     let type = "restart";
     project.readSettingObject(project_path)
       .then(object_model => {
-        project
-        .executeProject(project_path, object_model, type)
-        .then((data) => {
-          console.log({ data });
-          event.sender.send("restartProjectResult", data);
+        project.saveSetting(project_path, { ...object_model, status: "Running" })
+          .then(data => {
+            project
+          .executeProject(project_path, object_model, type)
+          .then((data) => {
+            console.log({ data });
+            event.sender.send("restartProjectResult", data);
+          })
+          .catch((err) => event.sender.send("restartProjectResult", err));
         })
-        .catch((err) => event.sender.send("restartProjectResult", err));
+        .catch(err =>  event.sender.send("restartProjectResult", err))
+        
       })
       .catch(err => event.sender.send("restartProjectResult", err))
   });
 
-  ipcMain.on("pauseProject", (event, process_id) => {
+  ipcMain.on("pauseProject", (event, process_id, project_path) => {
     try {
       // kill(process_id, "SIGABRT");
       const os = require("os")
@@ -176,9 +181,31 @@ function createWindow() {
           }
           console.log(`stdout: ${stdout}`);
           console.log(`stderr: ${stderr}`);
-        })
+          project.readSettingObject(project_path)
+          .then(object_model => {
+            project.saveSetting(project_path, { ...object_model, status: "Paused" })
+              .then(data => {
+                console.log("=====================PAUSED=========================")
+                mainWindow.webContents.send("pauseResult", { message: "Paused", status: 1 });
+            })
+            mainWindow.webContents.send("pauseResult", { message: "Error", status: 0 });
+            
+          })
+          mainWindow.webContents.send("pauseResult", { message: "Error", status: 0 });
+          })
       } else {
-        process_id.kill();  
+        process_id.kill();
+        project.readSettingObject(project_path)
+        .then(object_model => {
+          project.saveSetting(project_path, { ...object_model, status: "Paused" })
+            .then(data => {
+              console.log("=====================PAUSED=========================")
+              mainWindow.webContents.send("pauseResult", { message: "Paused", status: 1 });
+          })
+          mainWindow.webContents.send("pauseResult", { message: "Error", status: 0 });
+          
+        })
+        mainWindow.webContents.send("pauseResult", { message: "Error", status: 0 });
       }
       mainWindow.webContents.send("pauseResult", { message: "Pause", status: 1 });
     }
@@ -191,13 +218,18 @@ function createWindow() {
     let type = "continue";
     project.readSettingObject(project_path)
       .then(object_model => {
-        project
-        .executeProject(project_path, object_model, type)
-        .then((data) => {
-          console.log({ data });
-          event.sender.send("continueProjectResult", data);
+        project.saveSetting(project_path, { ...object_model, status: "Running" })
+          .then(data => {
+            project
+          .executeProject(project_path, object_model, type)
+          .then((data) => {
+            console.log({ data });
+            event.sender.send("continueProjectResult", data);
+          })
+          .catch((err) => event.sender.send("continueProjectResult", err));
         })
-        .catch((err) => event.sender.send("continueProjectResult", err));
+        .catch(err =>  event.sender.send("continueProjectResult", err))
+        
       })
       .catch(err => event.sender.send("continueProjectResult", err))
   });
@@ -206,13 +238,19 @@ function createWindow() {
     let type = "first";
     project.readSettingObject(project_path)
       .then(object_model => {
-        project
-        .executeProject(project_path, object_model, type)
-        .then((data) => {
-          console.log({ data });
-          event.sender.send("executeResult", data);
+        console.log("============== READING OBJECT MODEL =========================")
+        project.saveSetting(project_path, { ...object_model, status: "Running" })
+          .then(data => {
+            console.log("============== SAVED SETTING =========================")
+            project
+            .executeProject(project_path, object_model, type)
+            .then((data) => {
+              console.log({ data });
+              event.sender.send("executeResult", data);
+            })
+            .catch((err) => event.sender.send("executeResult", err));
         })
-        .catch((err) => event.sender.send("executeResult", err));
+        .catch(err =>  event.sender.send("executeResult", err))
       })
       .catch(err => event.sender.send("executeResult", err))
   });

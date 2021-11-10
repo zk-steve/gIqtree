@@ -1,5 +1,6 @@
 module.exports = {
   projectType: "assessment",
+  status: "Empty",
   data: {
     alignment: "",
     partition: "",

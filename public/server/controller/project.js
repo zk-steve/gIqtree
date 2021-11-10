@@ -173,7 +173,7 @@ const filterName = (path) => {
     } else {
       result = path.split("/");
     }
-    console.log({ result });
+    // console.log({ result });
     resolve(result[result.length - 1]);
   });
 };
@@ -186,7 +186,7 @@ const filterNameSync = (path) => {
     } else {
       result = path.split("/");
     }
-    console.log({ result });
+    // console.log({ result });
     return(result[result.length - 1]);
 }
 
@@ -269,6 +269,7 @@ const settingHelper = ( projectPath, objectModel) => {
       let { constrainedTreeFile, referenceTree } = objectModel.tree;
       let { gCF } = objectModel.assessment.concordanceFactor;
       let { dateFile } = objectModel.dating;
+      let { status } = objectModel.status;
       const contains = []
       if (Array.isArray(alignment)) {
         alignment.forEach(file => {
@@ -295,10 +296,14 @@ const settingHelper = ( projectPath, objectModel) => {
       if (dateFile !== '' && dateFile !== 'none') {
         contains.push(dateFile)
       }
+
+      if (status !== '' && status !== 'none' && status) {
+        contains.push(status)
+      }
       const args = contains.map(element => filterNameSync(element))
       console.log({contains, args})
       if (clearProjectInput(path.join(projectPath, "input") , args)) {
-        console.log("true")
+        console.log("=========== CLEAR PROJECT INPUT ===============")
         if (Array.isArray(alignment)) {
           objectModel.data.alignment = []
           alignment.forEach(sourcePath => {
@@ -321,8 +326,8 @@ const settingHelper = ( projectPath, objectModel) => {
           console.log({partition})
           const namePartition = filterNameSync(partition)
           const destPath = path.join(projectPath, "input", namePartition)
-          console.log("Copy partition")
-          fs.copyFileSync(partition, destPath, fs.constants.COPYFILE_EXCL)
+          console.log({destPath})
+          fs.copyFileSync(partition, destPath)
           console.log("Done")
           objectModel.data.partition = destPath
         }
@@ -358,7 +363,7 @@ const settingHelper = ( projectPath, objectModel) => {
         resolve(objectModel)
       }, 2)
     } catch (err) {
-      reject({ message: "Something was wrong", status: 0 })
+      reject({ message: "Setting helper error", status: 0 })
     }
   })
 }
@@ -367,6 +372,7 @@ const saveSetting = (projectPath, objectModel) => {
   return new Promise((resolve, reject) => {
     settingHelper(projectPath, objectModel)
       .then(newObjectModel => {
+        console.log({newObjectModel})
         addSettingFile(projectPath, newObjectModel)
           .then(data => {
             setTimeout(() => {
@@ -385,8 +391,9 @@ const readSettingObject = (projectPath) => {
     const settingPath = path.join(projectPath, "setting.json");
     if (fs.existsSync(projectPath)) {
       await fs.readFile(settingPath, (err, data) => {
-        if (err) reject({ message: "Something was wrong", status: 0 });
+        if (err) reject({ message: "Can not read setting.json", status: 0 });
         data = JSON.parse(data);
+        console.log({Setting: data})
         resolve(data);
       });
     } else {

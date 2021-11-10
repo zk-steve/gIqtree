@@ -3,7 +3,7 @@ const path = require("path");
 const readline = require("readline");
 const { viewFile } = require("./file_handler");
 const homepage = require("./homepage");
-const { readSettingObject, filterNameSync } = require("./project");
+const { readSettingObject, filterNameSync, saveSetting } = require("./project");
 let progress;
 const processLineByLine = async (path) => {
   if (!progress) progress = 0;
@@ -48,24 +48,41 @@ module.exports.getProgress = (project_path) => {
         else {
           outputLogPath = path.join(project_path, "output", "output.log")
         }
-        viewFile(outputLogPath)
+        // setTimeout(() => {
+          viewFile(outputLogPath)
           .then(file => {
             let data = file.data
             let dataArr = data.split("\n")
-            if (dataArr[dataArr.length - 1].includes("Date and Time:")
-              || dataArr[dataArr.length - 2].includes("Date and Time:")) {
-              resolve({doneStatus: 1, status: 1, data: data})
+            let checkPoint = dataArr.length >= 2 ? project_path + dataArr[dataArr.length-2] : project_path
+            console.log({BBBBB: dataArr[dataArr.length - 2], checkPoint})
+            if (Array.isArray(dataArr) && (checkPoint.includes(`${project_path}Date and Time:`))) {
+              readSettingObject(project_path)
+                .then(object_model => {
+                  saveSetting(project_path, { ...object_model, status: "Done" })
+                    .then(data => {
+                      console.log(`===================DONE + ${project_path}====================`)
+                      console.log({BBBBB: checkPoint, doneStatus: 1})
+                      resolve({ doneStatus: 1, status: 1, data: data })
+                    })
+                    .catch(err => {
+                      reject({ message: "Can not save setting file", status: 0 })
+                    }) 
+                })
+                .catch(err => {
+                  reject({ message: "Can not read setting file", status: 0 })
+              })
             }
             else {
               resolve({doneStatus: 0, status: 1, data: data})
             }
           })
           .catch(err => {
-            reject({ message: "Something was wrong", status: 0 });
+            reject({ message: "Can not view output file", status: 0 });
           })
+        // }, 500)
       })
       .catch(err => {
-        reject({ message: "Something was wrong", status: 0 });
+        reject({ message: "Can not read object model", status: 0 });
       })
   });
 };

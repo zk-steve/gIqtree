@@ -10,7 +10,7 @@ module.exports.data_mapping = (object_model) => {
       console.log("ARRAYYYYYYYYYYYY ALIGNMENT")
       object_model["data"]["alignment"] = object_model["data"]["alignment"].join(",")
       result += " -s " + `"${object_model["data"]["alignment"]}"`
-      console.log({result})
+      // console.log({result})
     }
     else if (fs.lstatSync(object_model["data"]["alignment"]).isDirectory()) {
       console.log("FOLDERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")

@@ -7,6 +7,8 @@ module.exports.assessment_mapping = (object_model, inputs) => {
       typeof parseInt(
         object_model["assessment"]["bootstrapMethodReplicate"]
       ) === "number"
+      && object_model["assessment"]["bootstrapMethodReplicate"] !== "0"
+      && object_model["assessment"]["bootstrapMethodReplicate"]
     ) {
       result += " -B " + object_model["assessment"]["bootstrapMethodReplicate"];
     } else if (
@@ -15,6 +17,8 @@ module.exports.assessment_mapping = (object_model, inputs) => {
       typeof parseInt(
         object_model["assessment"]["bootstrapMethodReplicate"]
       ) === "number"
+      && object_model["assessment"]["bootstrapMethodReplicate"] !== "0"
+      && object_model["assessment"]["bootstrapMethodReplicate"]
     ) {
       result += " -b " + object_model["assessment"]["bootstrapMethodReplicate"];
     }

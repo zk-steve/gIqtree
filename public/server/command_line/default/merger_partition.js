@@ -1,5 +1,6 @@
 module.exports = {
   projectType: "mergepartition",
+  status: "Empty",
   data: {
     alignment: "",
     partition: "",
