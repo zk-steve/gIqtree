@@ -39,3 +39,7 @@
 body::-webkit-scrollbar {
   display: none;
 }
+@font-face {
+  font-family: "Euclid Circular A";
+  src: url("./Euclid-Circular-A.ttf") format("truetype");
+}
