@@ -34,7 +34,7 @@ function ProjectPage(props) {
   const { id } = useParams();
   const [projectName, setProjectName] = useState(null);
   const [projectSetting, setProjectSetting] = useState(null);
-  const [progressLog, setProgressLog] = useState(0);
+  const [progressLog, setProgressLog] = useState("");
   const processId = useRef(null);
   const progress = useRef(null);
   useEffect(() => {
@@ -72,12 +72,10 @@ function ProjectPage(props) {
     };
     const executeResult = (event, data) => {
       data = JSON.parse(data);
-      console.log({data})
+      console.log({ data });
       processId.current = data.processId;
       setIsSettingOpen(false);
-      setTimeout(() => {
-        handleGetProjectProgress();
-      }, 500);
+      handleGetProjectProgress();
     };
     const getProgressResult = (event, data) => {
       if (data.status === 1) {
@@ -126,7 +124,7 @@ function ProjectPage(props) {
   const handleGetProjectProgress = () => {
     progress.current = setInterval(() => {
       ipcRenderer.invoke("getProgress", projectPath.current);
-    }, 700);
+    }, 2000);
   };
   const handleTestSetting = (setting) => {
     ipcRenderer.invoke("testSetting", id, setting);
@@ -141,7 +139,11 @@ function ProjectPage(props) {
         setIsContinueDisabled(true);
         break;
       case PROJECT_STATUS.IS_PAUSED:
-        ipcRenderer.send("pauseProject", processId.current, projectPath.current);
+        ipcRenderer.send(
+          "pauseProject",
+          processId.current,
+          projectPath.current
+        );
         setIsExecuteDisabled(true);
         setIsPauseDisabled(true);
         setIsContinueDisabled(false);

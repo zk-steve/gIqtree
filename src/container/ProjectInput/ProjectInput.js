@@ -11,6 +11,7 @@ import { useParams } from "react-router-dom";
 import useStyles from "./styles";
 import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
 import PhylotreeApplication from "@giap/phylotree";
+import ScrollToBottom from "react-scroll-to-bottom";
 const { ipcRenderer } = window.require("electron");
 
 function ProjectInput({
@@ -125,11 +126,9 @@ function ProjectInput({
                   >
                     <Typography>{progressPercentage}%</Typography>
                   </CircularProgressbarWithChildren> */
-            <textarea
-              readOnly
-              value={progressLog ? progressLog : ""}
-              className={classes.progressContent}
-            />
+            <ScrollToBottom mode="bottom" className={classes.progressContent}>
+              {progressLog ? progressLog : ""}
+            </ScrollToBottom>
           )}
       </div>
     </div>

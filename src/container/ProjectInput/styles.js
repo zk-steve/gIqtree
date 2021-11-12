@@ -118,16 +118,17 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "Courier",
   },
   progressContent: {
-    flexDirection: "column-reverse !important",
-    display: "flex",
     border: `dashed 1px ${theme.palette.action.disabled}`,
-    whiteSpace: "pre",
     height: "90% !important",
-    resize: "none",
+    maxHeight: "500px",
     borderRadius: "8px",
     width: "100%",
     minHeight: "400px",
     fontFamily: "Courier",
+    "&> div": {
+      whiteSpace: "pre-wrap",
+      paddingLeft: "1rem",
+    },
   },
 }));
 export default useStyles;
