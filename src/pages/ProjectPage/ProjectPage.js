@@ -4,7 +4,13 @@ import FolderTree from "container/FolderTree/FolderTree";
 import ProjectInput from "container/ProjectInput/ProjectInput";
 import ProjectSetting from "container/ProjectSetting/ProjectSetting";
 import SettingDetail from "container/SettingDetail/SettingDetail";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import { useParams } from "react-router-dom";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
@@ -37,6 +43,52 @@ function ProjectPage(props) {
   const [progressLog, setProgressLog] = useState("");
   const processId = useRef(null);
   const progress = useRef(null);
+  const handleSetProjectStatus = useCallback(
+    (status) => {
+      setProjectStatus(status);
+      console.log(status);
+      switch (status) {
+        case PROJECT_STATUS.IN_PROCESS:
+          ipcRenderer.invoke("executeProject", projectPath.current);
+          setIsExecuteDisabled(true);
+          setIsPauseDisabled(false);
+          setIsContinueDisabled(true);
+          break;
+        case PROJECT_STATUS.IS_PAUSED:
+          ipcRenderer.send(
+            "pauseProject",
+            processId.current,
+            projectPath.current
+          );
+          setIsExecuteDisabled(true);
+          setIsPauseDisabled(true);
+          setIsContinueDisabled(false);
+          break;
+        case PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE:
+          ipcRenderer.invoke("continueProject", projectPath.current);
+          setIsExecuteDisabled(true);
+          setIsPauseDisabled(false);
+          setIsContinueDisabled(true);
+          break;
+        case PROJECT_STATUS.EXECUTED:
+          ipcRenderer.send("getProjectById", id);
+          setIsExecuteDisabled(false);
+          setIsPauseDisabled(true);
+          setIsContinueDisabled(true);
+          break;
+        case PROJECT_STATUS.IN_PROCESS_AFTER_RESTART:
+          ipcRenderer.invoke("restartProject", projectPath.current);
+          setIsExecuteDisabled(true);
+          setIsPauseDisabled(false);
+          setIsContinueDisabled(true);
+          break;
+        default:
+          console.log("Fail");
+          break;
+      }
+    },
+    [id]
+  );
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
     const viewFileData = (event, data) => {
@@ -106,11 +158,10 @@ function ProjectPage(props) {
     ipcRenderer.on("getProgressResult", getProgressResult);
     ipcRenderer.on("pauseResult", pauseResult);
     return () => {
-      ipcRenderer.removeListener("returnProjectById", returnProjectById);
-      ipcRenderer.removeListener("saveSettingResult", saveSettingResult);
+      ipcRenderer.removeAllListeners();
       clearInterval(progress.current);
     };
-  }, [id]); //get list input and get project name
+  }, [handleSetProjectStatus, id, isSettingOpen, projectName]); //get list input and get project name
   const handleOpenSetting = () => {
     if (!isSettingOpen) setIsSettingOpen(true);
     if (currentFile !== "") setCurrentFile("");
@@ -127,48 +178,7 @@ function ProjectPage(props) {
   const handleTestSetting = (setting) => {
     ipcRenderer.invoke("testSetting", id, setting);
   };
-  const handleSetProjectStatus = (status) => {
-    setProjectStatus(status);
-    switch (status) {
-      case PROJECT_STATUS.IN_PROCESS:
-        ipcRenderer.invoke("executeProject", projectPath.current);
-        setIsExecuteDisabled(true);
-        setIsPauseDisabled(false);
-        setIsContinueDisabled(true);
-        break;
-      case PROJECT_STATUS.IS_PAUSED:
-        ipcRenderer.send(
-          "pauseProject",
-          processId.current,
-          projectPath.current
-        );
-        setIsExecuteDisabled(true);
-        setIsPauseDisabled(true);
-        setIsContinueDisabled(false);
-        break;
-      case PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE:
-        ipcRenderer.invoke("continueProject", projectPath.current);
-        setIsExecuteDisabled(true);
-        setIsPauseDisabled(false);
-        setIsContinueDisabled(true);
-        break;
-      case PROJECT_STATUS.EXECUTED:
-        ipcRenderer.send("getProjectById", id);
-        setIsExecuteDisabled(false);
-        setIsPauseDisabled(true);
-        setIsContinueDisabled(true);
-        break;
-      case PROJECT_STATUS.IN_PROCESS_AFTER_RESTART:
-        ipcRenderer.invoke("restartProject", projectPath.current);
-        setIsExecuteDisabled(true);
-        setIsPauseDisabled(false);
-        setIsContinueDisabled(true);
-        break;
-      default:
-        console.log("Fail");
-        break;
-    }
-  };
+
   return (
     <div className={classes.root}>
       <ProjectSetting

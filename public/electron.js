@@ -266,7 +266,7 @@ function createWindow() {
       .catch(err => {
         mainWindow.webContents.send("getProgressResult", err)
       })
-    }, 100)
+    }, 1000)
   })
 
   ipcMain.on("deleteInput", async (event, inputData) => {
