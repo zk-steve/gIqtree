@@ -255,14 +255,16 @@ function createWindow() {
       .catch(err => event.sender.send("executeResult", err))
   });
 
-  ipcMain.handle("getProgress", async (event, project_path) => {
-    getProgress(project_path)
-    .then(data => {
-      event.sender.send("getProgressResult", data);
-    })
-    .catch(err => {
-      event.sender.send("getProgressResult", err)
-    })
+  ipcMain.on("getProgress", async (event, project_path) => {
+    let intervalId = setInterval(() => {
+      getProgress(project_path, intervalId)
+      .then(data => {
+        mainWindow.webContents.send("getProgressResult", data);
+      })
+      .catch(err => {
+        mainWindow.webContents.send("getProgressResult", err)
+      })
+    }, 100)
   })
 
   ipcMain.on("deleteInput", async (event, inputData) => {

@@ -36,7 +36,7 @@ const processLineByLine = async (path) => {
   return progress;
 };
 
-module.exports.getProgress = (project_path) => {
+module.exports.getProgress = (project_path, intervalId) => {
   return new Promise(async (resolve, reject) => {
     readSettingObject(project_path)
       .then(object_model => {
@@ -61,7 +61,8 @@ module.exports.getProgress = (project_path) => {
                   saveSetting(project_path, { ...object_model, status: "Done" })
                     .then(status => {
                       console.log(`===================DONE + ${project_path}====================`)
-                      console.log({BBBBB: checkPoint, doneStatus: 1})
+                      console.log({ BBBBB: checkPoint, doneStatus: 1 })
+                      clearInterval(intervalId)
                       resolve({ doneStatus: 1, status: 1, data: data, project: project_path })
                     })
                     .catch(err => {

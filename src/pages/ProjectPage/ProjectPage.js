@@ -122,9 +122,7 @@ function ProjectPage(props) {
     ipcRenderer.send("viewFile", path);
   };
   const handleGetProjectProgress = () => {
-    progress.current = setInterval(() => {
-      ipcRenderer.invoke("getProgress", projectPath.current);
-    }, 2000);
+    progress.current = ipcRenderer.send("getProgress", projectPath.current);
   };
   const handleTestSetting = (setting) => {
     ipcRenderer.invoke("testSetting", id, setting);
