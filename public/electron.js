@@ -11,6 +11,7 @@ const { chooseFile, chooseFolder, chooseMultiFile } = require("./server/controll
 const { getProgress } = require("./server/controller/progress");
 
 let COMMAND = "";
+let intervalId;
 
 let mainWindow;
 function createWindow() {
@@ -171,6 +172,7 @@ function createWindow() {
   ipcMain.on("pauseProject", (event, process_id, project_path) => {
     try {
       // kill(process_id, "SIGABRT");
+      clearInterval(intervalId)
       const os = require("os")
       const child_process = require("child_process")
       if (os.platform() === 'win32') {
@@ -256,7 +258,7 @@ function createWindow() {
   });
 
   ipcMain.on("getProgress", async (event, project_path) => {
-    let intervalId = setInterval(() => {
+    intervalId = setInterval(() => {
       getProgress(project_path, intervalId)
       .then(data => {
         mainWindow.webContents.send("getProgressResult", data);
