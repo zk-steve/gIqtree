@@ -59,10 +59,10 @@ module.exports.getProgress = (project_path) => {
               readSettingObject(project_path)
                 .then(object_model => {
                   saveSetting(project_path, { ...object_model, status: "Done" })
-                    .then(data => {
+                    .then(status => {
                       console.log(`===================DONE + ${project_path}====================`)
                       console.log({BBBBB: checkPoint, doneStatus: 1})
-                      resolve({ doneStatus: 1, status: 1, data: data })
+                      resolve({ doneStatus: 1, status: 1, data: data, project: project_path })
                     })
                     .catch(err => {
                       reject({ message: "Can not save setting file", status: 0 })
