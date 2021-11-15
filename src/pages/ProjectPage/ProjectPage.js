@@ -43,52 +43,54 @@ function ProjectPage(props) {
   const [progressLog, setProgressLog] = useState("");
   const processId = useRef(null);
   const progress = useRef(null);
-  const handleSetProjectStatus = useCallback(
-    (status) => {
-      setProjectStatus(status);
-      console.log(status);
-      switch (status) {
-        case PROJECT_STATUS.IN_PROCESS:
-          ipcRenderer.invoke("executeProject", projectPath.current);
-          setIsExecuteDisabled(true);
-          setIsPauseDisabled(false);
-          setIsContinueDisabled(true);
-          break;
-        case PROJECT_STATUS.IS_PAUSED:
-          ipcRenderer.send(
-            "pauseProject",
-            processId.current,
-            projectPath.current
-          );
-          setIsExecuteDisabled(true);
-          setIsPauseDisabled(true);
-          setIsContinueDisabled(false);
-          break;
-        case PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE:
-          ipcRenderer.invoke("continueProject", projectPath.current);
-          setIsExecuteDisabled(true);
-          setIsPauseDisabled(false);
-          setIsContinueDisabled(true);
-          break;
-        case PROJECT_STATUS.EXECUTED:
-          ipcRenderer.send("getProjectById", id);
-          setIsExecuteDisabled(false);
-          setIsPauseDisabled(true);
-          setIsContinueDisabled(true);
-          break;
-        case PROJECT_STATUS.IN_PROCESS_AFTER_RESTART:
-          ipcRenderer.invoke("restartProject", projectPath.current);
-          setIsExecuteDisabled(true);
-          setIsPauseDisabled(false);
-          setIsContinueDisabled(true);
-          break;
-        default:
-          console.log("Fail");
-          break;
-      }
-    },
-    [id]
-  );
+  const handleSetProjectStatus = (status) => {
+    setProjectStatus(status);
+    console.log(status);
+    switch (status) {
+      case PROJECT_STATUS.IN_PROCESS:
+        ipcRenderer.invoke("executeProject", projectPath.current);
+        setIsExecuteDisabled(true);
+        setIsPauseDisabled(false);
+        setIsContinueDisabled(true);
+        break;
+      case PROJECT_STATUS.IS_PAUSED:
+        ipcRenderer.send(
+          "pauseProject",
+          processId.current,
+          projectPath.current
+        );
+        setIsExecuteDisabled(true);
+        setIsPauseDisabled(true);
+        setIsContinueDisabled(false);
+        break;
+      case PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE:
+        ipcRenderer.invoke("continueProject", projectPath.current);
+        setIsExecuteDisabled(true);
+        setIsPauseDisabled(false);
+        setIsContinueDisabled(true);
+        break;
+      case PROJECT_STATUS.EXECUTED:
+        ipcRenderer.send("getProjectById", id);
+        setIsExecuteDisabled(false);
+        setIsPauseDisabled(true);
+        setIsContinueDisabled(true);
+        handleShowAlert({
+          title: "Done",
+          message: "Your process has finished sucessfully!",
+        });
+        break;
+      case PROJECT_STATUS.IN_PROCESS_AFTER_RESTART:
+        ipcRenderer.invoke("restartProject", projectPath.current);
+        setIsExecuteDisabled(true);
+        setIsPauseDisabled(false);
+        setIsContinueDisabled(true);
+        break;
+      default:
+        console.log("Fail");
+        break;
+    }
+  };
+
   useEffect(() => {
     ipcRenderer.send("getProjectById", id);
     const viewFileData = (event, data) => {
@@ -113,6 +115,7 @@ function ProjectPage(props) {
         setProjectSetting(message.objectModel);
         projectPath.current = message.projectDetail.path;
         setListTrees(message.projectDetail.children);
+        console.log(isExecuteDisabled);
         if (message.objectModel.data.alignment !== "")
           setIsExecuteDisabled(false);
         else setIsExecuteDisabled(true);
@@ -133,8 +136,6 @@ function ProjectPage(props) {
       if (data.status === 1) {
         setProgressLog(data.data);
         if (data.doneStatus === 1) {
-          clearInterval(progress.current);
-          progress.current = null;
           console.log(data);
           handleSetProjectStatus(PROJECT_STATUS.EXECUTED);
           setIsSettingOpen(true);
@@ -161,7 +162,7 @@ function ProjectPage(props) {
       ipcRenderer.removeAllListeners();
       clearInterval(progress.current);
     };
-  }, [handleSetProjectStatus, id, isSettingOpen, projectName]); //get list input and get project name
+  }, [id, projectName]); //get list input and get project name
   const handleOpenSetting = () => {
     if (!isSettingOpen) setIsSettingOpen(true);
     if (currentFile !== "") setCurrentFile("");
@@ -173,7 +174,7 @@ function ProjectPage(props) {
     ipcRenderer.send("viewFile", path);
   };
   const handleGetProjectProgress = () => {
-    progress.current = ipcRenderer.send("getProgress", projectPath.current);
+    ipcRenderer.send("getProgress", projectPath.current);
   };
   const handleTestSetting = (setting) => {
     ipcRenderer.invoke("testSetting", id, setting);
