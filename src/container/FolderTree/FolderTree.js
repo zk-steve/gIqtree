@@ -44,19 +44,12 @@ function FolderTree({
     setIsInProcess,
   ]);
   const CustomTree = ({ name, isFile, ...props }) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const handleDeleteFile = (path) => {};
     return (
       <TreeItem
         {...props}
         label={
-          <div
-            className={classes.treeFile}
-            onMouseEnter={() => setIsVisible(true)}
-            onMouseLeave={() => setIsVisible(false)}
-          >
+          <div className={classes.treeFile}>
             <Typography variant="body1">{name}</Typography>
-            {isFile && isVisible && <CloseFile />}
           </div>
         }
         className={classes.treeContent}

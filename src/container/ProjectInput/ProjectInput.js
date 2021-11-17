@@ -33,10 +33,16 @@ function ProjectInput({
   };
   const { assessment } = projectSetting;
   const treeSupport = `${
-    assessment.bootstrapMethod !== "none" ? assessment.bootstrapMethod : ""
-  }${assessment.singleBranchTest.SHlike ? "/alrt" : ""}${
-    assessment.singleBranchTest.aBayes ? "/abayes" : ""
-  }${assessment.singleBranchTest.localBootstrap ? "/lcp" : ""}`;
+    assessment.bootstrapMethod !== "none"
+      ? assessment.bootstrapMethod === "ufboot"
+        ? "UFBoot"
+        : "SBS"
+      : ""
+  }${assessment.singleBranchTest.parametric ? "/aLRT" : ""}${
+    assessment.singleBranchTest.SHlike ? "/SH-aLRT" : ""
+  }${assessment.singleBranchTest.aBayes ? "/aBayes" : ""}${
+    assessment.singleBranchTest.localBootstrap ? "/LBP" : ""
+  }`;
   useEffect(() => {
     const selectFile = (event, data) => {
       const { message, status } = data;

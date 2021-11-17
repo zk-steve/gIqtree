@@ -27,9 +27,7 @@ function ProjectPage(props) {
   const { handleShowAlert } = useContext(DialogContext);
 
   const projectPath = useRef(null);
-  const [projectStatus, setProjectStatus] = useState(
-    PROJECT_STATUS.NOT_EXECUTED
-  );
+  const [projectStatus, setProjectStatus] = useState(null);
   const [currentFile, setCurrentFile] = useState("");
   const [isSettingOpen, setIsSettingOpen] = useState(true);
   const [listTrees, setListTrees] = useState([]);
@@ -43,10 +41,11 @@ function ProjectPage(props) {
   const [progressLog, setProgressLog] = useState("");
   const processId = useRef(null);
   const progress = useRef(null);
-  const handleSetProjectStatus = (status) => {
-    setProjectStatus(status);
-    console.log(status);
-    switch (status) {
+  useEffect(() => {
+    switch (projectStatus) {
+      case PROJECT_STATUS.NOT_EXECUTED:
+        setIsExecuteDisabled(false);
+        break;
       case PROJECT_STATUS.IN_PROCESS:
         ipcRenderer.invoke("executeProject", projectPath.current);
         setIsExecuteDisabled(true);
@@ -74,10 +73,6 @@ function ProjectPage(props) {
         setIsExecuteDisabled(false);
         setIsPauseDisabled(true);
         setIsContinueDisabled(true);
-        handleShowAlert({
-          title: "Done",
-          message: "Your process has finished sucessfully!",
-        });
         break;
       case PROJECT_STATUS.IN_PROCESS_AFTER_RESTART:
         ipcRenderer.invoke("restartProject", projectPath.current);
@@ -86,9 +81,11 @@ function ProjectPage(props) {
         setIsContinueDisabled(true);
         break;
       default:
-        console.log("Fail");
         break;
     }
+  }, [handleShowAlert, id, projectStatus]);
+  const handleSetProjectStatus = (status) => {
+    setProjectStatus(status);
   };
 
   useEffect(() => {
@@ -115,10 +112,28 @@ function ProjectPage(props) {
         setProjectSetting(message.objectModel);
         projectPath.current = message.projectDetail.path;
         setListTrees(message.projectDetail.children);
-        console.log(isExecuteDisabled);
-        if (message.objectModel.data.alignment !== "")
-          setIsExecuteDisabled(false);
-        else setIsExecuteDisabled(true);
+        if (message.objectModel.data.alignment !== "") {
+          console.log(message.objectModel.status);
+          switch (message.objectModel.status) {
+            case "Done":
+              console.log(isSettingOpen);
+              handleSetProjectStatus(PROJECT_STATUS.EXECUTED);
+              break;
+            case "Running":
+              handleSetProjectStatus(PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE);
+              break;
+            case "Paused":
+              setIsSettingOpen(false);
+              handleSetProjectStatus(PROJECT_STATUS.IS_PAUSED);
+              break;
+            case "Empty":
+              handleSetProjectStatus(PROJECT_STATUS.NOT_EXECUTED);
+              break;
+            default:
+              return;
+          }
+        }
+
         // if (message.tree.input.length > 0)
         //   handleSetListInput(message.tree.input);
         // if (message.tree.output.length > 0)
