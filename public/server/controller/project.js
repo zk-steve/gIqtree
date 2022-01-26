@@ -582,7 +582,7 @@ const executeProject = (project_path, object_model, type) => {
           COMMAND += " --redo";
         }
         else if (type === "continue") {
-          COMMAND += " --undo";
+          // COMMAND += " --undo";
         }
         else {
           COMMAND += " --redo"
