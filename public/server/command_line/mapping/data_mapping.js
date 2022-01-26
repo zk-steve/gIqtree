@@ -17,13 +17,14 @@ module.exports.data_mapping = (object_model) => {
       result += " -s "
       const files = fs.readdirSync(object_model["data"]["alignment"]);
       if (Array.isArray(files)) {
-        files.forEach(file => {
-          const filePath = path.join(object_model["data"]["alignment"], file)
-          result += `"${filePath}"`
-          if (files.indexOf(file) !== files.length - 1) {
-            result += ","
-          }
-        })
+        result += `"${object_model["data"]["alignment"]}"`
+        // files.forEach(file => {
+        //   const filePath = path.join(object_model["data"]["alignment"], file)
+        //   result += `"${filePath}"`
+        //   if (files.indexOf(file) !== files.length - 1) {
+        //     result += ","
+        //   }
+        // })
       }
     }
     else {
