@@ -5,6 +5,8 @@ const {
   CREATE_TABLE_OUTPUT,
 } = require("../table");
 
+const fs = require("fs")
+
 db.serialize(() => {
   // db.run(`DROP TABLE IF EXISTS project`);
   // db.run(`DROP TABLE IF EXISTS input`);
@@ -139,6 +141,42 @@ module.exports.deleteInput = async (input_id, project_id) => {
   });
 };
 
+const deleteProject = async (input_id, projectPath) => {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.all(
+        `DELETE FROM project WHERE path = "${projectPath}"`,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
+      );
+    });
+  });
+};
+
+const checkexistProject = (projectPath) => {
+  try {
+    if (fs.existsSync(projectPath)) {
+      console.log({projectPath, status: 1})
+      return true;
+    }
+    else {
+      console.log({ projectPath, status: 0 })
+      deleteProject(projectPath)
+        .then(result => {
+          return false;
+        })
+        .catch(err => {
+          return false;
+        })
+    }
+  } catch (err) {
+    console.log({projectPath, status: 0})
+    return false;
+  }
+}
+
 module.exports.getHistory = async () => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
@@ -146,7 +184,14 @@ module.exports.getHistory = async () => {
         "SELECT * FROM project ORDER BY project.time DESC",
         (err, rows) => {
           if (err) reject(err);
-          else resolve(rows);
+          else {
+            console.log({ rows });
+            const newRows = rows.filter(row => {
+              return checkexistProject(row.path)
+            })
+            console.log({newRows})
+            resolve(newRows)
+          }
         }
       );
     });
