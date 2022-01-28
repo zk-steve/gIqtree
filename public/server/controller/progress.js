@@ -53,7 +53,11 @@ module.exports.getProgress = (project_path, intervalId) => {
           .then(file => {
             let data = file.data
             let dataArr = data.split("\n")
-            let checkPoint = dataArr.length >= 2 ? project_path + dataArr[dataArr.length-2] : project_path
+            let checkPoint = dataArr.length >= 2 ? project_path + dataArr[dataArr.length - 2] : project_path
+            if (checkPoint.includes("ERROR")) {
+              console.log("ERROR")
+              reject({ message: "Command line failed", status: 0 })
+            }
             console.log({BBBBB: dataArr[dataArr.length - 2], checkPoint})
             if (Array.isArray(dataArr) && (checkPoint.includes(`${project_path}Date and Time:`))) {
               readSettingObject(project_path)
