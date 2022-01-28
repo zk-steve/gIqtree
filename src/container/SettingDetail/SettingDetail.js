@@ -1106,17 +1106,14 @@ function SettingDetail({
                     <Typography className={classes.inputLabel}>
                       Rate heterogeneity across sites:
                     </Typography>
-                    <div className={classes.shortPath}>
+                    <div
+                      className={clsx(classes.shortPath, classes.selectMargin)}
+                    >
                       <Typography align="left">
-                        Proportion of invariable sites
+                        Allowing proportion of invariable sites
                       </Typography>
                       <div className={classes.twoOption}>
-                        <div
-                          className={clsx(
-                            classes.radioInput,
-                            classes.selectMargin
-                          )}
-                        >
+                        <div className={classes.radioInput}>
                           <input
                             type="radio"
                             name="on"
@@ -1140,12 +1137,7 @@ function SettingDetail({
                             Yes
                           </InputLabel>
                         </div>
-                        <div
-                          className={clsx(
-                            classes.radioInput,
-                            classes.selectMargin
-                          )}
-                        >
+                        <div className={classes.radioInput}>
                           <input
                             type="radio"
                             name="on"
@@ -1201,13 +1193,7 @@ function SettingDetail({
                           <div className={classes.twoOption}>
                             {settingDetail.model.rateCategories.map(
                               (input, index) => (
-                                <div
-                                  key={index}
-                                  className={clsx(
-                                    classes.radioInput,
-                                    classes.selectMargin
-                                  )}
-                                >
+                                <div key={index} className={classes.radioInput}>
                                   <input
                                     type="radio"
                                     name={input.name}
@@ -1225,7 +1211,7 @@ function SettingDetail({
                                     }
                                   />
                                   <InputLabel
-                                    htmlFor="yes"
+                                    htmlFor={input.id}
                                     className={classes.radioLabel}
                                   >
                                     {input.label}

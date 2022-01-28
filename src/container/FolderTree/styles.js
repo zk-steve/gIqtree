@@ -65,5 +65,8 @@ const useStyles = makeStyles((theme) => ({
       padding: 0,
     },
   },
+  inputTreeIndex: {
+    width: "fit-content",
+  },
 }));
 export default useStyles;

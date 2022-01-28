@@ -4,14 +4,10 @@ import FolderTree from "container/FolderTree/FolderTree";
 import ProjectInput from "container/ProjectInput/ProjectInput";
 import ProjectSetting from "container/ProjectSetting/ProjectSetting";
 import SettingDetail from "container/SettingDetail/SettingDetail";
-import React, {
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { getFileExtension } from "utils";
+import { TREE_EXTENSION } from "utils/constant";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 export const PROJECT_STATUS = {
@@ -39,6 +35,8 @@ function ProjectPage(props) {
   const [projectName, setProjectName] = useState(null);
   const [projectSetting, setProjectSetting] = useState(null);
   const [progressLog, setProgressLog] = useState("");
+  const [currentTree, setCurrentTree] = useState(1);
+  const [currentTreeContent, setCurrentTreeContent] = useState("");
   const processId = useRef(null);
   const progress = useRef(null);
   useEffect(() => {
@@ -51,6 +49,8 @@ function ProjectPage(props) {
         setIsExecuteDisabled(true);
         setIsPauseDisabled(false);
         setIsContinueDisabled(true);
+        setCurrentFile("");
+        setOutputContent("");
         break;
       case PROJECT_STATUS.IS_PAUSED:
         ipcRenderer.send(
@@ -67,6 +67,8 @@ function ProjectPage(props) {
         setIsExecuteDisabled(true);
         setIsPauseDisabled(false);
         setIsContinueDisabled(true);
+        setCurrentFile("");
+        setOutputContent("");
         break;
       case PROJECT_STATUS.EXECUTED:
         ipcRenderer.send("getProjectById", id);
@@ -79,6 +81,8 @@ function ProjectPage(props) {
         setIsExecuteDisabled(true);
         setIsPauseDisabled(false);
         setIsContinueDisabled(true);
+        setCurrentFile("");
+        setOutputContent("");
         break;
       default:
         break;
@@ -93,8 +97,8 @@ function ProjectPage(props) {
     const viewFileData = (event, data) => {
       const { message, status } = data;
       if (status === 1) {
-        setOutputContent(message.data);
         setCurrentFile(message.name);
+        setOutputContent(message.data);
         if (isSettingOpen) setIsSettingOpen(false);
       }
     };
@@ -140,6 +144,7 @@ function ProjectPage(props) {
         //   handleSetListOutput(message.tree.output);
       }
     };
+
     const executeResult = (event, data) => {
       data = JSON.parse(data);
       console.log({ data });
@@ -178,6 +183,14 @@ function ProjectPage(props) {
       clearInterval(progress.current);
     };
   }, [id, projectName]); //get list input and get project name
+
+  useEffect(() => {
+    if (TREE_EXTENSION.includes(getFileExtension(currentFile))) {
+      const treeContent = outputContent?.split(";")[currentTree - 1] || "";
+      setCurrentTreeContent(treeContent);
+    }
+  }, [currentTree, currentTreeContent, outputContent]);
+
   const handleOpenSetting = () => {
     if (!isSettingOpen) setIsSettingOpen(true);
     if (currentFile !== "") setCurrentFile("");
@@ -217,6 +230,9 @@ function ProjectPage(props) {
           <Divider orientation="vertical" className={classes.divider} />
           {!isSettingOpen && (
             <ProjectInput
+              currentTreeContent={currentTreeContent}
+              currentTree={currentTree}
+              setCurrentTree={setCurrentTree}
               projectName={projectName}
               outputContent={outputContent}
               currentFile={currentFile}

@@ -1,17 +1,13 @@
+import PhylotreeApplication from "@giap/phylotree";
 import { Typography } from "@material-ui/core";
-import clsx from "clsx";
-import AlertDialog from "component/AlertDialog/AlertDialog";
+import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
 import React, { useEffect, useState } from "react";
-import {
-  buildStyles,
-  CircularProgressbarWithChildren,
-} from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useParams } from "react-router-dom";
-import useStyles from "./styles";
-import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
-import PhylotreeApplication from "@giap/phylotree";
 import ScrollToBottom from "react-scroll-to-bottom";
+import { getFileExtension } from "utils";
+import { TREE_EXTENSION } from "utils/constant";
+import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 
 function ProjectInput({
@@ -24,13 +20,14 @@ function ProjectInput({
   currentFile,
   progressLog,
   projectSetting,
+  currentTree,
+  setCurrentTree,
+  currentTreeContent,
 }) {
   const classes = useStyles();
   const { id } = useParams();
+  const numberOfTree = outputContent.split(";").length;
   const [isOpenAlert, setIsOpenAlert] = useState(false);
-  const handleSelectInput = () => {
-    ipcRenderer.send("selectDialog", id);
-  };
   const { assessment } = projectSetting;
   const treeSupport = `${
     assessment.bootstrapMethod !== "none"
@@ -43,6 +40,7 @@ function ProjectInput({
   }${assessment.singleBranchTest.aBayes ? "/aBayes" : ""}${
     assessment.singleBranchTest.localBootstrap ? "/LBP" : ""
   }`;
+
   useEffect(() => {
     const selectFile = (event, data) => {
       const { message, status } = data;
@@ -72,40 +70,48 @@ function ProjectInput({
     ipcRenderer.send("deleteInput", data);
   };
 
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (
+      e.target.treeIndex.value > 0 &&
+      e.target.treeIndex.value < outputContent.split(";").length
+    ) {
+      setCurrentTree(e.target.treeIndex.value);
+      e.target.treeIndex.blur();
+    }
+  };
   return (
     <div className={classes.root}>
       <div className={classes.container}>
-        {/* <Typography variant="h5" className={classes.title}>
-          {isInProcess && "Input"}
-          {!isInProcess && currentTab === "input" && projectName}
-          {!isInProcess && currentTab === "output" && "Output"}
-        </Typography> */}
+        {numberOfTree >= 3 && (
+          <form className={classes.treeIndexInput} onSubmit={onSubmit}>
+            <Typography>Tree index:</Typography>
+            <input defaultValue={currentTree} name="treeIndex" />
+            &nbsp; /&nbsp;{numberOfTree - 1}
+          </form>
+        )}
         <Typography className={classes.smallTitle}>
           {(projectStatus === PROJECT_STATUS.IN_PROCESS ||
             projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE ||
             projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_RESTART) &&
-            "Progression"}
+            "In progress..."}
           {(projectStatus === PROJECT_STATUS.EXECUTED ||
             projectStatus === PROJECT_STATUS.NOT_EXECUTED) &&
             currentFile !== "" &&
             currentFile}
         </Typography>
-        {(projectStatus === PROJECT_STATUS.EXECUTED ||
-          projectStatus === PROJECT_STATUS.NOT_EXECUTED) &&
-          outputContent !== "" &&
-          currentFile.split(".")[1] !== "treefile" && (
+        {outputContent !== "" &&
+          !TREE_EXTENSION.includes(getFileExtension(currentFile)) && (
             <textarea
               readOnly
               className={classes.outputContent}
               value={outputContent}
             />
           )}
-        {(projectStatus === PROJECT_STATUS.EXECUTED ||
-          projectStatus === PROJECT_STATUS.NOT_EXECUTED) &&
-          outputContent !== "" &&
-          currentFile.split(".")[1] === "treefile" && (
+        {currentTreeContent !== "" &&
+          TREE_EXTENSION.includes(getFileExtension(currentFile)) && (
             <PhylotreeApplication
-              newick={outputContent}
+              newick={currentTreeContent && currentTreeContent}
               support={treeSupport}
               width={600}
               height={500}

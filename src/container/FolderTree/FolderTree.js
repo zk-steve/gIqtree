@@ -57,11 +57,13 @@ function FolderTree({
     );
   };
   const renderTree = (nodes) =>
-    nodes.name !== "setting.json" && (
+    nodes.name !== "setting.json" &&
+    !nodes.name.split(".").includes("gz") && (
       <CustomTree
         name={nodes.name}
         isFile={!Boolean(nodes.children)}
         nodeId={nodes.path}
+        key={nodes.path}
       >
         {nodes.children && nodes.children.length > 0
           ? nodes.children.map((node) => renderTree(node))
@@ -119,6 +121,14 @@ function FolderTree({
             <TreeView
               defaultCollapseIcon={<ExpandMoreIcon />}
               defaultExpandIcon={<ChevronRightIcon />}
+              expanded={
+                listTrees.length > 0 &&
+                listTrees
+                  .filter(
+                    (item) => item.name === "input" || item.name === "output"
+                  )
+                  .map((file) => file.path)
+              }
               sx={{
                 height: "100%",
                 flexGrow: 1,

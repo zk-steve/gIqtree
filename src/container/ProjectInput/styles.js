@@ -126,8 +126,23 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "400px",
     fontFamily: "Courier",
     "&> div": {
+      textAlign: "left",
       whiteSpace: "pre-wrap",
       paddingLeft: "1rem",
+    },
+  },
+  treeIndexInput: {
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    "& p": {
+      marginRight: "4px",
+    },
+    "& input": {
+      width: "28px",
+      paddingLeft: "4px",
+      height: "24px",
+      borderRadius: "5px",
     },
   },
 }));
