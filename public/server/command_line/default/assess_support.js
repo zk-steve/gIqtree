@@ -26,7 +26,7 @@ module.exports = {
   },
   assessment: {
     bootstrapMethod: "standard",
-    bootstrapMethodReplicate: "0",
+    bootstrapMethodReplicate: "1000",
     ufbootOption: "no",
     multiPartitionSamplingStrategy: "SITE",
     singleBranchTest: {
