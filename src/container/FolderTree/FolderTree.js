@@ -17,6 +17,9 @@ function FolderTree({
   handleGetOutputContent,
   listTrees,
 }) {
+  // ignoring .DS_Store
+  listTrees = listTrees.filter(item => item.name !== ".DS_Store")
+
   const maxWidth = window.innerWidth / 5;
   const [size, setSize] = useState(210);
   const [expanded, setExpanded] = useState(
