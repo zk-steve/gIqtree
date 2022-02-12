@@ -151,6 +151,7 @@ function ProjectPage(props) {
       processId.current = data.processId;
       setIsSettingOpen(false);
       handleGetProjectProgress();
+      setCurrentFile("");
     };
     const getProgressResult = (event, data) => {
       if (data.status === 1) {
@@ -158,7 +159,7 @@ function ProjectPage(props) {
         if (data.doneStatus === 1) {
           console.log(data);
           handleSetProjectStatus(PROJECT_STATUS.EXECUTED);
-          setIsSettingOpen(true);
+          // setIsSettingOpen(true);
         } else {
           console.log(data);
         }
@@ -192,8 +193,8 @@ function ProjectPage(props) {
   }, [currentTree, currentTreeContent, outputContent]);
 
   const handleOpenSetting = () => {
-    if (!isSettingOpen) setIsSettingOpen(true);
-    if (currentFile !== "") setCurrentFile("");
+    setIsSettingOpen(!isSettingOpen);
+    // if (currentFile !== "") setCurrentFile("");
   };
   const handleCloseSetting = () => {
     setIsSettingOpen(false);
@@ -222,11 +223,13 @@ function ProjectPage(props) {
       <Divider variant="fullWidth" />
       <div className={classes.container}>
         <div className={classes.main}>
-          <FolderTree
-            listTrees={listTrees}
-            handleGetOutputContent={handleGetOutputContent}
-            currentFile={currentFile}
-          />
+          {listTrees.length > 0 && (
+            <FolderTree
+              listTrees={listTrees}
+              handleGetOutputContent={handleGetOutputContent}
+              currentFile={currentFile}
+            />
+          )}
           <Divider orientation="vertical" className={classes.divider} />
           {!isSettingOpen && (
             <ProjectInput

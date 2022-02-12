@@ -19,6 +19,12 @@ function FolderTree({
 }) {
   const maxWidth = window.innerWidth / 5;
   const [size, setSize] = useState(210);
+  const [expanded, setExpanded] = useState(
+    listTrees
+      .filter((item) => item.name === "input" || item.name === "output")
+      .map((file) => file.path) || []
+  );
+  const [selected, setSelected] = useState("");
   const classes = useStyles({ width: size });
   useEffect(() => {
     const selectFile = (event, data) => {
@@ -121,21 +127,19 @@ function FolderTree({
             <TreeView
               defaultCollapseIcon={<ExpandMoreIcon />}
               defaultExpandIcon={<ChevronRightIcon />}
-              expanded={
-                listTrees.length > 0 &&
-                listTrees
-                  .filter(
-                    (item) => item.name === "input" || item.name === "output"
-                  )
-                  .map((file) => file.path)
-              }
               sx={{
                 height: "100%",
                 flexGrow: 1,
                 width: "100%",
               }}
+              selected={selected}
+              expanded={expanded}
               onNodeSelect={(node, path) => {
                 handleGetOutputContent(path);
+                setSelected(path);
+              }}
+              onNodeToggle={(event, nodeIds) => {
+                setExpanded(nodeIds);
               }}
             >
               {listTrees.length > 0 &&

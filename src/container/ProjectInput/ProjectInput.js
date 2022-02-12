@@ -26,7 +26,7 @@ function ProjectInput({
 }) {
   const classes = useStyles();
   const { id } = useParams();
-  const numberOfTree = outputContent.split(";").length;
+  const numberOfTree = outputContent?.split(";").length;
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const { assessment } = projectSetting;
   const treeSupport = `${
@@ -80,25 +80,28 @@ function ProjectInput({
       e.target.treeIndex.blur();
     }
   };
+  console.log(currentFile, projectStatus);
   return (
     <div className={classes.root}>
       <div className={classes.container}>
-        {numberOfTree >= 3 && (
-          <form className={classes.treeIndexInput} onSubmit={onSubmit}>
-            <Typography>Tree index:</Typography>
-            <input defaultValue={currentTree} name="treeIndex" />
-            &nbsp; /&nbsp;{numberOfTree - 1}
-          </form>
-        )}
+        {numberOfTree >= 3 &&
+          TREE_EXTENSION.includes(getFileExtension(currentFile)) && (
+            <form className={classes.treeIndexInput} onSubmit={onSubmit}>
+              <Typography>Tree index:</Typography>
+              <input defaultValue={currentTree} name="treeIndex" />
+              &nbsp; /&nbsp;{numberOfTree - 1}
+            </form>
+          )}
         <Typography className={classes.smallTitle}>
           {(projectStatus === PROJECT_STATUS.IN_PROCESS ||
             projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE ||
             projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_RESTART) &&
             "In progress..."}
-          {(projectStatus === PROJECT_STATUS.EXECUTED ||
-            projectStatus === PROJECT_STATUS.NOT_EXECUTED) &&
-            currentFile !== "" &&
-            currentFile}
+          {progressLog &&
+            !currentFile &&
+            projectStatus === PROJECT_STATUS.EXECUTED &&
+            "Done"}
+          {currentFile !== "" && currentFile}
         </Typography>
         {outputContent !== "" &&
           !TREE_EXTENSION.includes(getFileExtension(currentFile)) && (
@@ -112,7 +115,9 @@ function ProjectInput({
           TREE_EXTENSION.includes(getFileExtension(currentFile)) && (
             <PhylotreeApplication
               newick={currentTreeContent && currentTreeContent}
-              support={treeSupport}
+              support={
+                getFileExtension(currentFile) === "treefile" ? treeSupport : ""
+              }
               width={600}
               height={500}
             />
@@ -124,12 +129,8 @@ function ProjectInput({
               <TreeView content={outputContent} />
             </div>
           )} */}
-        {(currentFile === "" ||
-          projectStatus === PROJECT_STATUS.EXECUTED ||
-          projectStatus === PROJECT_STATUS.NOT_EXECUTED) &&
-          projectStatus !== PROJECT_STATUS.EXECUTED &&
-          projectStatus !== PROJECT_STATUS.NOT_EXECUTED && (
-            /* <CircularProgressbarWithChildren
+        {currentFile === "" && progressLog && (
+          /* <CircularProgressbarWithChildren
                     value={progressPercentage}
                     styles={buildStyles({
                       pathTransition: "0.25s ease",
@@ -138,10 +139,10 @@ function ProjectInput({
                   >
                     <Typography>{progressPercentage}%</Typography>
                   </CircularProgressbarWithChildren> */
-            <ScrollToBottom mode="bottom" className={classes.progressContent}>
-              {progressLog ? progressLog : ""}
-            </ScrollToBottom>
-          )}
+          <ScrollToBottom mode="bottom" className={classes.progressContent}>
+            {progressLog ? progressLog : ""}
+          </ScrollToBottom>
+        )}
       </div>
     </div>
   );
