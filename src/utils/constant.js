@@ -1,1 +1,1 @@
-export const TREE_EXTENSION = [".treefile", ".contree", ".parstree"];
+export const TREE_EXTENSION = [".treefile", ".contree", ".parstree", ".bionj"];

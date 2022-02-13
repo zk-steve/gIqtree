@@ -80,7 +80,6 @@ function ProjectInput({
       e.target.treeIndex.blur();
     }
   };
-  console.log(currentFile, projectStatus);
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -116,7 +115,7 @@ function ProjectInput({
             <PhylotreeApplication
               newick={currentTreeContent && currentTreeContent}
               support={
-                getFileExtension(currentFile) === "treefile" ? treeSupport : ""
+                getFileExtension(currentFile) === ".treefile" ? treeSupport : ""
               }
               width={600}
               height={500}

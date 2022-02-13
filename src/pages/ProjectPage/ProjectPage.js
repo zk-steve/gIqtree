@@ -163,6 +163,11 @@ function ProjectPage(props) {
         } else {
           console.log(data);
         }
+      } else {
+        handleShowAlert({
+          title: "Error",
+          message: "An error occured. Please try again!",
+        });
       }
     };
     const pauseResult = (event, data) => {
