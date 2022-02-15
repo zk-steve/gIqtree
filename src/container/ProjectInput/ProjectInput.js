@@ -1,5 +1,5 @@
 import PhylotreeApplication from "@giap/phylotree";
-import { Typography } from "@material-ui/core";
+import { Link, Typography } from "@material-ui/core";
 import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
 import React, { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
@@ -28,7 +28,9 @@ function ProjectInput({
   const { id } = useParams();
   const numberOfTree = outputContent?.split(";").length;
   const [isOpenAlert, setIsOpenAlert] = useState(false);
+  const [overrideTreeView, setOverrideTreeView] = useState(false);
   const { assessment } = projectSetting;
+  const isTree = TREE_EXTENSION.includes(getFileExtension(currentFile));
   const treeSupport = `${
     assessment.bootstrapMethod !== "none"
       ? assessment.bootstrapMethod === "ufboot"
@@ -84,12 +86,21 @@ function ProjectInput({
     <div className={classes.root}>
       <div className={classes.container}>
         {numberOfTree >= 3 &&
-          TREE_EXTENSION.includes(getFileExtension(currentFile)) && (
-            <form className={classes.treeIndexInput} onSubmit={onSubmit}>
-              <Typography>Tree index:</Typography>
-              <input defaultValue={currentTree} name="treeIndex" />
-              &nbsp; /&nbsp;{numberOfTree - 1}
-            </form>
+          isTree && (
+            <>
+              <form className={classes.treeIndexInput} onSubmit={onSubmit}>
+                <Typography>Tree index:</Typography>
+                <input defaultValue={currentTree} name="treeIndex" />
+                &nbsp; /&nbsp;{numberOfTree - 1}
+              </form>
+              <Typography>
+                <Link color="inherit" onClick={() => setOverrideTreeView(!overrideTreeView)}>
+                  <b>
+                    Tree view is {overrideTreeView ? 'disabled' : 'enabled'}. Click here to toggle.
+                  </b>
+                </Link>
+              </Typography>
+            </>
           )}
         <Typography className={classes.smallTitle}>
           {(projectStatus === PROJECT_STATUS.IN_PROCESS ||
@@ -103,7 +114,7 @@ function ProjectInput({
           {currentFile !== "" && currentFile}
         </Typography>
         {outputContent !== "" &&
-          !TREE_EXTENSION.includes(getFileExtension(currentFile)) && (
+          (!isTree || overrideTreeView) && (
             <textarea
               readOnly
               className={classes.outputContent}
@@ -111,7 +122,7 @@ function ProjectInput({
             />
           )}
         {currentTreeContent !== "" &&
-          TREE_EXTENSION.includes(getFileExtension(currentFile)) && (
+          (isTree && !overrideTreeView) && (
             <PhylotreeApplication
               newick={currentTreeContent && currentTreeContent}
               support={
