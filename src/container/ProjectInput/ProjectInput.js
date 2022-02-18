@@ -1,7 +1,11 @@
 import PhylotreeApplication from "@giap/phylotree";
 import { Link, Typography } from "@material-ui/core";
+import {
+  KeyboardArrowDownRounded,
+  KeyboardArrowUpRounded,
+} from "@mui/icons-material";
 import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { useParams } from "react-router-dom";
 import ScrollToBottom from "react-scroll-to-bottom";
@@ -29,6 +33,9 @@ function ProjectInput({
   const numberOfTree = outputContent?.split(";").length;
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const [overrideTreeView, setOverrideTreeView] = useState(false);
+
+  const formRef = useRef(null);
+
   const { assessment } = projectSetting;
   const isTree = TREE_EXTENSION.includes(getFileExtension(currentFile));
   const treeSupport = `${
@@ -82,26 +89,21 @@ function ProjectInput({
       e.target.treeIndex.blur();
     }
   };
+  const onArrowUp = () => {
+    if (currentTree < numberOfTree - 1) {
+      formRef.current.treeIndex.value = currentTree + 1;
+      setCurrentTree(currentTree + 1);
+    }
+  };
+  const onArrowDown = () => {
+    if (currentTree > 1) {
+      formRef.current.treeIndex.value = parseInt(currentTree) - 1;
+      setCurrentTree(currentTree - 1);
+    }
+  };
   return (
     <div className={classes.root}>
       <div className={classes.container}>
-        {numberOfTree >= 3 &&
-          isTree && (
-            <>
-              <form className={classes.treeIndexInput} onSubmit={onSubmit}>
-                <Typography>Tree index:</Typography>
-                <input defaultValue={currentTree} name="treeIndex" />
-                &nbsp; /&nbsp;{numberOfTree - 1}
-              </form>
-              <Typography>
-                <Link color="inherit" onClick={() => setOverrideTreeView(!overrideTreeView)}>
-                  <b>
-                    Tree view is {overrideTreeView ? 'disabled' : 'enabled'}. Click here to toggle.
-                  </b>
-                </Link>
-              </Typography>
-            </>
-          )}
         <Typography className={classes.smallTitle}>
           {(projectStatus === PROJECT_STATUS.IN_PROCESS ||
             projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE ||
@@ -113,7 +115,46 @@ function ProjectInput({
             "Done"}
           {currentFile !== "" && currentFile}
         </Typography>
-        {outputContent !== "" &&
+        {numberOfTree >= 3 && isTree && (
+          <>
+            <form
+              className={classes.treeIndexInput}
+              onSubmit={onSubmit}
+              ref={formRef}
+            >
+              <Typography>Tree index:</Typography>
+              <input defaultValue={currentTree} name="treeIndex" />
+              &nbsp; /&nbsp;{numberOfTree - 1}
+              <div
+                className={classes.arrow}
+                style={{ marginLeft: "12px" }}
+                onClick={onArrowUp}
+              >
+                <KeyboardArrowUpRounded />
+              </div>
+              <div
+                className={classes.arrow}
+                style={{ marginLeft: "4px" }}
+                onClick={onArrowDown}
+              >
+                <KeyboardArrowDownRounded />
+              </div>
+            </form>
+            <Typography>
+              <Link
+                color="inherit"
+                onClick={() => setOverrideTreeView(!overrideTreeView)}
+              >
+                <b style={{ cursor: "pointer" }}>
+                  Tree view is {overrideTreeView ? "disabled" : "enabled"}.
+                  Click here to toggle.
+                </b>
+              </Link>
+            </Typography>
+          </>
+        )}
+        {currentFile &&
+          outputContent !== "" &&
           (!isTree || overrideTreeView) && (
             <textarea
               readOnly
@@ -121,17 +162,16 @@ function ProjectInput({
               value={outputContent}
             />
           )}
-        {currentTreeContent !== "" &&
-          (isTree && !overrideTreeView) && (
-            <PhylotreeApplication
-              newick={currentTreeContent && currentTreeContent}
-              support={
-                getFileExtension(currentFile) === ".treefile" ? treeSupport : ""
-              }
-              width={600}
-              height={500}
-            />
-          )}
+        {currentTreeContent !== "" && isTree && !overrideTreeView && (
+          <PhylotreeApplication
+            newick={currentTreeContent && currentTreeContent}
+            support={
+              getFileExtension(currentFile) === ".treefile" ? treeSupport : ""
+            }
+            width={600}
+            height={500}
+          />
+        )}
         {/* {!isInProcess &&
           outputContent !== "" &&
           ["bionj", "treefile"].includes(currentFile.split(".")[1]) && (

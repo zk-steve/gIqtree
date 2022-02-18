@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import clsx from "clsx";
 import SettingMenu from "component/SettingMenu/SettingMenu";
+import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
 import React, { useState, useEffect } from "react";
 import { Directory, CloseFile } from "shared/icons";
 import useStyles from "./styles";
@@ -21,6 +22,7 @@ function SettingDetail({
   handleTestSetting,
   id,
   projectPath,
+  projectStatus,
 }) {
   const reviewBox = (path, deleteAction, deleteActionArray = null) => {
     if (typeof path === "string" && path !== "")
@@ -1163,17 +1165,15 @@ function SettingDetail({
                         </div>
                       </div>
                     </div>
-                    {settingField.model.proportionOfInvariableSites ===
-                      "no" && (
-                      <>
-                        <div
-                          className={clsx(
-                            classes.shortPath,
-                            classes.selectMargin
-                          )}
-                        >
-                          <Typography align="left">RHAS Model</Typography>
-                          {/* <Select
+                    <>
+                      <div
+                        className={clsx(
+                          classes.shortPath,
+                          classes.selectMargin
+                        )}
+                      >
+                        <Typography align="left">RHAS Model</Typography>
+                        {/* <Select
                             variant="outlined"
                             className={classes.shortTextInput}
                             value={settingField.model.rateCategories}
@@ -1190,58 +1190,57 @@ function SettingDetail({
                               </MenuItem>
                             ))}
                           </Select> */}
-                          <div className={classes.twoOption}>
-                            {settingDetail.model.rateCategories.map(
-                              (input, index) => (
-                                <div key={index} className={classes.radioInput}>
-                                  <input
-                                    type="radio"
-                                    name={input.name}
-                                    id={input.id}
-                                    value={input.value}
-                                    checked={
-                                      settingField.model.rateCategories ===
-                                      input.value
-                                    }
-                                    onChange={(e) =>
-                                      handleChangeModelSetting(
-                                        e.target.value,
-                                        "rateCategories"
-                                      )
-                                    }
-                                  />
-                                  <InputLabel
-                                    htmlFor={input.id}
-                                    className={classes.radioLabel}
-                                  >
-                                    {input.label}
-                                  </InputLabel>
-                                </div>
-                              )
-                            )}
-                          </div>
-                        </div>
-                        <div
-                          className={clsx(
-                            classes.shortPath,
-                            classes.selectMargin
+                        <div className={classes.twoOption}>
+                          {settingDetail.model.rateCategories.map(
+                            (input, index) => (
+                              <div key={index} className={classes.radioInput}>
+                                <input
+                                  type="radio"
+                                  name={input.name}
+                                  id={input.id}
+                                  value={input.value}
+                                  checked={
+                                    settingField.model.rateCategories ===
+                                    input.value
+                                  }
+                                  onChange={(e) =>
+                                    handleChangeModelSetting(
+                                      e.target.value,
+                                      "rateCategories"
+                                    )
+                                  }
+                                />
+                                <InputLabel
+                                  htmlFor={input.id}
+                                  className={classes.radioLabel}
+                                >
+                                  {input.label}
+                                </InputLabel>
+                              </div>
+                            )
                           )}
-                        >
-                          <Typography align="left">#rate_categories</Typography>
-                          <OutlinedInput
-                            className={classes.shortTextInput}
-                            type="number"
-                            value={settingField.model.rateCategoriesNumber}
-                            onChange={(e) =>
-                              handleChangeModelSetting(
-                                e.target.value,
-                                "rateCategoriesNumber"
-                              )
-                            }
-                          />
                         </div>
-                      </>
-                    )}
+                      </div>
+                      <div
+                        className={clsx(
+                          classes.shortPath,
+                          classes.selectMargin
+                        )}
+                      >
+                        <Typography align="left">#rate_categories</Typography>
+                        <OutlinedInput
+                          className={classes.shortTextInput}
+                          type="number"
+                          value={settingField.model.rateCategoriesNumber}
+                          onChange={(e) =>
+                            handleChangeModelSetting(
+                              e.target.value,
+                              "rateCategoriesNumber"
+                            )
+                          }
+                        />
+                      </div>
+                    </>
                   </div>
                   <div className={classes.textInputContainer}>
                     <Typography className={classes.inputLabel}>
@@ -2197,6 +2196,11 @@ function SettingDetail({
                 variant="contained"
                 className={classes.button1}
                 onClick={handleSaveSetting}
+                disabled={
+                  projectStatus === PROJECT_STATUS.IN_PROCESS ||
+                  projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_CONTINUE ||
+                  projectStatus === PROJECT_STATUS.IN_PROCESS_AFTER_RESTART
+                }
               >
                 Save
               </Button>

@@ -256,6 +256,7 @@ function ProjectPage(props) {
               handleCloseSetting={handleCloseSetting}
               projectSetting={projectSetting}
               handleTestSetting={handleTestSetting}
+              projectStatus={projectStatus}
             />
           )}
         </div>

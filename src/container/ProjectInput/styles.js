@@ -1,4 +1,5 @@
 import { makeStyles } from "@material-ui/core";
+import { borderRadius } from "@mui/system";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -142,6 +143,12 @@ const useStyles = makeStyles((theme) => ({
       width: "28px",
       paddingLeft: "4px",
       height: "24px",
+      borderRadius: "5px",
+    },
+  },
+  arrow: {
+    "&:hover": {
+      backgroundColor: theme.palette.grey[300],
       borderRadius: "5px",
     },
   },
