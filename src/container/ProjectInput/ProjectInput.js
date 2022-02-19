@@ -4,8 +4,9 @@ import {
   KeyboardArrowDownRounded,
   KeyboardArrowUpRounded,
 } from "@mui/icons-material";
+import clsx from "clsx";
 import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { useParams } from "react-router-dom";
 import ScrollToBottom from "react-scroll-to-bottom";
@@ -101,6 +102,7 @@ function ProjectInput({
       setCurrentTree(currentTree - 1);
     }
   };
+  console.log(projectStatus);
   return (
     <div className={classes.root}>
       <div className={classes.container}>
@@ -162,6 +164,13 @@ function ProjectInput({
               value={outputContent}
             />
           )}
+        {!currentFile && !progressLog && (
+          <div className={classes.manualContainer}>
+            {projectStatus === PROJECT_STATUS.EXECUTED
+              ? "If you want to redo the analysis, please click RESTART."
+              : "If you are happy with current settings, please click EXECUTE to start the analysis."}
+          </div>
+        )}
         {currentTreeContent !== "" && isTree && !overrideTreeView && (
           <PhylotreeApplication
             newick={currentTreeContent && currentTreeContent}
@@ -180,15 +189,6 @@ function ProjectInput({
             </div>
           )} */}
         {currentFile === "" && progressLog && (
-          /* <CircularProgressbarWithChildren
-                    value={progressPercentage}
-                    styles={buildStyles({
-                      pathTransition: "0.25s ease",
-                      pathColor: "#DC3A61",
-                    })}
-                  >
-                    <Typography>{progressPercentage}%</Typography>
-                  </CircularProgressbarWithChildren> */
           <ScrollToBottom mode="bottom" className={classes.progressContent}>
             {progressLog ? progressLog : ""}
           </ScrollToBottom>

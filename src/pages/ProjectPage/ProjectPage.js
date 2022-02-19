@@ -120,7 +120,6 @@ function ProjectPage(props) {
           console.log(message.objectModel.status);
           switch (message.objectModel.status) {
             case "Done":
-              console.log(isSettingOpen);
               handleSetProjectStatus(PROJECT_STATUS.EXECUTED);
               break;
             case "Running":

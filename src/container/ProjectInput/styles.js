@@ -152,5 +152,16 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: "5px",
     },
   },
+  manualContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: `dashed 1px ${theme.palette.action.disabled}`,
+    borderRadius: "8px",
+    width: "100%",
+    height: "90%",
+    fontFamily: "Courier",
+    padding: "0 32px",
+  },
 }));
 export default useStyles;
