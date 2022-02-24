@@ -15,8 +15,8 @@ module.exports.other_mapping = (object_model, output_path) => {
     result += " --prefix " + `"${object_model["others"]["prefix"]}"`;
   }
   //Step 3: Enter command-line - done
-  if (object_model["others"]["enterCommandLine"] === "--redo") {
-    result += " --redo";
+  if (object_model["others"]["enterCommandLine"]) {
+    result += " " + object_model["others"]["enterCommandLine"];
   }
   console.log({ other_mapping: result });
   return result;

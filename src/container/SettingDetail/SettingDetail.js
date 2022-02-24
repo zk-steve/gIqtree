@@ -2175,7 +2175,7 @@ function SettingDetail({
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
-                    Enter command line
+                    Append command line
                   </Typography>
                   <OutlinedInput
                     className={classes.textInput}
