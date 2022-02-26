@@ -2149,6 +2149,9 @@ function SettingDetail({
                   </Typography>
                   <OutlinedInput
                     type="number"
+                    inputProps={{
+                      min: 1
+                    }}
                     className={classes.textInput}
                     value={settingField.others.numberOfCPUCores}
                     placeholder="Number of cores"
