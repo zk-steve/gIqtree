@@ -7,23 +7,17 @@ import SettingDetail from "container/SettingDetail/SettingDetail";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getFileExtension } from "utils";
-import { TREE_EXTENSION } from "utils/constant";
+import { TREE_EXTENSION, PROJECT_STATUS } from "utils/constant";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
-export const PROJECT_STATUS = {
-  NOT_EXECUTED: "NOT_EXECUTED",
-  IN_PROCESS: "IN_PROCESS",
-  IS_PAUSED: "IS_PAUSED",
-  IN_PROCESS_AFTER_CONTINUE: "IN_PROCESS_AFTER_CONTINUE",
-  IN_PROCESS_AFTER_RESTART: "IN_PROCESS_AFTER_RESTART",
-  EXECUTED: "EXECUTED",
-};
+
 function ProjectPage(props) {
   const classes = useStyles();
   const { handleShowAlert } = useContext(DialogContext);
 
   const projectPath = useRef(null);
   const [projectStatus, setProjectStatus] = useState(null);
+  const [projectType, setProjectType] = useState("");
   const [currentFile, setCurrentFile] = useState("");
   const [isSettingOpen, setIsSettingOpen] = useState(true);
   const [listTrees, setListTrees] = useState([]);
@@ -113,6 +107,7 @@ function ProjectPage(props) {
       const { message, status } = data;
       if (status === 1) {
         if (!projectName) setProjectName(message.projectDetail.name);
+        setProjectType(message.objectModel.projectType);
         setProjectSetting(message.objectModel);
         projectPath.current = message.projectDetail.path;
         setListTrees(message.projectDetail.children);
@@ -256,6 +251,7 @@ function ProjectPage(props) {
               projectSetting={projectSetting}
               handleTestSetting={handleTestSetting}
               projectStatus={projectStatus}
+              projectType={projectType}
             />
           )}
         </div>

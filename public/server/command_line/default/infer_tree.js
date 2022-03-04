@@ -1,5 +1,5 @@
 module.exports = {
-  projectType: "infertree",
+  projectType: "inferTree",
   status: "Empty",
   data: {
     alignment: "",

@@ -1,5 +1,5 @@
 module.exports = {
-  projectType: "findmodel",
+  projectType: "findModel",
   status: "Empty",
   data: {
     alignment: "",

@@ -3,17 +3,17 @@ import CreateProjectButton from "component/CreateProjectButton/CreateProjectButt
 import ProjectPopup from "component/ProjectPopup/ProjectPopup";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { PROJECT_TYPE } from "utils/constant";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 function ListCreateProjectButton(props) {
   const classes = useStyles();
   const listButton = [
-    { name: "Find Model", type: "findModel" },
-    { name: "Merge Partitions", type: "mergePartition" },
-
-    { name: "Infer Tree", type: "inferTree" },
-    { name: "Assess Support", type: "assessSupport" },
-    { name: "Date Tree", type: "dateTree" },
+    { name: "Find Model", type: PROJECT_TYPE.FIND_MODEL },
+    { name: "Merge Partitions", type: PROJECT_TYPE.MERGE_PARTITION },
+    { name: "Infer Tree", type: PROJECT_TYPE.INFER_TREE },
+    { name: "Assess Support", type: PROJECT_TYPE.ASSESS_SUPPORT },
+    { name: "Date Tree", type: PROJECT_TYPE.DATE_TREE },
   ];
   const [isOpen, setIsOpen] = useState(false);
   const [projectName, setProjectName] = useState("");

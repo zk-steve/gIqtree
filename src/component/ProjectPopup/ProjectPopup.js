@@ -19,7 +19,7 @@ function ProjectPopup({
   confirmAction,
   cancelAction,
   handleClose,
-  isOpen,
+  isOpen = false,
   projectType,
 }) {
   const classes = useStyles();

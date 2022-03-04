@@ -5,13 +5,12 @@ import {
   KeyboardArrowUpRounded,
 } from "@mui/icons-material";
 import clsx from "clsx";
-import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
 import React, { useEffect, useRef, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { useParams } from "react-router-dom";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { getFileExtension } from "utils";
-import { TREE_EXTENSION } from "utils/constant";
+import { TREE_EXTENSION, PROJECT_STATUS } from "utils/constant";
 import useStyles from "./styles";
 const { ipcRenderer } = window.require("electron");
 

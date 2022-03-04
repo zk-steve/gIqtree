@@ -2,7 +2,7 @@ import { Button, Typography } from "@material-ui/core";
 import React from "react";
 import { Setting } from "shared/icons";
 import useStyles from "./styles";
-import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
+import { PROJECT_STATUS } from "utils/constant";
 function ProjectSetting({
   handleOpenSetting,
   isExecuteDisabled,

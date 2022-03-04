@@ -1,5 +1,5 @@
 module.exports = {
-  projectType: "assessment",
+  projectType: "assessSupport",
   status: "Empty",
   data: {
     alignment: "",

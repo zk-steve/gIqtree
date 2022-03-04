@@ -9,10 +9,11 @@ import {
 } from "@material-ui/core";
 import clsx from "clsx";
 import SettingMenu from "component/SettingMenu/SettingMenu";
-import { PROJECT_STATUS } from "pages/ProjectPage/ProjectPage";
-import React, { useState, useEffect } from "react";
+import { PROJECT_STATUS, PROJECT_TYPE } from "utils/constant";
+import React, { useState, useEffect, useContext } from "react";
 import { Directory, CloseFile } from "shared/icons";
 import useStyles from "./styles";
+import { DialogContext } from "component/AlertDialog/AlertDialog";
 const { ipcRenderer } = window.require("electron");
 
 function SettingDetail({
@@ -23,6 +24,7 @@ function SettingDetail({
   id,
   projectPath,
   projectStatus,
+  projectType,
 }) {
   const reviewBox = (path, deleteAction, deleteActionArray = null) => {
     if (typeof path === "string" && path !== "")
@@ -54,6 +56,8 @@ function SettingDetail({
   const [settingField, setSettingField] = useState({ ...projectSetting } || {});
   const [currentOption, setCurrentOption] = useState("data");
   const [currentPathOption, setCurrentPathOption] = useState([]);
+
+  const { handleShowAlert } = useContext(DialogContext);
 
   useEffect(() => {
     // handleTestSetting(settingField);
@@ -849,7 +853,82 @@ function SettingDetail({
     });
   };
   const handleSaveSetting = () => {
-    ipcRenderer.invoke("saveSetting", projectPath, settingField);
+    console.log(projectType);
+    switch (projectType) {
+      case PROJECT_TYPE.MERGE_PARTITION:
+        const { data } = settingField;
+        if (
+          (data.alignment && data.partition) ||
+          (typeof data.alignment === "string" && data.alignment)
+        )
+          ipcRenderer.invoke("saveSetting", projectPath, settingField);
+        else
+          handleShowAlert({
+            title: "Warning",
+            message: (
+              <p>
+                The following setting options are required: <br />
+                <b>- MSA file</b>
+                and partition file
+                <br /> <b>- MSA folder</b>
+                <br />
+                <b> - MSA folder and partition file </b>
+                <br />
+                Please complete above option before saving.
+              </p>
+            ),
+          });
+        break;
+      case PROJECT_TYPE.ASSESS_SUPPORT:
+        const { tree, assessment } = settingField;
+        if (
+          tree.referenceTree &&
+          (assessment.singleBranchTest.SHlike ||
+            assessment.singleBranchTest.aBayes ||
+            assessment.singleBranchTest.localBootstrap ||
+            assessment.singleBranchTest.parametric)
+        )
+          ipcRenderer.invoke("saveSetting", projectPath, settingField);
+        else
+          handleShowAlert({
+            title: "Warning",
+            message: (
+              <p>
+                The following setting options are required: <br />{" "}
+                <b>- Reference tree</b>
+                <br /> <b>- Bootstrap Method</b>
+                <br /> <b>- Single branch tests</b>
+                <br />
+                <b> - MSA file </b>
+                <br />
+                Please complete above option before saving.
+              </p>
+            ),
+          });
+        break;
+      case PROJECT_TYPE.DATE_TREE:
+        const { dating } = settingField;
+        if (dating.dateFile && dating.availableDateInfoType !== "none")
+          ipcRenderer.invoke("saveSetting", projectPath, settingField);
+        else
+          handleShowAlert({
+            title: "Warning",
+            message: (
+              <p>
+                The following setting options are required: <br />
+                <b>- Available date info type</b>
+                <br /> <b>- Date file</b>
+                <br />
+                <b> - MSA file </b>
+                <br />
+                Please complete above option before saving.
+              </p>
+            ),
+          });
+        break;
+      default:
+        break;
+    }
   };
   const handleChooseFile = (option, subOption) => {
     ipcRenderer.send("chooseFile", projectPath);
@@ -2150,7 +2229,7 @@ function SettingDetail({
                   <OutlinedInput
                     type="number"
                     inputProps={{
-                      min: 1
+                      min: 1,
                     }}
                     className={classes.textInput}
                     value={settingField.others.numberOfCPUCores}
