@@ -2,7 +2,8 @@ const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
-const Downloader = require('nodejs-file-downloader');
+import axios from 'axios';
+import decompress from 'decompress';
 const unzipper = require("unzipper");
 
 let URL_IQTREE;
@@ -40,15 +41,14 @@ setImmediate(
   // Download iqtree
   async () => {//Wrapping the code with an async function, just for the sake of example.
     if (!fs.existsSync(path.join(iqtreePath))) {
-      const downloader = new Downloader({
-        url: URL_IQTREE,//If the file name already exists, a new file with the name 200MB1.zip is created.     
-        directory: dataPath,//This folder will be created, if it doesn't exist.               
-      })
+      fs.mkdirSync(dataPath, {
+        recursive: true
+      });
       try {
-        await downloader.download();//Downloader.download() returns a promise.
-        //Unzip iqtree
-      fs.createReadStream(path.join(dataPath, iqtreeName))
-      .pipe(unzipper.Extract({ path: path.join(dataPath) }));
+        let file = await axios.get(URL_IQTREE, {
+          responseType: 'arraybuffer'
+        }).then(res => res.data);
+        await decompress(Buffer.from(file), path.join(dataPath));
         console.log('All done');
       } catch (error) {//IMPORTANT: Handle a possible error. An error is thrown in case of network errors, or status codes of 400 and above.
         //Note that if the maxAttempts is set to higher than 1, the error is thrown only if all attempts fail.

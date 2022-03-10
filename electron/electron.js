@@ -18,7 +18,7 @@ function createWindow() {
   const display = screen.getPrimaryDisplay();
   const dimensions = display.workAreaSize;
   mainWindow = new BrowserWindow({
-    minWidth: 1440,
+    minWidth: 800,
     minHeight: 600,
     width: dimensions.width,
     height: dimensions.height,
@@ -164,7 +164,7 @@ function createWindow() {
           .catch((err) => event.sender.send("restartProjectResult", err));
         })
         .catch(err =>  event.sender.send("restartProjectResult", err))
-        
+
       })
       .catch(err => event.sender.send("restartProjectResult", err))
   });
@@ -191,7 +191,7 @@ function createWindow() {
                 mainWindow.webContents.send("pauseResult", { message: "Paused", status: 1 });
             })
             mainWindow.webContents.send("pauseResult", { message: "Error", status: 0 });
-            
+
           })
           mainWindow.webContents.send("pauseResult", { message: "Error", status: 0 });
           })
@@ -205,7 +205,7 @@ function createWindow() {
               mainWindow.webContents.send("pauseResult", { message: "Paused", status: 1 });
           })
           mainWindow.webContents.send("pauseResult", { message: "Error", status: 0 });
-          
+
         })
         mainWindow.webContents.send("pauseResult", { message: "Error", status: 0 });
       }
@@ -231,7 +231,7 @@ function createWindow() {
           .catch((err) => event.sender.send("continueProjectResult", err));
         })
         .catch(err =>  event.sender.send("continueProjectResult", err))
-        
+
       })
       .catch(err => event.sender.send("continueProjectResult", err))
   });

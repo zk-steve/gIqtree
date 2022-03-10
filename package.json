@@ -12,18 +12,9 @@
     },
     "win": {
       "icon": "build/icon.png"
-    },
-    "extraResources": [
-      {
-        "from": "public/server/database",
-        "to": "database",
-        "filter": [
-          "**/*"
-        ]
-      }
-    ]
+    }
   },
-  "main": "public/electron.js",
+  "main": "./build/electron.js",
   "homepage": "./",
   "scripts": {
     "test": "jest",
@@ -32,12 +23,13 @@
     "react-test": "react-scripts test --env=jsdom",
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
-    "release": "yarn react-build && electron-builder --publish=always",
+    "watch-electron": "tsc -p electron -w",
+    "build-ts-electron": "tsc --incremental false --tsBuildInfoFile null -p electron",
     "build": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build --win portable -l",
-    "build:win": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build --win portable",
-    "build:linux": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build -l",
-    "build:mac": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build -m",
-    "start": "concurrently \"cross-env HOST=localhost SKIP_PREFLIGHT_CHECK=true BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
+    "build:win": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn build-ts-electron && yarn electron-build --win portable",
+    "build:linux": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn build-ts-electron && yarn electron-build -l",
+    "build:mac": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn build-ts-electron && yarn electron-build -m",
+    "start": "concurrently \"cross-env HOST=localhost SKIP_PREFLIGHT_CHECK=true BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && yarn build-ts-electron && electron build/electron.js\""
   },
   "dependencies": {
     "@emotion/react": "^11.4.1",
@@ -50,12 +42,13 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "axios": "^0.26.0",
     "clsx": "^1.1.1",
     "core-js": "^3.19.0",
     "cross-env": "^7.0.3",
+    "decompress": "^4.2.1",
     "electron-is-dev": "^2.0.0",
     "fs-extra": "^10.0.0",
-    "nodejs-file-downloader": "^4.7.2",
     "react": "^17.0.2",
     "react-circular-progressbar": "^2.0.4",
     "react-d3-tree": "^3.1.1",
@@ -70,10 +63,12 @@
     "web-vitals": "^1.0.1"
   },
   "devDependencies": {
+    "@types/node": "14",
     "concurrently": "^6.2.0",
     "electron": "^13.1.7",
     "electron-builder": "^22.11.7",
     "test": "^0.6.0",
+    "typescript": "^4.6.2",
     "wait-on": "^6.0.0"
   },
   "eslintConfig": {
