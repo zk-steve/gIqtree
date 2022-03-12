@@ -853,82 +853,83 @@ function SettingDetail({
     });
   };
   const handleSaveSetting = () => {
-    switch (projectType) {
-      case PROJECT_TYPE.MERGE_PARTITION:
-        const { data } = settingField;
-        if (
-          (data.alignment && data.partition) ||
-          (typeof data.alignment === "string" && data.alignment)
-        )
-          ipcRenderer.invoke("saveSetting", projectPath, settingField);
-        else
-          handleShowAlert({
-            title: "Warning",
-            message: (
-              <p>
-                The following setting options are required: <br />
-                <b>- MSA file</b>
-                and partition file
-                <br /> <b>- MSA folder</b>
-                <br />
-                <b> - MSA folder and partition file </b>
-                <br />
-                Please complete above option before saving.
-              </p>
-            ),
-          });
-        break;
-      case PROJECT_TYPE.ASSESS_SUPPORT:
-        const { tree, assessment } = settingField;
-        if (
-          tree.referenceTree &&
-          (assessment.singleBranchTest.SHlike ||
-            assessment.singleBranchTest.aBayes ||
-            assessment.singleBranchTest.localBootstrap ||
-            assessment.singleBranchTest.parametric)
-        )
-          ipcRenderer.invoke("saveSetting", projectPath, settingField);
-        else
-          handleShowAlert({
-            title: "Warning",
-            message: (
-              <p>
-                The following setting options are required: <br />{" "}
-                <b>- Reference tree</b>
-                <br /> <b>- Bootstrap Method</b>
-                <br /> <b>- Single branch tests</b>
-                <br />
-                <b> - MSA file </b>
-                <br />
-                Please complete above option before saving.
-              </p>
-            ),
-          });
-        break;
-      case PROJECT_TYPE.DATE_TREE:
-        const { dating } = settingField;
-        if (dating.dateFile && dating.availableDateInfoType !== "none")
-          ipcRenderer.invoke("saveSetting", projectPath, settingField);
-        else
-          handleShowAlert({
-            title: "Warning",
-            message: (
-              <p>
-                The following setting options are required: <br />
-                <b>- Available date info type</b>
-                <br /> <b>- Date file</b>
-                <br />
-                <b> - MSA file </b>
-                <br />
-                Please complete above option before saving.
-              </p>
-            ),
-          });
-        break;
-      default:
-        ipcRenderer.invoke("saveSetting", projectPath, settingField);
-        break;
-    }
+    // switch (projectType) {
+    //   case PROJECT_TYPE.MERGE_PARTITION:
+    //     const { data } = settingField;
+    //     if (
+    //       (data.alignment && data.partition) ||
+    //       (typeof data.alignment === "string" && data.alignment)
+    //     )
+    //       ipcRenderer.invoke("saveSetting", projectPath, settingField);
+    //     else
+    //       handleShowAlert({
+    //         title: "Warning",
+    //         message: (
+    //           <p>
+    //             The following setting options are required: <br />
+    //             <b>- MSA file</b>
+    //             and partition file
+    //             <br /> <b>- MSA folder</b>
+    //             <br />
+    //             <b> - MSA folder and partition file </b>
+    //             <br />
+    //             Please complete above option before saving.
+    //           </p>
+    //         ),
+    //       });
+    //     break;
+    //   case PROJECT_TYPE.ASSESS_SUPPORT:
+    //     const { tree, assessment } = settingField;
+    //     if (
+    //       tree.referenceTree &&
+    //       (assessment.singleBranchTest.SHlike ||
+    //         assessment.singleBranchTest.aBayes ||
+    //         assessment.singleBranchTest.localBootstrap ||
+    //         assessment.singleBranchTest.parametric)
+    //     )
+    //       ipcRenderer.invoke("saveSetting", projectPath, settingField);
+    //     else
+    //       handleShowAlert({
+    //         title: "Warning",
+    //         message: (
+    //           <p>
+    //             The following setting options are required: <br />{" "}
+    //             <b>- Reference tree</b>
+    //             <br /> <b>- Bootstrap Method</b>
+    //             <br /> <b>- Single branch tests</b>
+    //             <br />
+    //             <b> - MSA file </b>
+    //             <br />
+    //             Please complete above option before saving.
+    //           </p>
+    //         ),
+    //       });
+    //     break;
+    //   case PROJECT_TYPE.DATE_TREE:
+    //     const { dating } = settingField;
+    //     if (dating.dateFile && dating.availableDateInfoType !== "none")
+    //       ipcRenderer.invoke("saveSetting", projectPath, settingField);
+    //     else
+    //       handleShowAlert({
+    //         title: "Warning",
+    //         message: (
+    //           <p>
+    //             The following setting options are required: <br />
+    //             <b>- Available date info type</b>
+    //             <br /> <b>- Date file</b>
+    //             <br />
+    //             <b> - MSA file </b>
+    //             <br />
+    //             Please complete above option before saving.
+    //           </p>
+    //         ),
+    //       });
+    //     break;
+    //   default:
+    //     ipcRenderer.invoke("saveSetting", projectPath, settingField);
+    //     break;
+    // }
+    ipcRenderer.invoke("saveSetting", projectPath, settingField);
   };
   const handleChooseFile = (option, subOption) => {
     ipcRenderer.send("chooseFile", projectPath);
@@ -1348,7 +1349,10 @@ function SettingDetail({
                             )
                           }
                         />
-                        <InputLabel className={clsx(classes.radioLabel)}>
+                        <InputLabel
+                          className={clsx(classes.radioLabel)}
+                          htmlFor={input.id}
+                        >
                           {input.label}
                         </InputLabel>
                       </div>
@@ -1379,15 +1383,18 @@ function SettingDetail({
                         <input
                           type="radio"
                           name="autoMerge"
-                          id="yes"
+                          id="autoMergeYes"
                           value="yes"
                           checked={settingField.model.autoMerge === "yes"}
                           onChange={(e) =>
-                            handleChangeModelSetting(e, "autoMerge")
+                            handleChangeModelSetting(
+                              e.target.value,
+                              "autoMerge"
+                            )
                           }
                         />
                         <InputLabel
-                          htmlFor="yes"
+                          htmlFor="autoMergeYes"
                           className={classes.radioLabel}
                         >
                           Yes
@@ -1402,14 +1409,20 @@ function SettingDetail({
                         <input
                           type="radio"
                           name="autoMerge"
-                          id="no"
+                          id="autoMergeNo"
                           value="no"
                           checked={settingField.model.autoMerge === "no"}
                           onChange={(e) =>
-                            handleChangeModelSetting(e, "autoMerge")
+                            handleChangeModelSetting(
+                              e.target.value,
+                              "autoMerge"
+                            )
                           }
                         />
-                        <InputLabel htmlFor="no" className={classes.radioLabel}>
+                        <InputLabel
+                          htmlFor="autoMergeNo"
+                          className={classes.radioLabel}
+                        >
                           No
                         </InputLabel>
                       </div>
@@ -1512,12 +1525,17 @@ function SettingDetail({
                       <input
                         type="radio"
                         name="on"
-                        id="yes"
+                        id="onYes"
                         value="yes"
                         checked={settingField.tree.on === "yes"}
-                        onChange={(e) => handleChangeTreeSetting(e, "on")}
+                        onChange={(e) =>
+                          handleChangeTreeSetting(e.target.value, "on")
+                        }
                       />
-                      <InputLabel htmlFor="yes" className={classes.radioLabel}>
+                      <InputLabel
+                        htmlFor="onYes"
+                        className={classes.radioLabel}
+                      >
                         Yes
                       </InputLabel>
                     </div>
@@ -1527,12 +1545,14 @@ function SettingDetail({
                       <input
                         type="radio"
                         name="on"
-                        id="no"
+                        id="onNo"
                         value="no"
                         checked={settingField.tree.on === "no"}
-                        onChange={(e) => handleChangeTreeSetting(e, "on")}
+                        onChange={(e) =>
+                          handleChangeTreeSetting(e.target.value, "on")
+                        }
                       />
-                      <InputLabel htmlFor="no" className={classes.radioLabel}>
+                      <InputLabel htmlFor="onNo" className={classes.radioLabel}>
                         No
                       </InputLabel>
                     </div>
@@ -1540,7 +1560,7 @@ function SettingDetail({
                 </div>
                 <div className={classes.textInputContainer}>
                   <Typography className={classes.inputLabel}>
-                    Number of unsuccesful iterations to stop:
+                    Number of unsuccessful iterations to stop:
                   </Typography>
                   <OutlinedInput
                     type="number"
@@ -1654,7 +1674,7 @@ function SettingDetail({
                         )
                       }
                     />
-                    <InputLabel htmlFor="none" className={classes.radioLabel}>
+                    <InputLabel htmlFor="ufboot" className={classes.radioLabel}>
                       UFboot
                     </InputLabel>
                   </div>
@@ -1812,7 +1832,7 @@ function SettingDetail({
                       }
                       onChange={(e) =>
                         handleChangeAssessmentSetting(
-                          e,
+                          e.target.value,
                           "multiPartitionSamplingStrategy"
                         )
                       }
