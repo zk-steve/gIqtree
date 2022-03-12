@@ -853,7 +853,6 @@ function SettingDetail({
     });
   };
   const handleSaveSetting = () => {
-    console.log(projectType);
     switch (projectType) {
       case PROJECT_TYPE.MERGE_PARTITION:
         const { data } = settingField;
@@ -927,6 +926,7 @@ function SettingDetail({
           });
         break;
       default:
+        ipcRenderer.invoke("saveSetting", projectPath, settingField);
         break;
     }
   };
