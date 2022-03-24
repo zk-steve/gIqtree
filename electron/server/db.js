@@ -4,7 +4,6 @@ const fs = require("fs");
 const os = require("os");
 import axios from 'axios';
 import decompress from 'decompress';
-const unzipper = require("unzipper");
 
 let URL_IQTREE;
 let iqtreeName;
