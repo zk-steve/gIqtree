@@ -18,7 +18,7 @@ resources:
     ref: dev
 jobs:
 - job: U_W
-  displayName: Build Ubuntu and Windown
+  displayName: Build Ubuntu and Window
   pool:
     name: Builder
   steps:
