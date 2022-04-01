@@ -16,9 +16,10 @@ resources:
   - repository: self
     type: git
     ref: dev
+
 jobs:
 - job: U_W
-  displayName: Build Ubuntu and Windown
+  displayName: Build Ubuntu and Windows
   pool:
     name: Builder
   steps:
@@ -45,10 +46,10 @@ jobs:
         find ./dist -name '*.AppImage' -exec cp -prv '{}' "./uw/" ";"
       workingDirectory: $(System.DefaultWorkingDirectory)
   - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: Ubuntu And Window'
+    displayName: 'Publish Artifact: Ubuntu And Windows'
     inputs:
       PathtoPublish: uw
-      ArtifactName: ubuntu-and-windown
+      ArtifactName: ubuntu-and-windows
 
 - job: MAC
   displayName: Build MacOS

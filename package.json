@@ -25,7 +25,7 @@
     "electron-build": "electron-builder",
     "watch-electron": "tsc -p electron -w",
     "build-ts-electron": "tsc --incremental false --tsBuildInfoFile null -p electron",
-    "build": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn electron-build --win portable -l",
+    "build": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn build-ts-electron && yarn electron-build --win portable -l",
     "build:win": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn build-ts-electron && yarn electron-build --win portable",
     "build:linux": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn build-ts-electron && yarn electron-build -l",
     "build:mac": "SKIP_PREFLIGHT_CHECK=true yarn react-build && yarn build-ts-electron && yarn electron-build -m",
